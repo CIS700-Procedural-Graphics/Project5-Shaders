@@ -16,9 +16,9 @@ Examples: [https://cis700-procedural-graphics.github.io/Project5-Shaders/](https
 ### 15 points each: Instagram-like filters
 
 - Tone mapping:
-    - Linear (+5 points)
-    - Reinhard (+5 points)
-    - Filmic (+5 points)
+    - Linear (5 points)
+    - Reinhard (5 points)
+    - Filmic (5 points)
 - Gaussian blur (no double counting with Bloom)
 - Iridescence
 - Pointilism
@@ -30,17 +30,18 @@ Examples: [https://cis700-procedural-graphics.github.io/Project5-Shaders/](https
 - Noise Warp
 - Hatching
 - Lit Sphere ([paper](http://www.ppsloan.org/publications/LitSphere.pdf))
+- Uncharted 2 customizable filmic curve, following John Hable’s presetantion. 
+    - Without Linear, Reinhard, filmic (10 points)
+    - With all of linear, Reinhard, filmic (10 points)
+    - Customizable via GUI: (5 points total)
+        - Controlling Exposure 
+        - Side by side comparison between linear, Reinhard, filmic, and Uncharted2 .
 
 ### 37.5 points each:
 - K-means color compression (unless you are extremely clever, the k-means clusterer has to be CPU side)
 - Dithering
 - Edge detection with Sobel filtering
-- Uncharted 2 customizable filmic curve, following John Hable’s presetantion. 
-    - Without Linear, Reinhard, filmic (+10 points)
-    - With all of linear, Reinhard, filmic (+10 points)
-    - Customizable via GUI (+17.5 points)
-    - Controlling Exposure (4 points)
-    - Side by side comparison between linear, Reinhard, filmic, and Uncharted2 (13.5 points). 
+ 
 
 ### 5 points - Interactivity
 Implement a dropdown GUI to select different shader effects from your list.
