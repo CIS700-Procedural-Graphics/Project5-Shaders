@@ -7,7 +7,7 @@ var options = {
 
 var GrayscaleShader = new EffectComposer.ShaderPass({
     uniforms: {
-        tDiffuse: {
+        tDiffuse: { //need this for all shader passes
             type: 't',
             value: null
         },
