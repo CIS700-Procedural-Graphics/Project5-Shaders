@@ -63,3 +63,10 @@ var GrayscaleShader = new EffectComposer.ShaderPass({
 ```
 
 BUT, if you want to modify the uniforms, you need to do so like so: `GrayscaleShader.material.uniforms.u_amount.value = val;`. Note the extra `.material` property.
+
+## Deploy
+
+1. Create a `gh-pages` branch on GitHub
+2. Do `npm run build`
+3. Commit and add all your changes.
+4. Do `npm run deploy`
