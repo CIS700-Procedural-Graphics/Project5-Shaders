@@ -1,6 +1,7 @@
 {
   "scripts": {
     "start": "webpack-dev-server --hot --inline",
+    "deploy": "npm run build && git push origin `git subtree split --prefix build master`:gh-pages --force",
     "build": "webpack"
   },
   "dependencies": {
