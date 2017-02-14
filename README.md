@@ -11,6 +11,8 @@ Document each shader you implement in your README with at least a sentence or tw
 
 If you use shadertoy or any materials as reference, please properly credit your sources in the README and on top of the shader file. Failing to do so will result in plagiarism and will significantly reduce your points.
 
+Examples: [https://cis700-procedural-graphics.github.io/Project5-Shaders/](https://cis700-procedural-graphics.github.io/Project5-Shaders/)
+
 ### 15 points each: Instagram-like filters
 
 - Tone mapping:
