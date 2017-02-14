@@ -29,6 +29,7 @@ Examples: [https://cis700-procedural-graphics.github.io/Project5-Shaders/](https
 - Bloom
 - Noise Warp
 - Hatching
+- Edge detection with Sobel filtering
 - Lit Sphere ([paper](http://www.ppsloan.org/publications/LitSphere.pdf))
 - Uncharted 2 customizable filmic curve, following John Hable’s presetantion. 
     - Without Linear, Reinhard, filmic (10 points)
@@ -40,7 +41,6 @@ Examples: [https://cis700-procedural-graphics.github.io/Project5-Shaders/](https
 ### 37.5 points each:
 - K-means color compression (unless you are extremely clever, the k-means clusterer has to be CPU side)
 - Dithering
-- Edge detection with Sobel filtering
  
 
 ### 5 points - Interactivity
