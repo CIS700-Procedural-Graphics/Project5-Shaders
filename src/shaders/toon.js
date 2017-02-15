@@ -12,6 +12,8 @@ var options = {
 }
 
 export default function(renderer, scene, camera) {
+    // var vector = new THREE.Vector3();
+    // var lookVec = camera.getWorldDirection( vector );
     
     const Shader = {
         initGUI: function(gui) {
@@ -64,10 +66,10 @@ export default function(renderer, scene, camera) {
                 u_lightIntensity: {
                     type: 'f',
                     value: options.lightIntensity
-                }
+                },
             },
-            vertexShader: require('../glsl/lambert-vert.glsl'),
-            fragmentShader: require('../glsl/lambert-frag.glsl')
+            vertexShader: require('../glsl/toon-vert.glsl'),
+            fragmentShader: require('../glsl/toon-frag.glsl')
         })
     }
 

@@ -21,7 +21,7 @@ var GrayscaleShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: require('../glsl/pass-vert.glsl'),
-    fragmentShader: require('../glsl/grayscale-frag.glsl')
+    fragmentShader: require('../glsl/inclass-frag.glsl')
 });
 
 // using the three effect composer. ok. 
