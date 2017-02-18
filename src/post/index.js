@@ -18,3 +18,5 @@ export function None(renderer, scene, camera) {
 export {default as Grayscale} from './grayscale'
 export {default as Vignette} from './vignette'
 export {default as Warp} from './warp'
+export {default as Sobel} from './sobel'
+export {default as Plasma} from './plasma'

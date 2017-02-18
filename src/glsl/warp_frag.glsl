@@ -6,7 +6,7 @@ varying vec2 f_uv;
 
 uniform vec3 gradients3d[12];
 uniform int time;
-uniform int table[512];
+uniform int table[24];
 
 
 float lerp(in float a, in float b, in float t)
@@ -25,37 +25,32 @@ float ecurve(in float t)
 // randomly select a 3d gradient given a corner's coordinates
 vec3 pickGradient(in int x, in int y, in int z)
 {
-	int h1 = 0;
-	// goddamn this frag shader error
+	// terrible way of picking the gradient but whatever
 	/*
-	for (int i = 0; i < 512; i++) {
-		if (i == x) {
-			h1 = table[i];
-			break;
+	int h = 0;
+	for (int i = 0; i < 24; i++) {
+		if (i == z) {
+			h = table[i]; break;
 		}
 	}
 
-	for (int i = 0; i < 512; i++) {
-		if (i == y + h1) {
-			h1 = table[i];
-			break;
+	for (int i = 0; i < 24; i++) {
+		if (i == y + h) {
+			h = table[i]; break;
 		}
 	}
 
-	for (int i = 0; i < 512; i++) {
-		if (i == z + h1) {
-			h1 = table[i];
-			break;
+	for (int i = 0; i < 24; i++) {
+		if (i == x + h) {
+			h = table[i]; break;
 		}
 	}
-
-	//int hash = table[z + table[y + table[x]]];
-	float t = float(h1) / 256.0;
-	*/
+    */
 	vec3 g = vec3(0, 0, 0);
+	int k = int(mod(float(x) + float(x) * float(y), 12.0));
 
 	for (int i = 0; i < 12; i++) {
-		if (i == int(mod(float(x) + float(x)*float(y) + float(x)*float(y)*float(z), 12.0))) {
+		if (i == k) {
 		//if (i == int(t * 12.0)) {
 			g = gradients3d[i];
 			break;
@@ -67,12 +62,12 @@ vec3 pickGradient(in int x, in int y, in int z)
 // uses time as z coordinate
 float getnoise3d(in float x, in float y, in int numSamples)
 {
-	float tOffset = float(time) / 1000.0 / float(numSamples);
+	float tOffset = float(time) / 1000.0;
 	//tOffset = 3.0;
 	// position within gradient grid
-	float xs = mod(x * float(numSamples), 255.0);
-	float ys = mod(y * float(numSamples), 255.0);
-	float zs = mod(tOffset * float(numSamples) , 255.0);
+	float xs = mod(x * float(numSamples), 24.0);
+	float ys = mod(y * float(numSamples), 24.0);
+	float zs = mod(tOffset * float(numSamples) , 24.0);
 	// lower bound of grid cube
 	int xlb = int(floor(xs));
 	int ylb = int(floor(ys));
@@ -121,8 +116,8 @@ float getnoise3d(in float x, in float y, in int numSamples)
 void main() {
 
 	float n = getnoise3d( f_uv.x, f_uv.y, 8);
-	float c = cos(2.0 * n * 3.14159);
-	float s = sin(2.0 * n * 3.14159);
+	//float c = cos(2.0 * n * 3.14159);
+	//float s = sin(2.0 * n * 3.14159);
 	//vec4 noise = texture2D(pNoise, f_uv);
 	//vec2 deformed = vec2(f_uv.x  + 2.0 * (u_amount - 0.5) * (f_uv.y - 0.5), f_uv.y);
 	n = getnoise3d(f_uv.x, mod(f_uv.y + n * u_amount, 1.0), 16);
