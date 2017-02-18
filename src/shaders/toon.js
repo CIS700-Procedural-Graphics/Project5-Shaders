@@ -2,7 +2,7 @@
 const THREE = require('three');
 import {textureLoaded} from '../mario'
 
-// options for shader
+// options for lambert shader
 var options = {
     lightColor: '#ffffff',
     lightIntensity: 2,

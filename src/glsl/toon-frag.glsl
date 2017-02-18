@@ -21,10 +21,13 @@ void main() {
     float d = clamp(dot(f_normal, normalize(u_lightPos - f_position)), 0.0, 1.0);
 
     vec3 calcColor = d * color.rgb * u_lightCol * u_lightIntensity + u_ambient;
-    float bin = 4.0;
-    vec3 ceil = ceil((calcColor * bin)) / bin;
-    vec3 floor = floor((calcColor * bin)) / bin;
-    calcColor = (ceil + floor ) / 2.0;
+    float bin = 2.0;
+    calcColor = (ceil((calcColor * bin)) - bin/3.0) / bin;
+
+    vec3 look = (cameraPosition - f_position);
+    if (dot(look, f_normal) < 0.5) {
+    	calcColor = vec3( 1,1,1);
+    }
 
 
     gl_FragColor = vec4(calcColor, 1.0);
