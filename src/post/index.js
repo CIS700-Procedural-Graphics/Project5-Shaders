@@ -17,3 +17,4 @@ export function None(renderer, scene, camera) {
 // follow this syntax to make your shaders available to the GUI
 export {default as Grayscale} from './grayscale'
 export {default as Vignette} from './vignette'
+export {default as Warp} from './warp'
