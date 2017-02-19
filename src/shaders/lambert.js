@@ -1,9 +1,10 @@
-
 const THREE = require('three');
-import {textureLoaded} from '../mario'
+import {
+    textureLoaded
+} from '../loader'
 
 // options for lambert shader
-var options = {
+let options = {
     lightColor: '#ffffff',
     lightIntensity: 2,
     albedo: '#dddddd',
@@ -12,7 +13,7 @@ var options = {
 }
 
 export default function(renderer, scene, camera) {
-    
+
     const Shader = {
         initGUI: function(gui) {
             gui.addColor(options, 'lightColor').onChange(function(val) {
@@ -31,11 +32,11 @@ export default function(renderer, scene, camera) {
                 Shader.material.uniforms.u_useTexture.value = val;
             });
         },
-        
+
         material: new THREE.ShaderMaterial({
             uniforms: {
                 texture: {
-                    type: "t", 
+                    type: "t",
                     value: null
                 },
                 u_useTexture: {

@@ -3,7 +3,7 @@ import * as Post from './post'
 import DAT from 'dat-gui'
 
 DAT.GUI.prototype.removeFolder = function(name) {
-  var folder = this.__folders[name];
+  let folder = this.__folders[name];
   if (!folder) {
     return;
   }
@@ -14,7 +14,7 @@ DAT.GUI.prototype.removeFolder = function(name) {
 }
 
 DAT.GUI.prototype.emptyFolder = function(name) {
-  var folder = this.__folders[name];
+  let folder = this.__folders[name];
   if (!folder) {
     return;
   }
@@ -26,19 +26,19 @@ DAT.GUI.prototype.emptyFolder = function(name) {
 }
 
 export function setupGUI(shaderSet, postProcessSet) {
-    var gui = new DAT.GUI();
-    var opts = { shader: null, post: null }
+    let gui = new DAT.GUI();
+    let opts = { shader: null, post: null }
 
-    var shaderControl = gui.add(opts, 'shader', Object.keys(Shaders)).onChange(name => {
+    let shaderControl = gui.add(opts, 'shader', Object.keys(Shaders)).onChange(name => {
         setShader(name);
     });
-    var shaderFolder = gui.addFolder('Shader Settings');
+    let shaderFolder = gui.addFolder('Shader Settings');
     shaderFolder.open();
 
-    var postControl = gui.add(opts, 'post', Object.keys(Post)).onChange(name => {
+    let postControl = gui.add(opts, 'post', Object.keys(Post)).onChange(name => {
         setPostProcess(name);
     })
-    var postFolder = gui.addFolder('Post Process Settings');
+    let postFolder = gui.addFolder('Post Process Settings');
     postFolder.open();
 
     function setShader(name) {
