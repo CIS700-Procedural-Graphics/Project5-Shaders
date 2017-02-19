@@ -4,3 +4,4 @@
 export {default as Lambert} from './lambert'
 export {default as Toon} from './toon'
 export {default as Twist} from './twist'
+export {default as Matcap} from './matcap'
