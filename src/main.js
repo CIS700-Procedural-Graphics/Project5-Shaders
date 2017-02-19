@@ -4,25 +4,25 @@ const THREE = require('three');
 const OrbitControls = require('three-orbit-controls')(THREE)
 
 import Stats from 'stats-js'
-import {objLoaded} from './mario'
+import {objLoaded} from './loader'
 import {setupGUI} from './setup'
 
 window.addEventListener('load', function() {
-    var stats = new Stats();
+    let stats = new Stats();
     stats.setMode(1);
     stats.domElement.style.position = 'absolute';
     stats.domElement.style.left = '0px';
     stats.domElement.style.top = '0px';
     document.body.appendChild(stats.domElement);
 
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-    var renderer = new THREE.WebGLRenderer( { antialias: true } );
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+    let renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x999999, 1.0);
 
-    var controls = new OrbitControls(camera, renderer.domElement);
+    let controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.enableZoom = true;
     controls.rotateSpeed = 0.3;
@@ -36,8 +36,8 @@ window.addEventListener('load', function() {
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
-    
-    var mesh, shader, post;
+
+    let mesh, shader, post;
     // this gets called when we set the shader
     function shaderSet(Shader, gui) {
         // create the shader and initialize its gui

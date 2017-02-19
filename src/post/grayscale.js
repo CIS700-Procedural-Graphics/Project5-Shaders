@@ -1,11 +1,11 @@
 const THREE = require('three');
 const EffectComposer = require('three-effectcomposer')(THREE)
 
-var options = {
+let options = {
     amount: 1
 }
 
-var GrayscaleShader = new EffectComposer.ShaderPass({
+let GrayscaleShader = new EffectComposer.ShaderPass({
     uniforms: {
         tDiffuse: {
             type: 't',
@@ -23,7 +23,7 @@ var GrayscaleShader = new EffectComposer.ShaderPass({
 export default function Grayscale(renderer, scene, camera) {
     
     // this is the THREE.js object for doing post-process effects
-    var composer = new EffectComposer(renderer);
+    let composer = new EffectComposer(renderer);
 
     // first render the scene normally and add that as the first pass
     composer.addPass(new EffectComposer.RenderPass(scene, camera));

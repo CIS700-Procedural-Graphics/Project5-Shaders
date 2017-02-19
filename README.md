@@ -90,14 +90,14 @@ So when you change the Shader parameter in the GUI, `Shader.initGUI(gui)` will b
 
 GUI parameters here are initialized the same way they are for the other shaders.
 
-Post process shaders should use the THREE.js `EffectComposer`. To set up the grayscale filter, I first create a new composer: `var composer = new EffectComposer(renderer);`. Then I add a a render pass as the first pass: `composer.addPass(new EffectComposer.RenderPass(scene, camera));`. This will set up the composer to render the scene as normal into a buffer. I add my filter to operate on that buffer: `composer.addPass(GrayscaleShader);`, and mark it as the final pass that will write to the screen `GrayscaleShader.renderToScreen = true;`
+Post process shaders should use the THREE.js `EffectComposer`. To set up the grayscale filter, I first create a new composer: `let composer = new EffectComposer(renderer);`. Then I add a a render pass as the first pass: `composer.addPass(new EffectComposer.RenderPass(scene, camera));`. This will set up the composer to render the scene as normal into a buffer. I add my filter to operate on that buffer: `composer.addPass(GrayscaleShader);`, and mark it as the final pass that will write to the screen `GrayscaleShader.renderToScreen = true;`
 
 GrayscaleShader is a `EffectComposer.ShaderPass` which basically takes the same arguments as `THREE.ShaderMaterial`. Note, that one uniform that will have to include is `tDiffuse`. This is the texture sampler which the EffectComposer will automatically bind the previously rendered pass to. If you look at `glsl/grayscale-frag.glsl`, this is the texture we read from to get the previous pixel color: `vec4 col = texture2D(tDiffuse, f_uv);`.
 
 IMPORTANT: You initially define your shader passes like so:
 
 ```javascript
-var GrayscaleShader = new EffectComposer.ShaderPass({
+let GrayscaleShader = new EffectComposer.ShaderPass({
     uniforms: {
         tDiffuse: {
             type: 't',
