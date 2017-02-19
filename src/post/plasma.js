@@ -2,8 +2,11 @@ const THREE = require('three');
 const EffectComposer = require('three-effectcomposer')(THREE)
 
 var options = {
-    amount: 1
+    amount: 0.2
 }
+
+var clock = new THREE.Clock();
+var t = 0.0;
 
 var PlasmaShader = new EffectComposer.ShaderPass({
     uniforms: {
@@ -18,7 +21,7 @@ var PlasmaShader = new EffectComposer.ShaderPass({
 
         time : {
             type: 'f',
-            value: Date.now() / 1000.0
+            value: t
         }
     },
     vertexShader: require('../glsl/pass-vert.glsl'),
@@ -52,7 +55,8 @@ export default function Plasma(renderer, scene, camera) {
         },
 
         update: function() {
-            PlasmaShader.material.uniforms.time.value = Date.now();
+            t += clock.getDelta();
+            PlasmaShader.material.uniforms.time.value = t;
         }
     }
 }
