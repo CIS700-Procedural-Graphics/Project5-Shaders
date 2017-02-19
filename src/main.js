@@ -6,6 +6,7 @@ const OrbitControls = require('three-orbit-controls')(THREE)
 import Stats from 'stats-js'
 import {objLoaded} from './mario'
 import {setupGUI} from './setup'
+import { updateTime } from './post/custom'
 
 window.addEventListener('load', function() {
     var stats = new Stats();
@@ -36,7 +37,7 @@ window.addEventListener('load', function() {
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
-    
+
     var mesh, shader, post;
     // this gets called when we set the shader
     function shaderSet(Shader, gui) {
@@ -70,6 +71,9 @@ window.addEventListener('load', function() {
     });
 
     (function tick() {
+
+        updateTime();
+
         controls.update();
         stats.begin();
         if (shader && shader.update) shader.update();   // perform any necessary updates

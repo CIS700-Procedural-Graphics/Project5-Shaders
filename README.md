@@ -1,6 +1,20 @@
 
 # Project 5: Shaders
 
+## Description
+
+**Gaussian blur:** I implemented Gaussian Blur as a post processing effect.  For each fragment, I visited a radius of neighboring fragments (based upon the value of sigma), and calculated relative color weights using the Gaussian function.  Then, I summed the colors times their weights to create a blurred Gaussian effect.
+
+**Iridescence:** I implemented an Iridescence filter in the fragment shader.  First, I took the dot product of the fragment's normal vector and the camera lookAt vector.  Then, using that value, I calculated a specific color from a palette of colors (using IQ's example palette code), and applied that color to the fragment.
+
+**Pointillism:** I implemented Pointillism as a post processing effect.  First, I took the color at each fragment, and calculated how close that color was to black.  I then used this measure of distance as the probability with which I colored that specific fragment black.  Otherwise, I colored the fragment white.
+
+**Vignette:** I implemented a Vignette filter as a post processing effect.  I first took the (u, v) coordinates, and calculated their distance from the center of the screen (0.5, 0.5).  I then normalized this distance so that a coordinate at the center would be 0.0, and a coordinate on the corner would be 1.0.  Finally, I interpolated between black and the original fragment color using the normalized distance.
+
+**Custom:** I implemented a wavy-distortion effect, again as post processing.  Essentially, I distorted the (u,v) coordinates of the image using sine waves.  I also passed in an updating time variable so that the distortion moves on each frame update.
+
+**GUI:** Many aspects of each of the above filters can be customized via the GUI.  The amount of Gaussian blur can be customized, the Iridescence color palette can be customized, the radius of the Vignette can be customized, and the rate of the Custom wave-distortion.
+
 ## Project Instructions
 
 Implement at least 75 points worth of shaders from the following list. We reserve the right to grant only partial credit for shaders that do not meet our standards, as well as extra credit for shaders that we find to be particularly impressive.
@@ -25,23 +39,23 @@ Examples: [https://cis700-procedural-graphics.github.io/Project5-Shaders/](https
 - Vignette
 - Fish-eye bulge
 
-### 25 points each: 
+### 25 points each:
 - Bloom
 - Noise Warp
 - Hatching
 - Edge detection with Sobel filtering
 - Lit Sphere ([paper](http://www.ppsloan.org/publications/LitSphere.pdf))
-- Uncharted 2 customizable filmic curve, following John Hable’s presetantion. 
+- Uncharted 2 customizable filmic curve, following John Hable’s presetantion.
     - Without Linear, Reinhard, filmic (10 points)
     - With all of linear, Reinhard, filmic (10 points)
     - Customizable via GUI: (5 points total)
-        - Controlling Exposure 
+        - Controlling Exposure
         - Side by side comparison between linear, Reinhard, filmic, and Uncharted2 .
 
 ### 37.5 points each:
 - K-means color compression (unless you are extremely clever, the k-means clusterer has to be CPU side)
 - Dithering
- 
+
 
 ### 5 points - Interactivity
 Implement a dropdown GUI to select different shader effects from your list.
@@ -65,7 +79,7 @@ To add a shader, you'll want to add a file to the `src/shaders` or `src/post` fo
 
 **shaders/lambert.js**
 
-IMPORTANT: I make my lambert shader available by exporting it in `shaders/index.js`. 
+IMPORTANT: I make my lambert shader available by exporting it in `shaders/index.js`.
 
 ```javascript
 export {default as Lambert} from './Lambert'
