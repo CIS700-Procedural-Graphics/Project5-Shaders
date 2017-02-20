@@ -64,14 +64,10 @@ export default function(renderer, scene, camera) {
                 }
             },
             vertexShader: require('../glsl/toon-vert.glsl'),
-            fragmentShader: require('../glsl/toon-frag.glsl')
+            fragmentShader: require('../glsl/iridescence_frag.glsl')
         })
     }
 
-
-    var gl = renderer.context;
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     // once the Mario texture loads, bind it to the material
     textureLoaded.then(function(texture) {
         Shader.material.uniforms.texture.value = texture;

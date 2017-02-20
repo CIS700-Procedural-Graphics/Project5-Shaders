@@ -8,8 +8,14 @@ var options = {
     lightIntensity: 2,
     albedo: '#dddddd',
     ambient: '#111111',
-    useTexture: true
+    useTexture: true,
+    width: 1,
+    top: 20.0,
+    bottom: -5.0,
+    pause: false
 }
+var clock = new THREE.Clock();
+var t = 0.0;
 
 export default function(renderer, scene, camera) {
     
@@ -30,6 +36,26 @@ export default function(renderer, scene, camera) {
             gui.add(options, 'useTexture').onChange(function(val) {
                 Shader.material.uniforms.u_useTexture.value = val;
             });
+            gui.add(options, 'width', 0, 3).onChange(function(val) {
+                Shader.material.uniforms.u_edgeWidth.value = val;
+            });
+            gui.add(options, 'top', 5.0, 25.0).onChange(function(val) {
+                Shader.material.uniforms.topEdge.value = val;
+            });
+            gui.add(options, 'bottom', -15.0, 5.0).onChange(function(val) {
+                Shader.material.uniforms.botEdge.value = val;
+            });
+            gui.add(options, 'pause');
+        },
+
+        update: function() {
+            var a = clock.getDelta();
+            
+            if (!options.pause) {
+                t += a;
+                Shader.material.uniforms.time.value = t;
+            }
+            
         },
         
         material: new THREE.ShaderMaterial({
@@ -37,6 +63,14 @@ export default function(renderer, scene, camera) {
                 texture: {
                     type: "t", 
                     value: null
+                },
+                disintegrate: {
+                    type: 't',
+                    value: THREE.ImageUtils.loadTexture('../anisotropic.png')
+                },
+                ramp: {
+                    type: 't',
+                    value: THREE.ImageUtils.loadTexture('../ramp.png')
                 },
                 u_useTexture: {
                     type: 'i',
@@ -61,17 +95,33 @@ export default function(renderer, scene, camera) {
                 u_lightIntensity: {
                     type: 'f',
                     value: options.lightIntensity
+                },
+                u_edgeWidth: {
+                    type: 'f',
+                    value: options.width
+                },
+                topEdge: {
+                    type: 'f',
+                    value: options.top
+                },
+                botEdge: {
+                    type: 'f',
+                    value: options.bottom
+                },
+                time : {
+                    type: 'f',
+                    value: t
                 }
             },
             vertexShader: require('../glsl/toon-vert.glsl'),
-            fragmentShader: require('../glsl/toon-frag.glsl')
+            fragmentShader: require('../glsl/teleport.glsl')
         })
     }
-
-
     var gl = renderer.context;
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    Shader.material.side = THREE.DoubleSide;
+    Shader.material.blending = THREE.NormalBlending;
     // once the Mario texture loads, bind it to the material
     textureLoaded.then(function(texture) {
         Shader.material.uniforms.texture.value = texture;
