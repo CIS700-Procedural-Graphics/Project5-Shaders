@@ -11,10 +11,6 @@ var WarpShader = new EffectComposer.ShaderPass({
             type: 't',
             value: null
         },
-        pNoise: { 
-            type: "t", 
-            value: THREE.ImageUtils.loadTexture('./perlin.png').texture
-        },
         u_amount: {
             type: 'f',
             value: options.amount
@@ -26,13 +22,13 @@ var WarpShader = new EffectComposer.ShaderPass({
       new THREE.Vector3(0.7071, 0, -0.7071),new THREE.Vector3(-0.7071, 0, -0.7071), new THREE.Vector3(0, 0.7071, 0.7071),
       new THREE.Vector3(0, -0.7071, 0.7071),new THREE.Vector3(0 ,0.7071, -0.7071),new THREE.Vector3(0, -0.7071, -0.7071)]},
 
-      table: {
-        type: "iv1",
-        value: [5,11,0,10,3,6,8,9,3,1,4,11,2,6,1,7,8,2,9,5,0,7,10,4]},
-      time: {
-        type: "i",
-        value: Date.now()
-      },
+        table: {
+            type: "iv1",
+            value: [5,11,0,10,3,6,8,9,3,1,4,11,2,6,1,7,8,2,9,5,0,7,10,4]},
+        time: {
+            type: "i",
+            value: Date.now()
+        },
     },
     vertexShader: require('../glsl/pass-vert.glsl'),
     fragmentShader: require('../glsl/warp_frag.glsl')

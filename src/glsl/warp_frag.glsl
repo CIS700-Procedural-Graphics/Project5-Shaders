@@ -1,6 +1,4 @@
-
 uniform sampler2D tDiffuse;
-uniform sampler2D pNoise;
 uniform float u_amount;
 varying vec2 f_uv;
 
@@ -118,7 +116,6 @@ void main() {
 	float n = getnoise3d( f_uv.x, f_uv.y, 8);
 	//float c = cos(2.0 * n * 3.14159);
 	//float s = sin(2.0 * n * 3.14159);
-	//vec4 noise = texture2D(pNoise, f_uv);
 	//vec2 deformed = vec2(f_uv.x  + 2.0 * (u_amount - 0.5) * (f_uv.y - 0.5), f_uv.y);
 	n = getnoise3d(f_uv.x, mod(f_uv.y + n * u_amount, 1.0), 16);
 	vec2 deformed = vec2(f_uv.x, f_uv.y + n * u_amount);
