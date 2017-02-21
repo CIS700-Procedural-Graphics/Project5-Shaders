@@ -1,6 +1,6 @@
 
 // this file is just for convenience. it sets up loading the mario obj and texture
-
+// comment
 const THREE = require('three');
 require('three-obj-loader')(THREE)
 

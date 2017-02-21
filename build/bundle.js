@@ -43534,7 +43534,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 // this file is just for convenience. it sets up loading the mario obj and texture
-
+// comment
 var THREE = __webpack_require__(0);
 __webpack_require__(5)(THREE);
 
