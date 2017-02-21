@@ -16,6 +16,7 @@ class Rubik
 		this.currentLength = 1.0;
 		this.time = 0;
 		this.callback = null;
+		this.container = null;
 	}
 
 	animate(axis, plane, length, callback)
@@ -290,6 +291,7 @@ class Rubik
 					var cube = new THREE.Mesh( boxGeo, mat );
 					cube.position.copy(new THREE.Vector3( x - 1, y - 1, z - 1));
 					// cube.scale.copy(new THREE.Vector3( .9, .9, .9 ))
+					// cube.scale.set(1.1, 1.1, 1.1);
 					container.add(cube);
 
 					// Index is x * 3 * 3 + y * 3 + z
@@ -298,6 +300,8 @@ class Rubik
 				}
 			}
 		}
+
+		this.container = container;
 
 		return container;
 	}

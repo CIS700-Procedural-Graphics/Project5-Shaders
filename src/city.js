@@ -604,10 +604,9 @@ class Generator
 		return shapes;
 	}
 
-	build(scene)
+	build(scene, buildingMaterial)
 	{
-  		var random = new Random(Random.engines.mt19937().autoSeed());
-		
+  		var random = new Random(Random.engines.mt19937().autoSeed());		
 
 		var factory = new Building.BuildingFactory();
 		var hullData = this.buildHulls(scene, random);
@@ -643,9 +642,7 @@ class Generator
 					geometryBatch.mergeMesh(massShapes[s])
 			}
 
-			var batchMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0x333333 });
-			batchMaterial.side = THREE.DoubleSide;
-			var batchedMesh = new THREE.Mesh(geometryBatch, batchMaterial);
+			var batchedMesh = new THREE.Mesh(geometryBatch, buildingMaterial);
 			group.add(batchedMesh);
 
 			var center = cellBounds[i].min.clone().add(cellBounds[i].max).multiplyScalar(.5);

@@ -29,6 +29,12 @@ var Engine =
   rubik : null,
   rubikTime : 0,
 
+  // Important meshes
+  initialCube : null,
+
+  // Important materials
+  buildingMaterial : null
+
 }
 
 function loadMusic()
@@ -45,6 +51,7 @@ function loadMusic()
       sound.setBuffer( buffer );
       sound.setLoop(true);
       sound.setVolume(1.0);
+      // sound.setVolume(0.0);
       sound.play();
 
       // Initialize the Engine ONLY when the sound is loaded
@@ -115,12 +122,77 @@ function loadCameraControllers()
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(4, 4, 4);
 
-      Engine.camera.zoom = 1 + Math.pow(Math.abs(Math.sin(t * 15.5 * Math.PI * 2)), 15) * .2;
+      Engine.camera.zoom = 1 + Math.pow(Math.abs(Math.sin(t * 15.5 * Math.PI * 2)), 15) * .15;
+
+      Engine.rubik.container.rotateY(.01);
 
       Engine.camera.lookAt(new THREE.Vector3(0, 0, 0));
+  }, 
+  function(){
+    Engine.fakeBox.visible = false;
+    Engine.rubik.container.visible = true;
   }));
 
   setActiveCamera(0);
+}
+
+function loadShaderMaterial(shaderName, uniforms)
+{
+  var mat = new THREE.ShaderMaterial({
+        uniforms: uniforms,
+        vertexShader: require("./shaders/" + shaderName + ".vert.glsl"),
+        fragmentShader: require("./shaders/" + shaderName + ".frag.glsl")
+  });
+
+  Engine.materials.push(mat);
+
+  return mat;
+}
+
+function makeBackgroundMaterial(mat)
+{
+    mat.depthWrite = false;
+    mat.depthTest = false;
+}
+
+function loadBackgrounds()
+{   
+  var bgGeo = new THREE.PlaneGeometry(1,1,1,1);
+
+  var initialMaterial = loadShaderMaterial("bg_initial", {
+    time: { type: "f", value : 0.0 }
+  });
+  makeBackgroundMaterial(initialMaterial)
+  var initialMesh = new THREE.Mesh(bgGeo, initialMaterial);
+
+  Engine.scene.add(initialMesh);
+}
+
+function loadFakeBox()
+{
+  var boxGeo = new THREE.BoxGeometry( 3, 3, 3 );
+  var material = loadShaderMaterial("fakeBox",{
+    time: { type: "f", value : 0.0 }
+  });
+  var mesh = new THREE.Mesh(boxGeo, material);
+
+  Engine.fakeBox = mesh;
+
+  Engine.scene.add(mesh);
+}
+
+function loadBuildings()
+{
+  Engine.buildingMaterial = loadShaderMaterial("building", {
+    time: { type: "f", value : 0.0 }
+  });
+
+  Engine.buildingMaterial.side = THREE.DoubleSide;
+  Engine.buildingMaterial.vertexColors = THREE.VertexColors;
+
+  var city = new City.Generator();
+  var cityBlocks = city.build(Engine.scene, Engine.buildingMaterial);
+  Engine.rubik.attachShapesToFace(cityBlocks);
 }
 
 function onLoad(framework) 
@@ -130,6 +202,12 @@ function onLoad(framework)
   var renderer = framework.renderer;
   var gui = framework.gui;
   var stats = framework.stats;
+
+  // Init Engine stuff
+  Engine.scene = scene;
+  Engine.renderer = renderer;
+  Engine.clock = new THREE.Clock();
+  Engine.camera = camera;
 
   renderer.setClearColor(new THREE.Color(.4, .75, .95), 1);
 
@@ -152,24 +230,20 @@ function onLoad(framework)
   camera.fov = 5;
   camera.updateProjectionMatrix();
 
+  loadBackgrounds();
+  loadFakeBox();
+
   Engine.rubik = new Rubik.Rubik();
   var rubikMesh = Engine.rubik.build();
+
+  loadBuildings();
+
+  rubikMesh.visible = false;
   scene.add(rubikMesh);
 
-  // Init Engine stuff
-  Engine.scene = scene;
-  Engine.renderer = renderer;
-  Engine.clock = new THREE.Clock();
-  Engine.camera = camera;
-
-  var random = new Random(Random.engines.mt19937().seed(2545));
-
+  var random = new Random(Random.engines.mt19937().seed(14041956));
   var speed = .45;
 
-  var city = new City.Generator();
-  var cityBlocks = city.build(scene);
-
-  // Engine.rubik.attachShapesToFace(cityBlocks);
 
   var callback = function() {
     Engine.rubik.animate(random.integer(0, 2), random.integer(0, 2), speed, callback);
@@ -195,6 +269,17 @@ function onUpdate(framework)
     Engine.deltaTime = deltaTime;
 
     Engine.rubik.update(deltaTime);
+
+    // Update materials code
+    for (var i = 0; i < Engine.materials.length; i++)
+    {
+      var material = Engine.materials[i];
+
+      material.uniforms.time.value = Engine.time;
+
+      if(material.uniforms["SCREEN_SIZE"] != null)
+        material.uniforms.SCREEN_SIZE.value = screenSize;
+    }
 
     updateCamera();
   }

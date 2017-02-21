@@ -30,6 +30,7 @@ function init(callback, update) {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x020202, 0);
+    renderer.antialias = true;
 
     // var controls = new OrbitControls(camera, renderer.domElement);
     // controls.enableDamping = true;

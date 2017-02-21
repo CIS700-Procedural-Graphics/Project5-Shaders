@@ -295,6 +295,8 @@ class MassShape
 
 		var boundaryVertexCount = this.lot.points.length;
 		var offset = 0;
+
+		var buildingBaseColor = new THREE.Color(Math.random(), Math.random(), Math.random())
 		
 		for(var i = 0; i < this.profile.points.length; i++)
 		{
@@ -327,9 +329,13 @@ class MassShape
 					var v5 = offset + boundaryVertexCount + ((v + 1) % boundaryVertexCount);
 					var v6 = offset + boundaryVertexCount + v;
 
-					geometry.faces.push(new THREE.Face3(v3, v2, v1));
-					geometry.faces.push(new THREE.Face3(v6, v5, v4));
+					var f1 = new THREE.Face3(v3, v2, v1);
+					var f2 = new THREE.Face3(v6, v5, v4);
+					f1.vertexColors = [buildingBaseColor, buildingBaseColor, buildingBaseColor];
+					f2.vertexColors = [buildingBaseColor, buildingBaseColor, buildingBaseColor];
 
+					geometry.faces.push(f1);
+					geometry.faces.push(f2);
 				}
 
 				offset += boundaryVertexCount;
@@ -346,12 +352,14 @@ class MassShape
 
 			for(var v = 0; v < boundaryVertexCount; v++)
 			{
-
 				var v1 = offset + v;
 				var v2 = offset + ((v + 1) % boundaryVertexCount);
 				var v3 = geometry.vertices.length - 1;
 
-				geometry.faces.push(new THREE.Face3(v1, v2, v3));
+				var face = new THREE.Face3(v1, v2, v3);
+				face.vertexColors = [buildingBaseColor, buildingBaseColor, buildingBaseColor];
+
+				geometry.faces.push(face);
 			}
 		}
 
