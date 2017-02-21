@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 44);
+/******/ 	return __webpack_require__(__webpack_require__.s = 42);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -43374,11 +43374,11 @@ function CanvasRenderer() {
  */
 
 module.exports = function(THREE) {
-  var CopyShader = EffectComposer.CopyShader = __webpack_require__(27)
-    , RenderPass = EffectComposer.RenderPass = __webpack_require__(30)(THREE)
-    , ShaderPass = EffectComposer.ShaderPass = __webpack_require__(31)(THREE, EffectComposer)
-    , MaskPass = EffectComposer.MaskPass = __webpack_require__(29)(THREE)
-    , ClearMaskPass = EffectComposer.ClearMaskPass = __webpack_require__(28)(THREE)
+  var CopyShader = EffectComposer.CopyShader = __webpack_require__(25)
+    , RenderPass = EffectComposer.RenderPass = __webpack_require__(28)(THREE)
+    , ShaderPass = EffectComposer.ShaderPass = __webpack_require__(29)(THREE, EffectComposer)
+    , MaskPass = EffectComposer.MaskPass = __webpack_require__(27)(THREE)
+    , ClearMaskPass = EffectComposer.ClearMaskPass = __webpack_require__(26)(THREE)
 
   function EffectComposer( renderer, renderTarget ) {
     this.renderer = renderer;
@@ -43536,16 +43536,16 @@ Object.defineProperty(exports, "__esModule", {
 // this file is just for convenience. it sets up loading the mario obj and texture
 
 var THREE = __webpack_require__(0);
-__webpack_require__(5)(THREE);
+__webpack_require__(4)(THREE);
 
 var textureLoaded = exports.textureLoaded = new Promise(function (resolve, reject) {
-    new THREE.TextureLoader().load(__webpack_require__(26), function (texture) {
+    new THREE.TextureLoader().load(__webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"https://raw.githubusercontent.com/emily-vo/Project5-Shaders/master/src/assets/wahoo.bmp\""); e.code = 'MODULE_NOT_FOUND';; throw e; }())), function (texture) {
         resolve(texture);
     });
 });
 
 var objLoaded = exports.objLoaded = new Promise(function (resolve, reject) {
-    new THREE.OBJLoader().load(__webpack_require__(4), function (obj) {
+    new THREE.OBJLoader().load(__webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"https://raw.githubusercontent.com/emily-vo/Project5-Shaders/master/src/assets/wahoo.obj\""); e.code = 'MODULE_NOT_FOUND';; throw e; }())), function (obj) {
         var geo = obj.children[0].geometry;
         geo.computeBoundingSphere();
         resolve(geo);
@@ -43554,12 +43554,6 @@ var objLoaded = exports.objLoaded = new Promise(function (resolve, reject) {
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__.p + "./assets/wahoo-d362db.obj";
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43878,7 +43872,7 @@ module.exports = function (THREE) {
 };
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43889,15 +43883,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.setupGUI = setupGUI;
 
-var _shaders = __webpack_require__(18);
+var _shaders = __webpack_require__(17);
 
 var Shaders = _interopRequireWildcard(_shaders);
 
-var _post = __webpack_require__(13);
+var _post = __webpack_require__(12);
 
 var Post = _interopRequireWildcard(_post);
 
-var _datGui = __webpack_require__(22);
+var _datGui = __webpack_require__(21);
 
 var _datGui2 = _interopRequireDefault(_datGui);
 
@@ -43968,13 +43962,13 @@ function setupGUI(shaderSet, postProcessSet) {
 }
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "index.html";
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports) {
 
 // stats.js - http://github.com/mrdoob/stats.js
@@ -43986,7 +43980,7 @@ a+"px",m=b,r=0);return b},update:function(){l=this.end()}}};"object"===typeof mo
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = function( THREE ) {
@@ -45012,7 +45006,7 @@ module.exports = function( THREE ) {
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45025,16 +45019,16 @@ Object.defineProperty(exports, "__esModule", {
 // this file is just for convenience. it sets up loading the mario obj and texture
 
 var THREE = __webpack_require__(0);
-__webpack_require__(5)(THREE);
+__webpack_require__(4)(THREE);
 
 var textureLoaded = exports.textureLoaded = new Promise(function (resolve, reject) {
-    new THREE.TextureLoader().load(__webpack_require__(25), function (texture) {
+    new THREE.TextureLoader().load(__webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"https://raw.githubusercontent.com/emily-vo/Project5-Shaders/master/src/assets/iridescent.bmp\""); e.code = 'MODULE_NOT_FOUND';; throw e; }())), function (texture) {
         resolve(texture);
     });
 });
 
 var objLoaded = exports.objLoaded = new Promise(function (resolve, reject) {
-    new THREE.OBJLoader().load(__webpack_require__(4), function (obj) {
+    new THREE.OBJLoader().load(__webpack_require__(24), function (obj) {
         var geo = obj.children[0].geometry;
         geo.computeBoundingSphere();
         resolve(geo);
@@ -45042,7 +45036,7 @@ var objLoaded = exports.objLoaded = new Promise(function (resolve, reject) {
 });
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45078,7 +45072,7 @@ var GaussianShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: __webpack_require__(2),
-    fragmentShader: __webpack_require__(32)
+    fragmentShader: __webpack_require__(30)
 });
 
 function Gaussian(renderer, scene, camera) {
@@ -45109,7 +45103,7 @@ function Gaussian(renderer, scene, camera) {
 }
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45138,7 +45132,7 @@ var GrayscaleShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: __webpack_require__(2),
-    fragmentShader: __webpack_require__(33)
+    fragmentShader: __webpack_require__(31)
 });
 
 function Grayscale(renderer, scene, camera) {
@@ -45170,7 +45164,7 @@ function Grayscale(renderer, scene, camera) {
 }
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45181,7 +45175,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.None = None;
 
-var _grayscale = __webpack_require__(12);
+var _grayscale = __webpack_require__(11);
 
 Object.defineProperty(exports, 'Grayscale', {
     enumerable: true,
@@ -45190,7 +45184,7 @@ Object.defineProperty(exports, 'Grayscale', {
     }
 });
 
-var _invert = __webpack_require__(14);
+var _invert = __webpack_require__(13);
 
 Object.defineProperty(exports, 'Invert', {
     enumerable: true,
@@ -45199,7 +45193,7 @@ Object.defineProperty(exports, 'Invert', {
     }
 });
 
-var _sobel = __webpack_require__(16);
+var _sobel = __webpack_require__(15);
 
 Object.defineProperty(exports, 'Sobel', {
     enumerable: true,
@@ -45208,7 +45202,7 @@ Object.defineProperty(exports, 'Sobel', {
     }
 });
 
-var _vignette = __webpack_require__(17);
+var _vignette = __webpack_require__(16);
 
 Object.defineProperty(exports, 'Vignette', {
     enumerable: true,
@@ -45217,7 +45211,7 @@ Object.defineProperty(exports, 'Vignette', {
     }
 });
 
-var _gaussian = __webpack_require__(11);
+var _gaussian = __webpack_require__(10);
 
 Object.defineProperty(exports, 'Gaussian', {
     enumerable: true,
@@ -45226,7 +45220,7 @@ Object.defineProperty(exports, 'Gaussian', {
     }
 });
 
-var _pointilism = __webpack_require__(15);
+var _pointilism = __webpack_require__(14);
 
 Object.defineProperty(exports, 'Pointilism', {
     enumerable: true,
@@ -45253,7 +45247,7 @@ function None(renderer, scene, camera) {
 // follow this syntax to make your shaders available to the GUI
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45286,7 +45280,7 @@ var invertShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: __webpack_require__(2),
-    fragmentShader: __webpack_require__(34)
+    fragmentShader: __webpack_require__(32)
 });
 
 function invert(renderer, scene, camera) {
@@ -45318,7 +45312,7 @@ function invert(renderer, scene, camera) {
 }
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45354,7 +45348,7 @@ var PointilismShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: __webpack_require__(2),
-    fragmentShader: __webpack_require__(39)
+    fragmentShader: __webpack_require__(37)
 });
 
 function Pointilism(renderer, scene, camera) {
@@ -45385,7 +45379,7 @@ function Pointilism(renderer, scene, camera) {
 }
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45421,7 +45415,7 @@ var SobelShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: __webpack_require__(2),
-    fragmentShader: __webpack_require__(40)
+    fragmentShader: __webpack_require__(38)
 });
 
 function Grayscale(renderer, scene, camera) {
@@ -45452,7 +45446,7 @@ function Grayscale(renderer, scene, camera) {
 }
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45486,7 +45480,7 @@ var VignetteShaders = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: __webpack_require__(2),
-    fragmentShader: __webpack_require__(43)
+    fragmentShader: __webpack_require__(41)
 });
 
 function Vignette(renderer, scene, camera) {
@@ -45521,7 +45515,7 @@ function Vignette(renderer, scene, camera) {
 }
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45531,7 +45525,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _lambert = __webpack_require__(20);
+var _lambert = __webpack_require__(19);
 
 Object.defineProperty(exports, 'Lambert', {
   enumerable: true,
@@ -45540,7 +45534,7 @@ Object.defineProperty(exports, 'Lambert', {
   }
 });
 
-var _toon = __webpack_require__(21);
+var _toon = __webpack_require__(20);
 
 Object.defineProperty(exports, 'Toon', {
   enumerable: true,
@@ -45549,7 +45543,7 @@ Object.defineProperty(exports, 'Toon', {
   }
 });
 
-var _iridescent = __webpack_require__(19);
+var _iridescent = __webpack_require__(18);
 
 Object.defineProperty(exports, 'Iridescent', {
   enumerable: true,
@@ -45561,7 +45555,7 @@ Object.defineProperty(exports, 'Iridescent', {
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45626,8 +45620,8 @@ exports.default = function (renderer, scene, camera) {
                     value: camera.position
                 }
             },
-            vertexShader: __webpack_require__(36),
-            fragmentShader: __webpack_require__(35)
+            vertexShader: __webpack_require__(34),
+            fragmentShader: __webpack_require__(33)
         })
     };
 
@@ -45639,7 +45633,7 @@ exports.default = function (renderer, scene, camera) {
     return Shader;
 };
 
-var _iridescentmario = __webpack_require__(10);
+var _iridescentmario = __webpack_require__(9);
 
 var THREE = __webpack_require__(0);
 
@@ -45654,7 +45648,7 @@ var options = {
 };
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45716,8 +45710,8 @@ exports.default = function (renderer, scene, camera) {
                     value: options.lightIntensity
                 }
             },
-            vertexShader: __webpack_require__(38),
-            fragmentShader: __webpack_require__(37)
+            vertexShader: __webpack_require__(36),
+            fragmentShader: __webpack_require__(35)
         })
     };
 
@@ -45744,7 +45738,7 @@ var options = {
 };
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45816,8 +45810,8 @@ exports.default = function (renderer, scene, camera) {
                     value: dir
                 }
             },
-            vertexShader: __webpack_require__(42),
-            fragmentShader: __webpack_require__(41)
+            vertexShader: __webpack_require__(40),
+            fragmentShader: __webpack_require__(39)
         })
     };
 
@@ -45844,14 +45838,14 @@ var options = {
 };
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(24)
-module.exports.color = __webpack_require__(23)
+module.exports = __webpack_require__(23)
+module.exports.color = __webpack_require__(22)
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports) {
 
 /**
@@ -46611,7 +46605,7 @@ dat.color.toString,
 dat.utils.common);
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports) {
 
 /**
@@ -50276,19 +50270,13 @@ dat.dom.dom,
 dat.utils.common);
 
 /***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/wahoo-d362db.obj";
+
+/***/ }),
 /* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__.p + "./assets/iridescent-ec82e7.bmp";
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__.p + "./assets/wahoo-1bfe66.bmp";
-
-/***/ }),
-/* 27 */
 /***/ (function(module, exports) {
 
 /**
@@ -50330,7 +50318,7 @@ module.exports = {
 
 
 /***/ }),
-/* 28 */
+/* 26 */
 /***/ (function(module, exports) {
 
 /**
@@ -50354,7 +50342,7 @@ module.exports = function(THREE) {
 };
 
 /***/ }),
-/* 29 */
+/* 27 */
 /***/ (function(module, exports) {
 
 /**
@@ -50431,7 +50419,7 @@ module.exports = function(THREE) {
 
 
 /***/ }),
-/* 30 */
+/* 28 */
 /***/ (function(module, exports) {
 
 /**
@@ -50494,7 +50482,7 @@ module.exports = function(THREE) {
 
 
 /***/ }),
-/* 31 */
+/* 29 */
 /***/ (function(module, exports) {
 
 /**
@@ -50556,98 +50544,98 @@ module.exports = function(THREE, EffectComposer) {
 };
 
 /***/ }),
-/* 32 */
+/* 30 */
 /***/ (function(module, exports) {
 
 module.exports = "uniform sampler2D tDiffuse;\nuniform float u_amount;\nuniform float sWidth;\nuniform float sHeight;\nvarying vec2 f_uv;\n\n\n// Get the pixel in uv coordinates using an offset from the current position\nvec2 getPixel(float x, float y) {\n\treturn f_uv + vec2(1.0/sWidth, 1.0/sHeight) * vec2(x, y);\n}\n\n// Retrieves the color from the texture\nvec4 getColor(vec2 pixel) {\n\tvec4 col = texture2D(tDiffuse, pixel);\n\treturn col;\n}\n\nvoid main() {\n\t// Get colors for each pixel\n\tvec4 a = getColor(getPixel(-1.0, -1.0));\n\tvec4 b = getColor(getPixel(0.0, -1.0));\n\tvec4 c = getColor(getPixel(1.0, -1.0));\n\tvec4 d = getColor(getPixel(-1.0, 0.0));\n\tvec4 e = getColor(getPixel(0.0, 0.0));\n\tvec4 f = getColor(getPixel(1.0, 0.0));\n\tvec4 g = getColor(getPixel(-1.0, 1.0));\n\tvec4 h = getColor(getPixel(0.0, 1.0));\n\tvec4 i = getColor(getPixel(1.0, 1.0));\n\n\t// Apply weighted average\n\tgl_FragColor = 0.1107* (a + c + g + i) + 0.1113* (b + d + h + f) + 0.1119 * e;\n}   "
 
 /***/ }),
-/* 33 */
+/* 31 */
 /***/ (function(module, exports) {
 
 module.exports = "\nuniform sampler2D tDiffuse;\nuniform float u_amount;\nvarying vec2 f_uv;\n\n// tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to\n\nvoid main() {\n    vec4 col = texture2D(tDiffuse, f_uv);\n    float gray = dot(col.rgb, vec3(0.299, 0.587, 0.114));\n\n    col.rgb = vec3(gray, gray, gray) * (u_amount) + col.rgb * (1.0 - u_amount);\n\n    gl_FragColor = col;\n}   "
 
 /***/ }),
-/* 34 */
+/* 32 */
 /***/ (function(module, exports) {
 
 module.exports = "\nuniform sampler2D tDiffuse;\nuniform float u_amount;\nvarying vec2 f_uv;\n\n// tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to\nvoid main() {\n    vec4 col = texture2D(tDiffuse, f_uv);\n    col = vec4(1.0 - col.x, 1.0 - col.y, 1.0 - col.z, 1.0 - u_amount);\n    gl_FragColor = col;\n}   "
 
 /***/ }),
-/* 35 */
+/* 33 */
 /***/ (function(module, exports) {
 
 module.exports = "\nuniform sampler2D texture;\nuniform int u_useTexture;\nuniform vec3 u_albedo;\nuniform vec3 u_ambient;\nuniform vec3 u_lightPos;\nuniform vec3 u_lightCol;\nuniform float u_lightIntensity;\nuniform vec3 u_camPos;\n\nvarying vec3 f_position;\nvarying vec3 f_normal;\nvarying vec2 f_uv;\nvarying float noise;\n\n\nvoid main() {\n    vec4 color = vec4(u_albedo, 1.0);\n    float d = clamp(dot(f_normal, normalize(u_camPos - f_position)), 0.0, 1.0);\n\n    // Read from texture using relation to the view vector and a little bit of noise\n    if (u_useTexture == 1) {\n        color = texture2D(texture, vec2(f_uv.x - d*float(noise), f_uv.y - d*float(noise)));\n    }\n\n    gl_FragColor = vec4(d * color.rgb * u_lightCol * u_lightIntensity + u_ambient, 1.0);\n}"
 
 /***/ }),
-/* 36 */
+/* 34 */
 /***/ (function(module, exports) {
 
 module.exports = "\nvarying vec2 f_uv;\nvarying vec3 f_normal;\nvarying vec3 f_position;\nvarying float noise;\n\nfloat random(float a, float b, float c) {\n    return fract(sin(dot(vec3(a, b, c), vec3(12.9898, 78.233, 78.233)))*43758.5453);\n}\n\nfloat lerp(float a, float b, float t) {\n    return a * (1.0 - t) + b * t;\n}\n\nvec4 lerp(vec4 a, vec4 b, float t) {\n    return a * (1.0 - t) + b * t;\n}\n\nfloat cerp(float a, float b, float t) {\n    float cos_t = (1.0 - cos(t*3.14159)) * 0.5;\n    return lerp(a, b, cos_t);\n}\n\nfloat interpolateNoise(float x, float y, float z) {\n    float x0, y0, z0, x1, y1, z1;\n    \n    // Find the grid voxel that this point falls in\n    x0 = floor(x);\n    y0 = floor(y);\n    z0 = floor(z);\n    \n    x1 = x0 + 1.0;\n    y1 = y0 + 1.0;\n    z1 = z0 + 1.0;\n    \n    // Generate noise at each of the 8 points\n    float FUL, FUR, FLL, FLR, BUL, BUR, BLL, BLR;\n    \n    // front upper left\n    FUL = random(x0, y1, z1);\n    \n    // front upper right\n    FUR = random(x1, y1, z1);\n    \n    // front lower left\n    FLL = random(x0, y0, z1);\n    \n    // front lower right\n    FLR = random(x1, y0, z1);\n    \n    // back upper left\n    BUL = random(x0, y1, z0);\n    \n    // back upper right\n    BUR = random(x1, y1, z0);\n    \n    // back lower left\n    BLL = random(x0, y0, z0);\n    \n    // back lower right\n    BLR = random(x1, y0, z0);\n    \n    // Find the interpolate t values\n    float n0, n1, m0, m1, v;\n    float tx = fract(x - x0);\n    float ty = fract(y - y0);\n    float tz = fract(z - z0);\n    tx = (x - x0);\n    ty = (y - y0);\n    tz = (z - z0);\n    \n    // interpolate along x and y for back\n    n0 = cerp(BLL, BLR, tx);\n    n1 = cerp(BUL, BUR, tx);\n    m0 = cerp(n0, n1, ty);\n    \n    // interpolate along x and y for front\n    n0 = cerp(FLL, FLR, tx);\n    n1 = cerp(FUL, FUR, tx);\n    m1 = cerp(n0, n1, ty);\n    \n    // interpolate along z\n    v = cerp(m0, m1, tz);\n    \n    return v;\n}\n\nfloat generateNoise(float x, float y, float z) {\n    float total = 0.0;\n    float persistence = 1.0 / 2.0;\n    int its = 0;\n    for (int i = 0; i < 32; i++) {\n        float freq = pow(2.0, float(i));\n        float ampl = pow(persistence, float(i));\n        total += interpolateNoise(freq*x, freq*y, freq*z)*ampl;\n    }\n    return total;\n}\n\nvoid main() {\n    // Pass noise to the fragment shader\n\tnoise =  generateNoise(position.x, position.y, position.z);\n    f_uv = uv;\n    f_normal = normal;\n    f_position = position;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n}"
 
 /***/ }),
-/* 37 */
+/* 35 */
 /***/ (function(module, exports) {
 
 module.exports = "\nuniform sampler2D texture;\nuniform int u_useTexture;\nuniform vec3 u_albedo;\nuniform vec3 u_ambient;\nuniform vec3 u_lightPos;\nuniform vec3 u_lightCol;\nuniform float u_lightIntensity;\n\nvarying vec3 f_position;\nvarying vec3 f_normal;\nvarying vec2 f_uv;\n\nvoid main() {\n    vec4 color = vec4(u_albedo, 1.0);\n    \n    if (u_useTexture == 1) {\n        color = texture2D(texture, f_uv);\n    }\n\n    float d = clamp(dot(f_normal, normalize(u_lightPos - f_position)), 0.0, 1.0);\n\n    gl_FragColor = vec4(d * color.rgb * u_lightCol * u_lightIntensity + u_ambient, 1.0);\n}"
 
 /***/ }),
-/* 38 */
+/* 36 */
 /***/ (function(module, exports) {
 
 module.exports = "\nvarying vec2 f_uv;\nvarying vec3 f_normal;\nvarying vec3 f_position;\n\n// uv, position, projectionMatrix, modelViewMatrix, normal\nvoid main() {\n    f_uv = uv;\n    f_normal = normal;\n    f_position = position;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n}"
 
 /***/ }),
-/* 39 */
+/* 37 */
 /***/ (function(module, exports) {
 
 module.exports = "uniform sampler2D tDiffuse;\nuniform float u_amount;\nvarying vec2 f_uv;\n\n// tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to\nfloat random(float a, float b, float c) {\n    return fract(sin(dot(vec3(a, b, c), vec3(12.9898, 78.233, 78.233)))*43758.5453);\n}\n\nvoid main() {\n    // Retrieve color and transform to gray scale\n    vec4 col = texture2D(tDiffuse, f_uv);\n    float gray = dot(col.rgb, vec3(0.299, 0.587, 0.114));\n    col.rgb = vec3(gray, gray, gray) * (u_amount) + col.rgb * (1.0 - u_amount);\n\n    // Scale probability with of darkness\n    float prob = random(f_uv.x, f_uv.y, 1.0)*(1.0 - col.r*col.b*col.g) / 4.0; \n\n    // Compare probability to darkness and shade black if dark enough, white otherwise\n    if (prob > col.r*col.b*col.g) {\n    \tgl_FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n    }\n    else {\n    \tgl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n    }\n       \n}   "
 
 /***/ }),
-/* 40 */
+/* 38 */
 /***/ (function(module, exports) {
 
 module.exports = "\nuniform sampler2D tDiffuse;\nuniform float u_amount;\nuniform float sWidth;\nuniform float sHeight;\nvarying vec2 f_uv;\n\n\nvec2 getPixel(float x, float y) {\n\treturn f_uv + vec2(1.0/sWidth, 1.0/sHeight) * vec2(x, y);\n}\n\nvec4 getGreyscaleColor(vec2 pixel) {\n\tvec4 col = texture2D(tDiffuse, pixel);\n\tfloat gray = dot(col.rgb, vec3(0.299, 0.587, 0.114));\n\tcol.rgb = vec3(gray, gray, gray) * (u_amount) + col.rgb * (1.0 - u_amount);\n\treturn col;\n}\n\nvoid main() {\n\t// Gets greyscale pixel from neighboring pixels\n\tvec4 a = getGreyscaleColor(getPixel(-1.0, -1.0));\n\tvec4 b = getGreyscaleColor(getPixel(0.0, -1.0));\n\tvec4 c = getGreyscaleColor(getPixel(1.0, -1.0));\n\tvec4 d = getGreyscaleColor(getPixel(-1.0, 0.0));\n\tvec4 e = getGreyscaleColor(getPixel(0.0, 0.0));\n\tvec4 f = getGreyscaleColor(getPixel(1.0, 0.0));\n\tvec4 g = getGreyscaleColor(getPixel(-1.0, 1.0));\n\tvec4 h = getGreyscaleColor(getPixel(0.0, 1.0));\n\tvec4 i = getGreyscaleColor(getPixel(1.0, 1.0));\n\n\tfloat r = sqrt(pow(-a.r - 2.0*d.r - g.r + c.r + 2.0*f.r + i.r, 2.0) \n\t\t+ pow(a.r + 2.0*b.r + c.r - g.r -2.0*h.r - i.r, 2.0));\n\tfloat gc = sqrt(pow(-a.g - 2.0*d.g - g.g + c.g + 2.0*f.g + i.g, 2.0) \n\t\t+ pow(a.g + 2.0*b.g + c.g - g.g -2.0*h.g - i.g, 2.0));\n\tfloat bc = sqrt(pow(-a.b - 2.0*d.b - g.b + c.b + 2.0*f.b + i.b, 2.0) \n\t\t+ pow(a.b + 2.0*b.b + c.b - g.b -2.0*h.b - i.b, 2.0));\n    gl_FragColor = vec4(r, gc, bc, 1.0);\n}   "
 
 /***/ }),
-/* 41 */
+/* 39 */
 /***/ (function(module, exports) {
 
 module.exports = "\nuniform sampler2D texture;\nuniform int u_useTexture;\nuniform vec3 u_albedo;\nuniform vec3 u_ambient;\nuniform vec3 u_lightPos;\nuniform vec3 u_lightCol;\nuniform float u_lightIntensity;\nuniform vec3 u_camPos;\nuniform vec3 u_camDir;\nvarying vec3 f_position;\nvarying vec3 f_normal;\nvarying vec2 f_uv;\n\nvoid main() {\n    vec4 color = vec4(u_albedo, 1.0);\n    \n    if (u_useTexture == 1) {\n        color = texture2D(texture, f_uv);\n    }\n\n    float d = clamp(dot(f_normal, normalize(u_lightPos - f_position)), 0.0, 1.0);\n    vec3 finalColor = d * color.rgb * u_lightCol * u_lightIntensity + u_ambient;\n   \tfinalColor.x = floor(finalColor.x*3.0)/3.0;\n   \tfinalColor.y = floor(finalColor.y*3.0)/3.0;\n   \tfinalColor.z = floor(finalColor.z*3.0)/3.0;\n   \tvec3 view_vec = -normalize(u_camPos - f_position);\n   \tif (abs(dot(f_normal, view_vec)) <=  0.4) {\n   \t\tfinalColor = vec3(0.0, 0.0, 0.0);\n   \t}\n    gl_FragColor = vec4(finalColor, 1.0);\n}"
 
 /***/ }),
-/* 42 */
+/* 40 */
 /***/ (function(module, exports) {
 
 module.exports = "\nvarying vec2 f_uv;\nvarying vec3 f_normal;\nvarying vec3 f_position;\n\n// uv, position, projectionMatrix, modelViewMatrix, normal\nvoid main() {\n    f_uv = uv;\n    f_normal = normal;\n    f_position = position;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n}"
 
 /***/ }),
-/* 43 */
+/* 41 */
 /***/ (function(module, exports) {
 
 module.exports = "\nuniform sampler2D tDiffuse;\nuniform float u_amount;\nuniform float sWidth;\nuniform float sHeight;\nuniform vec3 u_color;\nvarying vec2 f_uv;\n\n\nvec2 getPixel(float x, float y) {\n\treturn f_uv + vec2(1.0/sWidth, 1.0/sHeight) * vec2(x, y);\n}\nfloat getDistance(vec2 pixel) {\n\treturn sqrt(pow(pixel.x - 0.5, 2.0) + pow(pixel.y - 0.5, 2.0));\n}\nvec4 getColor() {\n\tvec4 col = texture2D(tDiffuse, f_uv);\n\treturn col;\n}\nvec4 lerp(vec4 c1, vec4 c2, float t) {\n\treturn (1.0 - t)*c1 + t*c2;\n}\n// tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to\nvoid main() {\n    gl_FragColor = lerp(getColor(), u_amount*vec4(u_color, 1), clamp(getDistance(getPixel(0.0, 0.0)), 0.0, 1.0));\n\n}   "
 
 /***/ }),
-/* 44 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _statsJs = __webpack_require__(8);
+var _statsJs = __webpack_require__(7);
 
 var _statsJs2 = _interopRequireDefault(_statsJs);
 
 var _mario = __webpack_require__(3);
 
-var _setup = __webpack_require__(6);
+var _setup = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-__webpack_require__(7);
+__webpack_require__(6);
 
 var THREE = __webpack_require__(0);
-var OrbitControls = __webpack_require__(9)(THREE);
+var OrbitControls = __webpack_require__(8)(THREE);
 
 window.addEventListener('load', function () {
     var stats = new _statsJs2.default();
