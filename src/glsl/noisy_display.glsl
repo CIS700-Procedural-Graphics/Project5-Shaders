@@ -8,6 +8,11 @@ uniform float u_noiseStrength;
 uniform float u_bandSpeed;
 uniform float u_bandWidth;
 uniform float u_colorize;
+
+uniform float u_scanStrength;
+uniform float u_scanSpeed;
+uniform float u_scanWidth;
+
 varying vec2 f_uv;
 
 
@@ -18,10 +23,10 @@ float rNoise(in float x, in float y) {
 
 void main() {
     // scan line
-    float y = fract(time / 10.0);
-    float scanWidth = 0.05;
+    float y = fract(0.1 * u_scanSpeed * time);
+    float scanWidth = u_scanWidth * 0.05;
     float t = clamp((y - f_uv.y) / scanWidth, 0.0, 1.0);
-    t = 0.2 * smoothstep(0.0, 1.0, t) * sign(t - 1.0);
+    t = u_scanStrength * 0.2 * smoothstep(0.0, 1.0, t) * sign(t - 1.0);
     // distort reading by scan
     vec4 col = texture2D(tDiffuse, vec2(mod(f_uv.x + 0.2 * t, 1.0), f_uv.y));
     col += 2.0 * vec4(t, t, t, 0);
