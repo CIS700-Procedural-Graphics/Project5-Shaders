@@ -5,7 +5,7 @@ const THREE = require('three');
 var options = {
     lightColor: '#ffffff',
     lightIntensity: 2,
-    albedo: '#dddddd',
+    albedo: '#808080',
     ambient: '#111111',
 }
 
@@ -29,10 +29,6 @@ export default function(renderer, scene, camera) {
         
         material: new THREE.ShaderMaterial({
             uniforms: {
-                texture: {
-                    type: "t", 
-                    value: null
-                },
                 u_albedo: {
                     type: 'v3',
                     value: new THREE.Color(options.albedo)

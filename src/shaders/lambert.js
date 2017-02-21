@@ -1,6 +1,6 @@
 
 const THREE = require('three');
-import {marioTexture} from '../mario'
+import {marioTexture} from '../textures'
 
 // options for lambert shader
 var options = {

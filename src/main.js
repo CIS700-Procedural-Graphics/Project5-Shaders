@@ -4,7 +4,7 @@ const THREE = require('three');
 const OrbitControls = require('three-orbit-controls')(THREE)
 
 import Stats from 'stats-js'
-import {objLoaded} from './mario'
+import {objLoaded} from './textures'
 import {setupGUI} from './setup'
 
 window.addEventListener('load', function() {

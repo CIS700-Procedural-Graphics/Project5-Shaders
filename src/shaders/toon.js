@@ -1,6 +1,6 @@
 
 const THREE = require('three');
-import {textureLoaded} from '../mario'
+import {marioTexture} from '../textures'
 
 // options for lambert shader
 var options = {
@@ -69,7 +69,7 @@ export default function(renderer, scene, camera) {
     }
 
     // once the Mario texture loads, bind it to the material
-    textureLoaded.then(function(texture) {
+   marioTexture.then(function(texture) {
         Shader.material.uniforms.texture.value = texture;
     });
 
