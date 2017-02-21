@@ -10,6 +10,6 @@ void main() {
     float gray = dot(col.rgb, vec3(0.299, 0.587, 0.114));
 
     col.rgb = vec3(gray, gray, gray) * (u_amount) + col.rgb * (1.0 - u_amount);
-
+    
     gl_FragColor = col;
 }   
