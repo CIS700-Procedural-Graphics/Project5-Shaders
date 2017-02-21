@@ -26,3 +26,6 @@ The pipeline is as follows: High pass, Blur, Additive Re-blending. The first ste
 
 ### Oil/Watercolor paintings
 For each pixel, we band intensities but this time we keep track of the sum of the R, G, and B values of that intensity as well as how often an intensity appears (the mode). We take the most frequent intensity band and then do a reverse lookup of the total R, G, and B values of that intensity band. We then divide by the mode of the intensity to obtain a flat color that we apply to pixels. Because the mode intensity doesn't change that often over pixels, we get the blotchiness that is characteristic of oil/watercolor paintings.
+
+### Dithering
+Since the traditional serial Dithering algorithms aren't parallelizable in glsl, we resort to using other approximation methods. In particular, we perform Ordered Dithering using a generated Bayer matrix to "push" error around. We add the error to the pixel and round to either 1 or 0 (full color or none at all). The end result is pretty neat.
