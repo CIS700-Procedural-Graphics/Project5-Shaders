@@ -13,6 +13,7 @@ Lit Sphere (25)
 -------------------------
 Reference: Spherical Reflection/Environment Mapping
 (https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader)
+
 ![](./litsphere1.jpg)
 ![](./litsphere2.jpg)
 ![](./litsphere3.jpg)
