@@ -22,6 +22,12 @@ float rNoise(in float x, in float y) {
 }
 
 void main() {
+    // edge darkening
+    float xd = f_uv.x - 0.5;
+    float yd = f_uv.y - 0.5;
+    float dist = u_vignette * sqrt(xd * xd + yd * yd);
+    vec4 vignette = mix(vec4(1, 1, 1, 1), vec4(0, 0, 0, 1), dist * dist);
+
     // scan line
     float y = fract(0.1 * u_scanSpeed * time);
     float scanWidth = u_scanWidth * 0.05;
@@ -40,12 +46,6 @@ void main() {
     float noise = rNoise(11.777 * fract(f_uv.x + 2.347 * time), -4.0973 * fract(f_uv.y + 1.979 * time));
     float noise2 = rNoise(1.236 * fract(f_uv.x - 1.347 * time), -4.0973 * fract(f_uv.y + 4.458 * time));
     noise *= u_noiseStrength * noise2;
-
-    // edge darkening
-    float xd = f_uv.x - 0.5;
-    float yd = f_uv.y - 0.5;
-    float dist = u_vignette * sqrt(xd * xd + yd * yd);
-    vec4 vignette = mix(vec4(1, 1, 1, 1), vec4(0, 0, 0, 1), dist * dist);
 
     // composite
     col = vignette * clamp(band * col + noise, vec4(0, 0, 0, 1), vec4(1, 1, 1, 1));
