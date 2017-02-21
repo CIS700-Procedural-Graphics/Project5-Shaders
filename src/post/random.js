@@ -18,7 +18,7 @@ var GrayscaleShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: require('../glsl/pass-vert.glsl'),
-    fragmentShader: require('../glsl/grayscale-frag.glsl')
+    fragmentShader: require('../glsl/random-frag.glsl')
 });
 
 export default function Grayscale(renderer, scene, camera) {
