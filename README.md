@@ -1,6 +1,9 @@
 
 # Project 5: Shaders
 
+Name: Meghana 
+
+Note: The noise offset warp effect is incorrectly labeled as "Tone" on the gui
 
 ## Renders
 
