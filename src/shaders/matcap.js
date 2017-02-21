@@ -8,12 +8,12 @@ var options = {
 }
 
 var maps = [];
-maps.push(THREE.ImageUtils.loadTexture('../spheremat1.png'));
-maps.push(THREE.ImageUtils.loadTexture('../spheremat2.png'));
-maps.push(THREE.ImageUtils.loadTexture('../spheremat3.png'));
-maps.push(THREE.ImageUtils.loadTexture('../spheremat4.png'));
-maps.push(THREE.ImageUtils.loadTexture('../spheremat5.png'));
-maps.push(THREE.ImageUtils.loadTexture('../besttextureever.png'));
+maps.push(THREE.ImageUtils.loadTexture('./assets/spheremat1.png'));
+maps.push(THREE.ImageUtils.loadTexture('./assets/spheremat2.png'));
+maps.push(THREE.ImageUtils.loadTexture('./assets/spheremat3.png'));
+maps.push(THREE.ImageUtils.loadTexture('./assets/spheremat4.png'));
+maps.push(THREE.ImageUtils.loadTexture('./assets/spheremat5.png'));
+maps.push(THREE.ImageUtils.loadTexture('./assets/besttextureever.png'));
 var audioLoader = new THREE.AudioLoader();
 var listener = new THREE.AudioListener();
 var sound = new THREE.Audio(listener);
@@ -31,7 +31,7 @@ export default function(renderer, scene, camera) {
                     camera.add(listener);
 
                     //Load a sound and set it as the Audio object's buffer
-                    audioLoader.load( '../endofallthings.mp3', function(buffer) {
+                    audioLoader.load( './assets/endofallthings.mp3', function(buffer) {
                         sound.setBuffer(buffer);
                         sound.setLoop(false);
                         sound.setVolume(1.0);
