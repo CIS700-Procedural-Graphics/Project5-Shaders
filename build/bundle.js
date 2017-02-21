@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 26);
+/******/ 	return __webpack_require__(__webpack_require__.s = 44);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -43369,6 +43369,163 @@ function CanvasRenderer() {
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+module.exports = function(THREE) {
+  var CopyShader = EffectComposer.CopyShader = __webpack_require__(27)
+    , RenderPass = EffectComposer.RenderPass = __webpack_require__(30)(THREE)
+    , ShaderPass = EffectComposer.ShaderPass = __webpack_require__(31)(THREE, EffectComposer)
+    , MaskPass = EffectComposer.MaskPass = __webpack_require__(29)(THREE)
+    , ClearMaskPass = EffectComposer.ClearMaskPass = __webpack_require__(28)(THREE)
+
+  function EffectComposer( renderer, renderTarget ) {
+    this.renderer = renderer;
+
+    if ( renderTarget === undefined ) {
+      var width = window.innerWidth || 1;
+      var height = window.innerHeight || 1;
+      var parameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBuffer: false };
+
+      renderTarget = new THREE.WebGLRenderTarget( width, height, parameters );
+    }
+
+    this.renderTarget1 = renderTarget;
+    this.renderTarget2 = renderTarget.clone();
+
+    this.writeBuffer = this.renderTarget1;
+    this.readBuffer = this.renderTarget2;
+
+    this.passes = [];
+
+    this.copyPass = new ShaderPass( CopyShader );
+  };
+
+  EffectComposer.prototype = {
+    swapBuffers: function() {
+
+      var tmp = this.readBuffer;
+      this.readBuffer = this.writeBuffer;
+      this.writeBuffer = tmp;
+
+    },
+
+    addPass: function ( pass ) {
+
+      this.passes.push( pass );
+
+    },
+
+    insertPass: function ( pass, index ) {
+
+      this.passes.splice( index, 0, pass );
+
+    },
+
+    render: function ( delta ) {
+
+      this.writeBuffer = this.renderTarget1;
+      this.readBuffer = this.renderTarget2;
+
+      var maskActive = false;
+
+      var pass, i, il = this.passes.length;
+
+      for ( i = 0; i < il; i ++ ) {
+
+        pass = this.passes[ i ];
+
+        if ( !pass.enabled ) continue;
+
+        pass.render( this.renderer, this.writeBuffer, this.readBuffer, delta, maskActive );
+
+        if ( pass.needsSwap ) {
+
+          if ( maskActive ) {
+
+            var context = this.renderer.context;
+
+            context.stencilFunc( context.NOTEQUAL, 1, 0xffffffff );
+
+            this.copyPass.render( this.renderer, this.writeBuffer, this.readBuffer, delta );
+
+            context.stencilFunc( context.EQUAL, 1, 0xffffffff );
+
+          }
+
+          this.swapBuffers();
+
+        }
+
+        if ( pass instanceof MaskPass ) {
+
+          maskActive = true;
+
+        } else if ( pass instanceof ClearMaskPass ) {
+
+          maskActive = false;
+
+        }
+
+      }
+
+    },
+
+    reset: function ( renderTarget ) {
+
+      if ( renderTarget === undefined ) {
+
+        renderTarget = this.renderTarget1.clone();
+
+        renderTarget.width = window.innerWidth;
+        renderTarget.height = window.innerHeight;
+
+      }
+
+      this.renderTarget1 = renderTarget;
+      this.renderTarget2 = renderTarget.clone();
+
+      this.writeBuffer = this.renderTarget1;
+      this.readBuffer = this.renderTarget2;
+
+    },
+
+    setSize: function ( width, height ) {
+
+      var renderTarget = this.renderTarget1.clone();
+
+      renderTarget.width = width;
+      renderTarget.height = height;
+
+      this.reset( renderTarget );
+
+    }
+
+  };
+
+  // shared ortho camera
+
+  EffectComposer.camera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0, 1 );
+
+  EffectComposer.quad = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2 ), null );
+
+  EffectComposer.scene = new THREE.Scene();
+  EffectComposer.scene.add( EffectComposer.quad );
+
+  return EffectComposer
+};
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = "\n// we use this vertex shader for the post process steps. All we do is copy the uv value and set position appropriately\nvarying vec2 f_uv;\nvoid main() {\n    f_uv = uv;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n}"
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 
 
@@ -43379,16 +43536,16 @@ Object.defineProperty(exports, "__esModule", {
 // this file is just for convenience. it sets up loading the mario obj and texture
 
 var THREE = __webpack_require__(0);
-__webpack_require__(21)(THREE);
+__webpack_require__(5)(THREE);
 
 var textureLoaded = exports.textureLoaded = new Promise(function (resolve, reject) {
-    new THREE.TextureLoader().load(__webpack_require__(13), function (texture) {
+    new THREE.TextureLoader().load(__webpack_require__(26), function (texture) {
         resolve(texture);
     });
 });
 
 var objLoaded = exports.objLoaded = new Promise(function (resolve, reject) {
-    new THREE.OBJLoader().load(__webpack_require__(14), function (obj) {
+    new THREE.OBJLoader().load(__webpack_require__(4), function (obj) {
         var geo = obj.children[0].geometry;
         geo.computeBoundingSphere();
         resolve(geo);
@@ -43396,7 +43553,332 @@ var objLoaded = exports.objLoaded = new Promise(function (resolve, reject) {
 });
 
 /***/ }),
-/* 2 */
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/wahoo-d362db.obj";
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (THREE) {
+
+  /**
+   * @author mrdoob / http://mrdoob.com/
+   */
+  THREE.OBJLoader = function (manager) {
+
+    this.manager = manager !== undefined ? manager : THREE.DefaultLoadingManager;
+  };
+
+  THREE.OBJLoader.prototype = {
+
+    constructor: THREE.OBJLoader,
+
+    load: function load(url, onLoad, onProgress, onError) {
+
+      var scope = this;
+
+      var loader = new THREE.XHRLoader(scope.manager);
+      loader.load(url, function (text) {
+
+        onLoad(scope.parse(text));
+      }, onProgress, onError);
+    },
+
+    parse: function parse(text) {
+
+      console.time('OBJLoader');
+
+      var object,
+          objects = [];
+      var geometry, material;
+
+      function parseVertexIndex(value) {
+
+        var index = parseInt(value);
+
+        return (index >= 0 ? index - 1 : index + vertices.length / 3) * 3;
+      }
+
+      function parseNormalIndex(value) {
+
+        var index = parseInt(value);
+
+        return (index >= 0 ? index - 1 : index + normals.length / 3) * 3;
+      }
+
+      function parseUVIndex(value) {
+
+        var index = parseInt(value);
+
+        return (index >= 0 ? index - 1 : index + uvs.length / 2) * 2;
+      }
+
+      function addVertex(a, b, c) {
+
+        geometry.vertices.push(vertices[a], vertices[a + 1], vertices[a + 2], vertices[b], vertices[b + 1], vertices[b + 2], vertices[c], vertices[c + 1], vertices[c + 2]);
+      }
+
+      function addNormal(a, b, c) {
+
+        geometry.normals.push(normals[a], normals[a + 1], normals[a + 2], normals[b], normals[b + 1], normals[b + 2], normals[c], normals[c + 1], normals[c + 2]);
+      }
+
+      function addUV(a, b, c) {
+
+        geometry.uvs.push(uvs[a], uvs[a + 1], uvs[b], uvs[b + 1], uvs[c], uvs[c + 1]);
+      }
+
+      function addFace(a, b, c, d, ua, ub, uc, ud, na, nb, nc, nd) {
+
+        var ia = parseVertexIndex(a);
+        var ib = parseVertexIndex(b);
+        var ic = parseVertexIndex(c);
+        var id;
+
+        if (d === undefined) {
+
+          addVertex(ia, ib, ic);
+        } else {
+
+          id = parseVertexIndex(d);
+
+          addVertex(ia, ib, id);
+          addVertex(ib, ic, id);
+        }
+
+        if (ua !== undefined) {
+
+          ia = parseUVIndex(ua);
+          ib = parseUVIndex(ub);
+          ic = parseUVIndex(uc);
+
+          if (d === undefined) {
+
+            addUV(ia, ib, ic);
+          } else {
+
+            id = parseUVIndex(ud);
+
+            addUV(ia, ib, id);
+            addUV(ib, ic, id);
+          }
+        }
+
+        if (na !== undefined) {
+
+          ia = parseNormalIndex(na);
+          ib = parseNormalIndex(nb);
+          ic = parseNormalIndex(nc);
+
+          if (d === undefined) {
+
+            addNormal(ia, ib, ic);
+          } else {
+
+            id = parseNormalIndex(nd);
+
+            addNormal(ia, ib, id);
+            addNormal(ib, ic, id);
+          }
+        }
+      }
+
+      // create mesh if no objects in text
+
+      if (/^o /gm.test(text) === false) {
+
+        geometry = {
+          vertices: [],
+          normals: [],
+          uvs: []
+        };
+
+        material = {
+          name: ''
+        };
+
+        object = {
+          name: '',
+          geometry: geometry,
+          material: material
+        };
+
+        objects.push(object);
+      }
+
+      var vertices = [];
+      var normals = [];
+      var uvs = [];
+
+      // v float float float
+
+      var vertex_pattern = /v( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)/;
+
+      // vn float float float
+
+      var normal_pattern = /vn( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)/;
+
+      // vt float float
+
+      var uv_pattern = /vt( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)/;
+
+      // f vertex vertex vertex ...
+
+      var face_pattern1 = /f( +-?\d+)( +-?\d+)( +-?\d+)( +-?\d+)?/;
+
+      // f vertex/uv vertex/uv vertex/uv ...
+
+      var face_pattern2 = /f( +(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+))?/;
+
+      // f vertex/uv/normal vertex/uv/normal vertex/uv/normal ...
+
+      var face_pattern3 = /f( +(-?\d+)\/(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+)\/(-?\d+))?/;
+
+      // f vertex//normal vertex//normal vertex//normal ...
+
+      var face_pattern4 = /f( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))?/;
+
+      //
+
+      var lines = text.split('\n');
+
+      for (var i = 0; i < lines.length; i++) {
+
+        var line = lines[i];
+        line = line.trim();
+
+        var result;
+
+        if (line.length === 0 || line.charAt(0) === '#') {
+
+          continue;
+        } else if ((result = vertex_pattern.exec(line)) !== null) {
+
+          // ["v 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
+
+          vertices.push(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]));
+        } else if ((result = normal_pattern.exec(line)) !== null) {
+
+          // ["vn 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
+
+          normals.push(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]));
+        } else if ((result = uv_pattern.exec(line)) !== null) {
+
+          // ["vt 0.1 0.2", "0.1", "0.2"]
+
+          uvs.push(parseFloat(result[1]), parseFloat(result[2]));
+        } else if ((result = face_pattern1.exec(line)) !== null) {
+
+          // ["f 1 2 3", "1", "2", "3", undefined]
+
+          addFace(result[1], result[2], result[3], result[4]);
+        } else if ((result = face_pattern2.exec(line)) !== null) {
+
+          // ["f 1/1 2/2 3/3", " 1/1", "1", "1", " 2/2", "2", "2", " 3/3", "3", "3", undefined, undefined, undefined]
+
+          addFace(result[2], result[5], result[8], result[11], result[3], result[6], result[9], result[12]);
+        } else if ((result = face_pattern3.exec(line)) !== null) {
+
+          // ["f 1/1/1 2/2/2 3/3/3", " 1/1/1", "1", "1", "1", " 2/2/2", "2", "2", "2", " 3/3/3", "3", "3", "3", undefined, undefined, undefined, undefined]
+
+          addFace(result[2], result[6], result[10], result[14], result[3], result[7], result[11], result[15], result[4], result[8], result[12], result[16]);
+        } else if ((result = face_pattern4.exec(line)) !== null) {
+
+          // ["f 1//1 2//2 3//3", " 1//1", "1", "1", " 2//2", "2", "2", " 3//3", "3", "3", undefined, undefined, undefined]
+
+          addFace(result[2], result[5], result[8], result[11], undefined, undefined, undefined, undefined, result[3], result[6], result[9], result[12]);
+        } else if (/^o /.test(line)) {
+
+          geometry = {
+            vertices: [],
+            normals: [],
+            uvs: []
+          };
+
+          material = {
+            name: ''
+          };
+
+          object = {
+            name: line.substring(2).trim(),
+            geometry: geometry,
+            material: material
+          };
+
+          objects.push(object);
+        } else if (/^g /.test(line)) {
+
+          // group
+
+        } else if (/^usemtl /.test(line)) {
+
+            // material
+
+            material.name = line.substring(7).trim();
+          } else if (/^mtllib /.test(line)) {
+
+            // mtl file
+
+          } else if (/^s /.test(line)) {
+
+              // smooth shading
+
+            } else {
+
+                // console.log( "THREE.OBJLoader: Unhandled line " + line );
+
+              }
+      }
+
+      var container = new THREE.Object3D();
+      var l;
+
+      for (i = 0, l = objects.length; i < l; i++) {
+
+        object = objects[i];
+        geometry = object.geometry;
+
+        var buffergeometry = new THREE.BufferGeometry();
+
+        buffergeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.vertices), 3));
+
+        if (geometry.normals.length > 0) {
+
+          buffergeometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(geometry.normals), 3));
+        }
+
+        if (geometry.uvs.length > 0) {
+
+          buffergeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometry.uvs), 2));
+        }
+
+        material = new THREE.MeshLambertMaterial({
+          color: 0xff0000
+        });
+        material.name = object.material.name;
+
+        var mesh = new THREE.Mesh(buffergeometry, material);
+        mesh.name = object.name;
+
+        container.add(mesh);
+      }
+
+      console.timeEnd('OBJLoader');
+
+      return container;
+    }
+
+  };
+};
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43407,15 +43889,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.setupGUI = setupGUI;
 
-var _shaders = __webpack_require__(8);
+var _shaders = __webpack_require__(18);
 
 var Shaders = _interopRequireWildcard(_shaders);
 
-var _post = __webpack_require__(7);
+var _post = __webpack_require__(13);
 
 var Post = _interopRequireWildcard(_post);
 
-var _datGui = __webpack_require__(10);
+var _datGui = __webpack_require__(22);
 
 var _datGui2 = _interopRequireDefault(_datGui);
 
@@ -43486,13 +43968,13 @@ function setupGUI(shaderSet, postProcessSet) {
 }
 
 /***/ }),
-/* 3 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "index.html";
 
 /***/ }),
-/* 4 */
+/* 8 */
 /***/ (function(module, exports) {
 
 // stats.js - http://github.com/mrdoob/stats.js
@@ -43504,7 +43986,7 @@ a+"px",m=b,r=0);return b},update:function(){l=this.end()}}};"object"===typeof mo
 
 
 /***/ }),
-/* 5 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = function( THREE ) {
@@ -44530,7 +45012,104 @@ module.exports = function( THREE ) {
 
 
 /***/ }),
-/* 6 */
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+// this file is just for convenience. it sets up loading the mario obj and texture
+
+var THREE = __webpack_require__(0);
+__webpack_require__(5)(THREE);
+
+var textureLoaded = exports.textureLoaded = new Promise(function (resolve, reject) {
+    new THREE.TextureLoader().load(__webpack_require__(25), function (texture) {
+        resolve(texture);
+    });
+});
+
+var objLoaded = exports.objLoaded = new Promise(function (resolve, reject) {
+    new THREE.OBJLoader().load(__webpack_require__(4), function (obj) {
+        var geo = obj.children[0].geometry;
+        geo.computeBoundingSphere();
+        resolve(geo);
+    });
+});
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = Gaussian;
+var THREE = __webpack_require__(0);
+var EffectComposer = __webpack_require__(1)(THREE);
+
+var options = {
+    amount: 1
+};
+var GaussianShader = new EffectComposer.ShaderPass({
+    uniforms: {
+        tDiffuse: {
+            type: 't',
+            value: null
+        },
+        u_amount: {
+            type: 'f',
+            value: options.amount
+        },
+        sHeight: {
+            type: 'f',
+            value: screen.height
+        },
+        sWidth: {
+            type: 'f',
+            value: screen.width
+        }
+    },
+    vertexShader: __webpack_require__(2),
+    fragmentShader: __webpack_require__(32)
+});
+
+function Gaussian(renderer, scene, camera) {
+    // this is the THREE.js object for doing post-process effects
+    var composer = new EffectComposer(renderer);
+
+    // first render the scene normally and add that as the first pass
+    composer.addPass(new EffectComposer.RenderPass(scene, camera));
+
+    // then take the rendered result and apply the GaussianShader
+    composer.addPass(GaussianShader);
+
+    // set this to true on the shader for your last pass to write to the screen
+    GaussianShader.renderToScreen = true;
+
+    return {
+        initGUI: function initGUI(gui) {
+            gui.add(options, 'amount', 0, 1).onChange(function (val) {
+                GaussianShader.material.uniforms.u_amount.value = val;
+            });
+        },
+
+        render: function render() {
+            ;
+            composer.render();
+        }
+    };
+}
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44541,7 +45120,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = Grayscale;
 var THREE = __webpack_require__(0);
-var EffectComposer = __webpack_require__(16)(THREE);
+var EffectComposer = __webpack_require__(1)(THREE);
 
 var options = {
     amount: 1
@@ -44558,8 +45137,8 @@ var GrayscaleShader = new EffectComposer.ShaderPass({
             value: options.amount
         }
     },
-    vertexShader: __webpack_require__(25),
-    fragmentShader: __webpack_require__(22)
+    vertexShader: __webpack_require__(2),
+    fragmentShader: __webpack_require__(33)
 });
 
 function Grayscale(renderer, scene, camera) {
@@ -44591,7 +45170,7 @@ function Grayscale(renderer, scene, camera) {
 }
 
 /***/ }),
-/* 7 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44602,12 +45181,57 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.None = None;
 
-var _grayscale = __webpack_require__(6);
+var _grayscale = __webpack_require__(12);
 
 Object.defineProperty(exports, 'Grayscale', {
     enumerable: true,
     get: function get() {
         return _interopRequireDefault(_grayscale).default;
+    }
+});
+
+var _invert = __webpack_require__(14);
+
+Object.defineProperty(exports, 'Invert', {
+    enumerable: true,
+    get: function get() {
+        return _interopRequireDefault(_invert).default;
+    }
+});
+
+var _sobel = __webpack_require__(16);
+
+Object.defineProperty(exports, 'Sobel', {
+    enumerable: true,
+    get: function get() {
+        return _interopRequireDefault(_sobel).default;
+    }
+});
+
+var _vignette = __webpack_require__(17);
+
+Object.defineProperty(exports, 'Vignette', {
+    enumerable: true,
+    get: function get() {
+        return _interopRequireDefault(_vignette).default;
+    }
+});
+
+var _gaussian = __webpack_require__(11);
+
+Object.defineProperty(exports, 'Gaussian', {
+    enumerable: true,
+    get: function get() {
+        return _interopRequireDefault(_gaussian).default;
+    }
+});
+
+var _pointilism = __webpack_require__(15);
+
+Object.defineProperty(exports, 'Pointilism', {
+    enumerable: true,
+    get: function get() {
+        return _interopRequireDefault(_pointilism).default;
     }
 });
 
@@ -44629,7 +45253,275 @@ function None(renderer, scene, camera) {
 // follow this syntax to make your shaders available to the GUI
 
 /***/ }),
-/* 8 */
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = invert;
+var THREE = __webpack_require__(0);
+var EffectComposer = __webpack_require__(1)(THREE);
+
+var options = {
+    amount: 1
+};
+var t = new Date();
+var invertShader = new EffectComposer.ShaderPass({
+    uniforms: {
+        tDiffuse: {
+            type: 't',
+            value: null
+        },
+        u_amount: {
+            type: 'f',
+            value: options.amount
+        },
+        time: {
+            type: 'f',
+            value: t.getTime()
+        }
+    },
+    vertexShader: __webpack_require__(2),
+    fragmentShader: __webpack_require__(34)
+});
+
+function invert(renderer, scene, camera) {
+
+    // this is the THREE.js object for doing post-process effects
+    var composer = new EffectComposer(renderer);
+
+    // first render the scene normally and add that as the first pass
+    composer.addPass(new EffectComposer.RenderPass(scene, camera));
+
+    // then take the rendered result and apply the GrayscaleShader
+    composer.addPass(invertShader);
+
+    // set this to true on the shader for your last pass to write to the screen
+    invertShader.renderToScreen = true;
+
+    return {
+        initGUI: function initGUI(gui) {
+            gui.add(options, 'amount', 0, 1).onChange(function (val) {
+                invertShader.material.uniforms.u_amount.value = val;
+            });
+        },
+
+        render: function render() {
+            ;
+            composer.render();
+        }
+    };
+}
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = Pointilism;
+var THREE = __webpack_require__(0);
+var EffectComposer = __webpack_require__(1)(THREE);
+
+var options = {
+    amount: 1
+};
+var PointilismShader = new EffectComposer.ShaderPass({
+    uniforms: {
+        tDiffuse: {
+            type: 't',
+            value: null
+        },
+        u_amount: {
+            type: 'f',
+            value: options.amount
+        },
+        sHeight: {
+            type: 'f',
+            value: screen.height
+        },
+        sWidth: {
+            type: 'f',
+            value: screen.width
+        }
+    },
+    vertexShader: __webpack_require__(2),
+    fragmentShader: __webpack_require__(39)
+});
+
+function Pointilism(renderer, scene, camera) {
+    // this is the THREE.js object for doing post-process effects
+    var composer = new EffectComposer(renderer);
+
+    // first render the scene normally and add that as the first pass
+    composer.addPass(new EffectComposer.RenderPass(scene, camera));
+
+    // then take the rendered result and apply the PointilismShader
+    composer.addPass(PointilismShader);
+
+    // set this to true on the shader for your last pass to write to the screen
+    PointilismShader.renderToScreen = true;
+
+    return {
+        initGUI: function initGUI(gui) {
+            gui.add(options, 'amount', 0, 1).onChange(function (val) {
+                PointilismShader.material.uniforms.u_amount.value = val;
+            });
+        },
+
+        render: function render() {
+            ;
+            composer.render();
+        }
+    };
+}
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = Grayscale;
+var THREE = __webpack_require__(0);
+var EffectComposer = __webpack_require__(1)(THREE);
+
+var options = {
+    amount: 1
+};
+var SobelShader = new EffectComposer.ShaderPass({
+    uniforms: {
+        tDiffuse: {
+            type: 't',
+            value: null
+        },
+        u_amount: {
+            type: 'f',
+            value: options.amount
+        },
+        sHeight: {
+            type: 'f',
+            value: screen.height
+        },
+        sWidth: {
+            type: 'f',
+            value: screen.width
+        }
+    },
+    vertexShader: __webpack_require__(2),
+    fragmentShader: __webpack_require__(40)
+});
+
+function Grayscale(renderer, scene, camera) {
+    // this is the THREE.js object for doing post-process effects
+    var composer = new EffectComposer(renderer);
+
+    // first render the scene normally and add that as the first pass
+    composer.addPass(new EffectComposer.RenderPass(scene, camera));
+
+    // then take the rendered result and apply the SobelShader
+    composer.addPass(SobelShader);
+
+    // set this to true on the shader for your last pass to write to the screen
+    SobelShader.renderToScreen = true;
+
+    return {
+        initGUI: function initGUI(gui) {
+            gui.add(options, 'amount', 0, 1).onChange(function (val) {
+                SobelShader.material.uniforms.u_amount.value = val;
+            });
+        },
+
+        render: function render() {
+            ;
+            composer.render();
+        }
+    };
+}
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = Vignette;
+var THREE = __webpack_require__(0);
+var EffectComposer = __webpack_require__(1)(THREE);
+
+var options = {
+    amount: 1,
+    color: '#ffffff'
+};
+
+var VignetteShaders = new EffectComposer.ShaderPass({
+    uniforms: {
+        tDiffuse: {
+            type: 't',
+            value: null
+        },
+        u_amount: {
+            type: 'f',
+            value: options.amount
+        },
+        u_color: {
+            type: 'v3',
+            value: new THREE.Color(options.lightColor)
+        }
+    },
+    vertexShader: __webpack_require__(2),
+    fragmentShader: __webpack_require__(43)
+});
+
+function Vignette(renderer, scene, camera) {
+
+    // this is the THREE.js object for doing post-process effects
+    var composer = new EffectComposer(renderer);
+
+    // first render the scene normally and add that as the first pass
+    composer.addPass(new EffectComposer.RenderPass(scene, camera));
+
+    // then take the rendered result and apply the VignetteShaders
+    composer.addPass(VignetteShaders);
+
+    // set this to true on the shader for your last pass to write to the screen
+    VignetteShaders.renderToScreen = true;
+
+    return {
+        initGUI: function initGUI(gui) {
+            gui.add(options, 'amount', 0, 1).onChange(function (val) {
+                VignetteShaders.material.uniforms.u_amount.value = val;
+            });
+            gui.addColor(options, 'color').onChange(function (val) {
+                VignetteShaders.material.uniforms.u_color.value = new THREE.Color(val);
+            });
+        },
+
+        render: function render() {
+            ;
+            composer.render();
+        }
+    };
+}
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44639,7 +45531,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _lambert = __webpack_require__(9);
+var _lambert = __webpack_require__(20);
 
 Object.defineProperty(exports, 'Lambert', {
   enumerable: true,
@@ -44648,10 +45540,121 @@ Object.defineProperty(exports, 'Lambert', {
   }
 });
 
+var _toon = __webpack_require__(21);
+
+Object.defineProperty(exports, 'Toon', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_toon).default;
+  }
+});
+
+var _iridescent = __webpack_require__(19);
+
+Object.defineProperty(exports, 'Iridescent', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_iridescent).default;
+  }
+});
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 9 */
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (renderer, scene, camera) {
+    var Shader = {
+        initGUI: function initGUI(gui) {
+            gui.addColor(options, 'lightColor').onChange(function (val) {
+                Shader.material.uniforms.u_lightCol.value = new THREE.Color(val);
+            });
+            gui.add(options, 'lightIntensity').onChange(function (val) {
+                Shader.material.uniforms.u_lightIntensity.value = val;
+            });
+            gui.addColor(options, 'albedo').onChange(function (val) {
+                Shader.material.uniforms.u_albedo.value = new THREE.Color(val);
+            });
+            gui.addColor(options, 'ambient').onChange(function (val) {
+                Shader.material.uniforms.u_ambient.value = new THREE.Color(val);
+            });
+            gui.add(options, 'useTexture').onChange(function (val) {
+                Shader.material.uniforms.u_useTexture.value = val;
+            });
+        },
+
+        material: new THREE.ShaderMaterial({
+            uniforms: {
+                texture: {
+                    type: "t",
+                    value: null
+                },
+                u_useTexture: {
+                    type: 'i',
+                    value: options.useTexture
+                },
+                u_albedo: {
+                    type: 'v3',
+                    value: new THREE.Color(options.albedo)
+                },
+                u_ambient: {
+                    type: 'v3',
+                    value: new THREE.Color(options.ambient)
+                },
+                u_lightPos: {
+                    type: 'v3',
+                    value: new THREE.Vector3(30, 50, 40)
+                },
+                u_lightCol: {
+                    type: 'v3',
+                    value: new THREE.Color(options.lightColor)
+                },
+                u_lightIntensity: {
+                    type: 'f',
+                    value: options.lightIntensity
+                },
+                u_camPos: {
+                    type: 'v3',
+                    value: camera.position
+                }
+            },
+            vertexShader: __webpack_require__(36),
+            fragmentShader: __webpack_require__(35)
+        })
+    };
+
+    // once the Mario texture loads, bind it to the material
+    _iridescentmario.textureLoaded.then(function (texture) {
+        Shader.material.uniforms.texture.value = texture;
+    });
+
+    return Shader;
+};
+
+var _iridescentmario = __webpack_require__(10);
+
+var THREE = __webpack_require__(0);
+
+
+// options for lambert shader
+var options = {
+    lightColor: '#ffffff',
+    lightIntensity: 2,
+    albedo: '#dddddd',
+    ambient: '#111111',
+    useTexture: true
+};
+
+/***/ }),
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44713,8 +45716,8 @@ exports.default = function (renderer, scene, camera) {
                     value: options.lightIntensity
                 }
             },
-            vertexShader: __webpack_require__(24),
-            fragmentShader: __webpack_require__(23)
+            vertexShader: __webpack_require__(38),
+            fragmentShader: __webpack_require__(37)
         })
     };
 
@@ -44726,7 +45729,7 @@ exports.default = function (renderer, scene, camera) {
     return Shader;
 };
 
-var _mario = __webpack_require__(1);
+var _mario = __webpack_require__(3);
 
 var THREE = __webpack_require__(0);
 
@@ -44741,14 +45744,114 @@ var options = {
 };
 
 /***/ }),
-/* 10 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(12)
-module.exports.color = __webpack_require__(11)
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (renderer, scene, camera) {
+    var pLocal = new THREE.Vector3(0, 0, -1);
+    var pWorld = pLocal.applyMatrix4(camera.matrixWorld);
+    var dir = pWorld.sub(camera.position).normalize();
+    var Shader = {
+        initGUI: function initGUI(gui) {
+            gui.addColor(options, 'lightColor').onChange(function (val) {
+                Shader.material.uniforms.u_lightCol.value = new THREE.Color(val);
+            });
+            gui.add(options, 'lightIntensity').onChange(function (val) {
+                Shader.material.uniforms.u_lightIntensity.value = val;
+            });
+            gui.addColor(options, 'albedo').onChange(function (val) {
+                Shader.material.uniforms.u_albedo.value = new THREE.Color(val);
+            });
+            gui.addColor(options, 'ambient').onChange(function (val) {
+                Shader.material.uniforms.u_ambient.value = new THREE.Color(val);
+            });
+            gui.add(options, 'useTexture').onChange(function (val) {
+                Shader.material.uniforms.u_useTexture.value = val;
+            });
+        },
+
+        material: new THREE.ShaderMaterial({
+            uniforms: {
+                texture: {
+                    type: "t",
+                    value: null
+                },
+                u_useTexture: {
+                    type: 'i',
+                    value: options.useTexture
+                },
+                u_albedo: {
+                    type: 'v3',
+                    value: new THREE.Color(options.albedo)
+                },
+                u_ambient: {
+                    type: 'v3',
+                    value: new THREE.Color(options.ambient)
+                },
+                u_lightPos: {
+                    type: 'v3',
+                    value: new THREE.Vector3(30, 50, 40)
+                },
+                u_lightCol: {
+                    type: 'v3',
+                    value: new THREE.Color(options.lightColor)
+                },
+                u_lightIntensity: {
+                    type: 'f',
+                    value: options.lightIntensity
+                },
+                u_camPos: {
+                    type: 'v3',
+                    value: camera.position
+                },
+                u_camDir: {
+                    type: 'v3',
+                    value: dir
+                }
+            },
+            vertexShader: __webpack_require__(42),
+            fragmentShader: __webpack_require__(41)
+        })
+    };
+
+    // once the Mario texture loads, bind it to the material
+    _mario.textureLoaded.then(function (texture) {
+        Shader.material.uniforms.texture.value = texture;
+    });
+
+    return Shader;
+};
+
+var _mario = __webpack_require__(3);
+
+var THREE = __webpack_require__(0);
+
+
+// options for lambert shader
+var options = {
+    lightColor: '#ffffff',
+    lightIntensity: 2,
+    albedo: '#dddddd',
+    ambient: '#111111',
+    useTexture: true
+};
 
 /***/ }),
-/* 11 */
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(24)
+module.exports.color = __webpack_require__(23)
+
+/***/ }),
+/* 23 */
 /***/ (function(module, exports) {
 
 /**
@@ -45508,7 +46611,7 @@ dat.color.toString,
 dat.utils.common);
 
 /***/ }),
-/* 12 */
+/* 24 */
 /***/ (function(module, exports) {
 
 /**
@@ -49173,19 +50276,19 @@ dat.dom.dom,
 dat.utils.common);
 
 /***/ }),
-/* 13 */
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/iridescent-ec82e7.bmp";
+
+/***/ }),
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "./assets/wahoo-1bfe66.bmp";
 
 /***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__.p + "./assets/wahoo-d362db.obj";
-
-/***/ }),
-/* 15 */
+/* 27 */
 /***/ (function(module, exports) {
 
 /**
@@ -49227,158 +50330,7 @@ module.exports = {
 
 
 /***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * @author alteredq / http://alteredqualia.com/
- */
-
-module.exports = function(THREE) {
-  var CopyShader = EffectComposer.CopyShader = __webpack_require__(15)
-    , RenderPass = EffectComposer.RenderPass = __webpack_require__(19)(THREE)
-    , ShaderPass = EffectComposer.ShaderPass = __webpack_require__(20)(THREE, EffectComposer)
-    , MaskPass = EffectComposer.MaskPass = __webpack_require__(18)(THREE)
-    , ClearMaskPass = EffectComposer.ClearMaskPass = __webpack_require__(17)(THREE)
-
-  function EffectComposer( renderer, renderTarget ) {
-    this.renderer = renderer;
-
-    if ( renderTarget === undefined ) {
-      var width = window.innerWidth || 1;
-      var height = window.innerHeight || 1;
-      var parameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBuffer: false };
-
-      renderTarget = new THREE.WebGLRenderTarget( width, height, parameters );
-    }
-
-    this.renderTarget1 = renderTarget;
-    this.renderTarget2 = renderTarget.clone();
-
-    this.writeBuffer = this.renderTarget1;
-    this.readBuffer = this.renderTarget2;
-
-    this.passes = [];
-
-    this.copyPass = new ShaderPass( CopyShader );
-  };
-
-  EffectComposer.prototype = {
-    swapBuffers: function() {
-
-      var tmp = this.readBuffer;
-      this.readBuffer = this.writeBuffer;
-      this.writeBuffer = tmp;
-
-    },
-
-    addPass: function ( pass ) {
-
-      this.passes.push( pass );
-
-    },
-
-    insertPass: function ( pass, index ) {
-
-      this.passes.splice( index, 0, pass );
-
-    },
-
-    render: function ( delta ) {
-
-      this.writeBuffer = this.renderTarget1;
-      this.readBuffer = this.renderTarget2;
-
-      var maskActive = false;
-
-      var pass, i, il = this.passes.length;
-
-      for ( i = 0; i < il; i ++ ) {
-
-        pass = this.passes[ i ];
-
-        if ( !pass.enabled ) continue;
-
-        pass.render( this.renderer, this.writeBuffer, this.readBuffer, delta, maskActive );
-
-        if ( pass.needsSwap ) {
-
-          if ( maskActive ) {
-
-            var context = this.renderer.context;
-
-            context.stencilFunc( context.NOTEQUAL, 1, 0xffffffff );
-
-            this.copyPass.render( this.renderer, this.writeBuffer, this.readBuffer, delta );
-
-            context.stencilFunc( context.EQUAL, 1, 0xffffffff );
-
-          }
-
-          this.swapBuffers();
-
-        }
-
-        if ( pass instanceof MaskPass ) {
-
-          maskActive = true;
-
-        } else if ( pass instanceof ClearMaskPass ) {
-
-          maskActive = false;
-
-        }
-
-      }
-
-    },
-
-    reset: function ( renderTarget ) {
-
-      if ( renderTarget === undefined ) {
-
-        renderTarget = this.renderTarget1.clone();
-
-        renderTarget.width = window.innerWidth;
-        renderTarget.height = window.innerHeight;
-
-      }
-
-      this.renderTarget1 = renderTarget;
-      this.renderTarget2 = renderTarget.clone();
-
-      this.writeBuffer = this.renderTarget1;
-      this.readBuffer = this.renderTarget2;
-
-    },
-
-    setSize: function ( width, height ) {
-
-      var renderTarget = this.renderTarget1.clone();
-
-      renderTarget.width = width;
-      renderTarget.height = height;
-
-      this.reset( renderTarget );
-
-    }
-
-  };
-
-  // shared ortho camera
-
-  EffectComposer.camera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0, 1 );
-
-  EffectComposer.quad = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2 ), null );
-
-  EffectComposer.scene = new THREE.Scene();
-  EffectComposer.scene.add( EffectComposer.quad );
-
-  return EffectComposer
-};
-
-/***/ }),
-/* 17 */
+/* 28 */
 /***/ (function(module, exports) {
 
 /**
@@ -49402,7 +50354,7 @@ module.exports = function(THREE) {
 };
 
 /***/ }),
-/* 18 */
+/* 29 */
 /***/ (function(module, exports) {
 
 /**
@@ -49479,7 +50431,7 @@ module.exports = function(THREE) {
 
 
 /***/ }),
-/* 19 */
+/* 30 */
 /***/ (function(module, exports) {
 
 /**
@@ -49542,7 +50494,7 @@ module.exports = function(THREE) {
 
 
 /***/ }),
-/* 20 */
+/* 31 */
 /***/ (function(module, exports) {
 
 /**
@@ -49604,369 +50556,98 @@ module.exports = function(THREE, EffectComposer) {
 };
 
 /***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 32 */
+/***/ (function(module, exports) {
 
-"use strict";
-
-
-module.exports = function (THREE) {
-
-  /**
-   * @author mrdoob / http://mrdoob.com/
-   */
-  THREE.OBJLoader = function (manager) {
-
-    this.manager = manager !== undefined ? manager : THREE.DefaultLoadingManager;
-  };
-
-  THREE.OBJLoader.prototype = {
-
-    constructor: THREE.OBJLoader,
-
-    load: function load(url, onLoad, onProgress, onError) {
-
-      var scope = this;
-
-      var loader = new THREE.XHRLoader(scope.manager);
-      loader.load(url, function (text) {
-
-        onLoad(scope.parse(text));
-      }, onProgress, onError);
-    },
-
-    parse: function parse(text) {
-
-      console.time('OBJLoader');
-
-      var object,
-          objects = [];
-      var geometry, material;
-
-      function parseVertexIndex(value) {
-
-        var index = parseInt(value);
-
-        return (index >= 0 ? index - 1 : index + vertices.length / 3) * 3;
-      }
-
-      function parseNormalIndex(value) {
-
-        var index = parseInt(value);
-
-        return (index >= 0 ? index - 1 : index + normals.length / 3) * 3;
-      }
-
-      function parseUVIndex(value) {
-
-        var index = parseInt(value);
-
-        return (index >= 0 ? index - 1 : index + uvs.length / 2) * 2;
-      }
-
-      function addVertex(a, b, c) {
-
-        geometry.vertices.push(vertices[a], vertices[a + 1], vertices[a + 2], vertices[b], vertices[b + 1], vertices[b + 2], vertices[c], vertices[c + 1], vertices[c + 2]);
-      }
-
-      function addNormal(a, b, c) {
-
-        geometry.normals.push(normals[a], normals[a + 1], normals[a + 2], normals[b], normals[b + 1], normals[b + 2], normals[c], normals[c + 1], normals[c + 2]);
-      }
-
-      function addUV(a, b, c) {
-
-        geometry.uvs.push(uvs[a], uvs[a + 1], uvs[b], uvs[b + 1], uvs[c], uvs[c + 1]);
-      }
-
-      function addFace(a, b, c, d, ua, ub, uc, ud, na, nb, nc, nd) {
-
-        var ia = parseVertexIndex(a);
-        var ib = parseVertexIndex(b);
-        var ic = parseVertexIndex(c);
-        var id;
-
-        if (d === undefined) {
-
-          addVertex(ia, ib, ic);
-        } else {
-
-          id = parseVertexIndex(d);
-
-          addVertex(ia, ib, id);
-          addVertex(ib, ic, id);
-        }
-
-        if (ua !== undefined) {
-
-          ia = parseUVIndex(ua);
-          ib = parseUVIndex(ub);
-          ic = parseUVIndex(uc);
-
-          if (d === undefined) {
-
-            addUV(ia, ib, ic);
-          } else {
-
-            id = parseUVIndex(ud);
-
-            addUV(ia, ib, id);
-            addUV(ib, ic, id);
-          }
-        }
-
-        if (na !== undefined) {
-
-          ia = parseNormalIndex(na);
-          ib = parseNormalIndex(nb);
-          ic = parseNormalIndex(nc);
-
-          if (d === undefined) {
-
-            addNormal(ia, ib, ic);
-          } else {
-
-            id = parseNormalIndex(nd);
-
-            addNormal(ia, ib, id);
-            addNormal(ib, ic, id);
-          }
-        }
-      }
-
-      // create mesh if no objects in text
-
-      if (/^o /gm.test(text) === false) {
-
-        geometry = {
-          vertices: [],
-          normals: [],
-          uvs: []
-        };
-
-        material = {
-          name: ''
-        };
-
-        object = {
-          name: '',
-          geometry: geometry,
-          material: material
-        };
-
-        objects.push(object);
-      }
-
-      var vertices = [];
-      var normals = [];
-      var uvs = [];
-
-      // v float float float
-
-      var vertex_pattern = /v( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)/;
-
-      // vn float float float
-
-      var normal_pattern = /vn( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)/;
-
-      // vt float float
-
-      var uv_pattern = /vt( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)/;
-
-      // f vertex vertex vertex ...
-
-      var face_pattern1 = /f( +-?\d+)( +-?\d+)( +-?\d+)( +-?\d+)?/;
-
-      // f vertex/uv vertex/uv vertex/uv ...
-
-      var face_pattern2 = /f( +(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+))?/;
-
-      // f vertex/uv/normal vertex/uv/normal vertex/uv/normal ...
-
-      var face_pattern3 = /f( +(-?\d+)\/(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+)\/(-?\d+))?/;
-
-      // f vertex//normal vertex//normal vertex//normal ...
-
-      var face_pattern4 = /f( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))?/;
-
-      //
-
-      var lines = text.split('\n');
-
-      for (var i = 0; i < lines.length; i++) {
-
-        var line = lines[i];
-        line = line.trim();
-
-        var result;
-
-        if (line.length === 0 || line.charAt(0) === '#') {
-
-          continue;
-        } else if ((result = vertex_pattern.exec(line)) !== null) {
-
-          // ["v 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
-
-          vertices.push(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]));
-        } else if ((result = normal_pattern.exec(line)) !== null) {
-
-          // ["vn 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
-
-          normals.push(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]));
-        } else if ((result = uv_pattern.exec(line)) !== null) {
-
-          // ["vt 0.1 0.2", "0.1", "0.2"]
-
-          uvs.push(parseFloat(result[1]), parseFloat(result[2]));
-        } else if ((result = face_pattern1.exec(line)) !== null) {
-
-          // ["f 1 2 3", "1", "2", "3", undefined]
-
-          addFace(result[1], result[2], result[3], result[4]);
-        } else if ((result = face_pattern2.exec(line)) !== null) {
-
-          // ["f 1/1 2/2 3/3", " 1/1", "1", "1", " 2/2", "2", "2", " 3/3", "3", "3", undefined, undefined, undefined]
-
-          addFace(result[2], result[5], result[8], result[11], result[3], result[6], result[9], result[12]);
-        } else if ((result = face_pattern3.exec(line)) !== null) {
-
-          // ["f 1/1/1 2/2/2 3/3/3", " 1/1/1", "1", "1", "1", " 2/2/2", "2", "2", "2", " 3/3/3", "3", "3", "3", undefined, undefined, undefined, undefined]
-
-          addFace(result[2], result[6], result[10], result[14], result[3], result[7], result[11], result[15], result[4], result[8], result[12], result[16]);
-        } else if ((result = face_pattern4.exec(line)) !== null) {
-
-          // ["f 1//1 2//2 3//3", " 1//1", "1", "1", " 2//2", "2", "2", " 3//3", "3", "3", undefined, undefined, undefined]
-
-          addFace(result[2], result[5], result[8], result[11], undefined, undefined, undefined, undefined, result[3], result[6], result[9], result[12]);
-        } else if (/^o /.test(line)) {
-
-          geometry = {
-            vertices: [],
-            normals: [],
-            uvs: []
-          };
-
-          material = {
-            name: ''
-          };
-
-          object = {
-            name: line.substring(2).trim(),
-            geometry: geometry,
-            material: material
-          };
-
-          objects.push(object);
-        } else if (/^g /.test(line)) {
-
-          // group
-
-        } else if (/^usemtl /.test(line)) {
-
-            // material
-
-            material.name = line.substring(7).trim();
-          } else if (/^mtllib /.test(line)) {
-
-            // mtl file
-
-          } else if (/^s /.test(line)) {
-
-              // smooth shading
-
-            } else {
-
-                // console.log( "THREE.OBJLoader: Unhandled line " + line );
-
-              }
-      }
-
-      var container = new THREE.Object3D();
-      var l;
-
-      for (i = 0, l = objects.length; i < l; i++) {
-
-        object = objects[i];
-        geometry = object.geometry;
-
-        var buffergeometry = new THREE.BufferGeometry();
-
-        buffergeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.vertices), 3));
-
-        if (geometry.normals.length > 0) {
-
-          buffergeometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(geometry.normals), 3));
-        }
-
-        if (geometry.uvs.length > 0) {
-
-          buffergeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometry.uvs), 2));
-        }
-
-        material = new THREE.MeshLambertMaterial({
-          color: 0xff0000
-        });
-        material.name = object.material.name;
-
-        var mesh = new THREE.Mesh(buffergeometry, material);
-        mesh.name = object.name;
-
-        container.add(mesh);
-      }
-
-      console.timeEnd('OBJLoader');
-
-      return container;
-    }
-
-  };
-};
+module.exports = "uniform sampler2D tDiffuse;\nuniform float u_amount;\nuniform float sWidth;\nuniform float sHeight;\nvarying vec2 f_uv;\n\n\n// Get the pixel in uv coordinates using an offset from the current position\nvec2 getPixel(float x, float y) {\n\treturn f_uv + vec2(1.0/sWidth, 1.0/sHeight) * vec2(x, y);\n}\n\n// Retrieves the color from the texture\nvec4 getColor(vec2 pixel) {\n\tvec4 col = texture2D(tDiffuse, pixel);\n\treturn col;\n}\n\nvoid main() {\n\t// Get colors for each pixel\n\tvec4 a = getColor(getPixel(-1.0, -1.0));\n\tvec4 b = getColor(getPixel(0.0, -1.0));\n\tvec4 c = getColor(getPixel(1.0, -1.0));\n\tvec4 d = getColor(getPixel(-1.0, 0.0));\n\tvec4 e = getColor(getPixel(0.0, 0.0));\n\tvec4 f = getColor(getPixel(1.0, 0.0));\n\tvec4 g = getColor(getPixel(-1.0, 1.0));\n\tvec4 h = getColor(getPixel(0.0, 1.0));\n\tvec4 i = getColor(getPixel(1.0, 1.0));\n\n\t// Apply weighted average\n\tgl_FragColor = 0.1107* (a + c + g + i) + 0.1113* (b + d + h + f) + 0.1119 * e;\n}   "
 
 /***/ }),
-/* 22 */
+/* 33 */
 /***/ (function(module, exports) {
 
 module.exports = "\nuniform sampler2D tDiffuse;\nuniform float u_amount;\nvarying vec2 f_uv;\n\n// tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to\n\nvoid main() {\n    vec4 col = texture2D(tDiffuse, f_uv);\n    float gray = dot(col.rgb, vec3(0.299, 0.587, 0.114));\n\n    col.rgb = vec3(gray, gray, gray) * (u_amount) + col.rgb * (1.0 - u_amount);\n\n    gl_FragColor = col;\n}   "
 
 /***/ }),
-/* 23 */
+/* 34 */
+/***/ (function(module, exports) {
+
+module.exports = "\nuniform sampler2D tDiffuse;\nuniform float u_amount;\nvarying vec2 f_uv;\n\n// tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to\nvoid main() {\n    vec4 col = texture2D(tDiffuse, f_uv);\n    col = vec4(1.0 - col.x, 1.0 - col.y, 1.0 - col.z, 1.0 - u_amount);\n    gl_FragColor = col;\n}   "
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports) {
+
+module.exports = "\nuniform sampler2D texture;\nuniform int u_useTexture;\nuniform vec3 u_albedo;\nuniform vec3 u_ambient;\nuniform vec3 u_lightPos;\nuniform vec3 u_lightCol;\nuniform float u_lightIntensity;\nuniform vec3 u_camPos;\n\nvarying vec3 f_position;\nvarying vec3 f_normal;\nvarying vec2 f_uv;\nvarying float noise;\n\n\nvoid main() {\n    vec4 color = vec4(u_albedo, 1.0);\n    float d = clamp(dot(f_normal, normalize(u_camPos - f_position)), 0.0, 1.0);\n\n    // Read from texture using relation to the view vector and a little bit of noise\n    if (u_useTexture == 1) {\n        color = texture2D(texture, vec2(f_uv.x - d*float(noise), f_uv.y - d*float(noise)));\n    }\n\n    gl_FragColor = vec4(d * color.rgb * u_lightCol * u_lightIntensity + u_ambient, 1.0);\n}"
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports) {
+
+module.exports = "\nvarying vec2 f_uv;\nvarying vec3 f_normal;\nvarying vec3 f_position;\nvarying float noise;\n\nfloat random(float a, float b, float c) {\n    return fract(sin(dot(vec3(a, b, c), vec3(12.9898, 78.233, 78.233)))*43758.5453);\n}\n\nfloat lerp(float a, float b, float t) {\n    return a * (1.0 - t) + b * t;\n}\n\nvec4 lerp(vec4 a, vec4 b, float t) {\n    return a * (1.0 - t) + b * t;\n}\n\nfloat cerp(float a, float b, float t) {\n    float cos_t = (1.0 - cos(t*3.14159)) * 0.5;\n    return lerp(a, b, cos_t);\n}\n\nfloat interpolateNoise(float x, float y, float z) {\n    float x0, y0, z0, x1, y1, z1;\n    \n    // Find the grid voxel that this point falls in\n    x0 = floor(x);\n    y0 = floor(y);\n    z0 = floor(z);\n    \n    x1 = x0 + 1.0;\n    y1 = y0 + 1.0;\n    z1 = z0 + 1.0;\n    \n    // Generate noise at each of the 8 points\n    float FUL, FUR, FLL, FLR, BUL, BUR, BLL, BLR;\n    \n    // front upper left\n    FUL = random(x0, y1, z1);\n    \n    // front upper right\n    FUR = random(x1, y1, z1);\n    \n    // front lower left\n    FLL = random(x0, y0, z1);\n    \n    // front lower right\n    FLR = random(x1, y0, z1);\n    \n    // back upper left\n    BUL = random(x0, y1, z0);\n    \n    // back upper right\n    BUR = random(x1, y1, z0);\n    \n    // back lower left\n    BLL = random(x0, y0, z0);\n    \n    // back lower right\n    BLR = random(x1, y0, z0);\n    \n    // Find the interpolate t values\n    float n0, n1, m0, m1, v;\n    float tx = fract(x - x0);\n    float ty = fract(y - y0);\n    float tz = fract(z - z0);\n    tx = (x - x0);\n    ty = (y - y0);\n    tz = (z - z0);\n    \n    // interpolate along x and y for back\n    n0 = cerp(BLL, BLR, tx);\n    n1 = cerp(BUL, BUR, tx);\n    m0 = cerp(n0, n1, ty);\n    \n    // interpolate along x and y for front\n    n0 = cerp(FLL, FLR, tx);\n    n1 = cerp(FUL, FUR, tx);\n    m1 = cerp(n0, n1, ty);\n    \n    // interpolate along z\n    v = cerp(m0, m1, tz);\n    \n    return v;\n}\n\nfloat generateNoise(float x, float y, float z) {\n    float total = 0.0;\n    float persistence = 1.0 / 2.0;\n    int its = 0;\n    for (int i = 0; i < 32; i++) {\n        float freq = pow(2.0, float(i));\n        float ampl = pow(persistence, float(i));\n        total += interpolateNoise(freq*x, freq*y, freq*z)*ampl;\n    }\n    return total;\n}\n\nvoid main() {\n    // Pass noise to the fragment shader\n\tnoise =  generateNoise(position.x, position.y, position.z);\n    f_uv = uv;\n    f_normal = normal;\n    f_position = position;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n}"
+
+/***/ }),
+/* 37 */
 /***/ (function(module, exports) {
 
 module.exports = "\nuniform sampler2D texture;\nuniform int u_useTexture;\nuniform vec3 u_albedo;\nuniform vec3 u_ambient;\nuniform vec3 u_lightPos;\nuniform vec3 u_lightCol;\nuniform float u_lightIntensity;\n\nvarying vec3 f_position;\nvarying vec3 f_normal;\nvarying vec2 f_uv;\n\nvoid main() {\n    vec4 color = vec4(u_albedo, 1.0);\n    \n    if (u_useTexture == 1) {\n        color = texture2D(texture, f_uv);\n    }\n\n    float d = clamp(dot(f_normal, normalize(u_lightPos - f_position)), 0.0, 1.0);\n\n    gl_FragColor = vec4(d * color.rgb * u_lightCol * u_lightIntensity + u_ambient, 1.0);\n}"
 
 /***/ }),
-/* 24 */
+/* 38 */
 /***/ (function(module, exports) {
 
 module.exports = "\nvarying vec2 f_uv;\nvarying vec3 f_normal;\nvarying vec3 f_position;\n\n// uv, position, projectionMatrix, modelViewMatrix, normal\nvoid main() {\n    f_uv = uv;\n    f_normal = normal;\n    f_position = position;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n}"
 
 /***/ }),
-/* 25 */
+/* 39 */
 /***/ (function(module, exports) {
 
-module.exports = "\n// we use this vertex shader for the post process steps. All we do is copy the uv value and set position appropriately\n\nvarying vec2 f_uv;\nvoid main() {\n    f_uv = uv;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n}"
+module.exports = "uniform sampler2D tDiffuse;\nuniform float u_amount;\nvarying vec2 f_uv;\n\n// tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to\nfloat random(float a, float b, float c) {\n    return fract(sin(dot(vec3(a, b, c), vec3(12.9898, 78.233, 78.233)))*43758.5453);\n}\n\nvoid main() {\n    // Retrieve color and transform to gray scale\n    vec4 col = texture2D(tDiffuse, f_uv);\n    float gray = dot(col.rgb, vec3(0.299, 0.587, 0.114));\n    col.rgb = vec3(gray, gray, gray) * (u_amount) + col.rgb * (1.0 - u_amount);\n\n    // Scale probability with of darkness\n    float prob = random(f_uv.x, f_uv.y, 1.0)*(1.0 - col.r*col.b*col.g) / 4.0; \n\n    // Compare probability to darkness and shade black if dark enough, white otherwise\n    if (prob > col.r*col.b*col.g) {\n    \tgl_FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n    }\n    else {\n    \tgl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n    }\n       \n}   "
 
 /***/ }),
-/* 26 */
+/* 40 */
+/***/ (function(module, exports) {
+
+module.exports = "\nuniform sampler2D tDiffuse;\nuniform float u_amount;\nuniform float sWidth;\nuniform float sHeight;\nvarying vec2 f_uv;\n\n\nvec2 getPixel(float x, float y) {\n\treturn f_uv + vec2(1.0/sWidth, 1.0/sHeight) * vec2(x, y);\n}\n\nvec4 getGreyscaleColor(vec2 pixel) {\n\tvec4 col = texture2D(tDiffuse, pixel);\n\tfloat gray = dot(col.rgb, vec3(0.299, 0.587, 0.114));\n\tcol.rgb = vec3(gray, gray, gray) * (u_amount) + col.rgb * (1.0 - u_amount);\n\treturn col;\n}\n\nvoid main() {\n\t// Gets greyscale pixel from neighboring pixels\n\tvec4 a = getGreyscaleColor(getPixel(-1.0, -1.0));\n\tvec4 b = getGreyscaleColor(getPixel(0.0, -1.0));\n\tvec4 c = getGreyscaleColor(getPixel(1.0, -1.0));\n\tvec4 d = getGreyscaleColor(getPixel(-1.0, 0.0));\n\tvec4 e = getGreyscaleColor(getPixel(0.0, 0.0));\n\tvec4 f = getGreyscaleColor(getPixel(1.0, 0.0));\n\tvec4 g = getGreyscaleColor(getPixel(-1.0, 1.0));\n\tvec4 h = getGreyscaleColor(getPixel(0.0, 1.0));\n\tvec4 i = getGreyscaleColor(getPixel(1.0, 1.0));\n\n\tfloat r = sqrt(pow(-a.r - 2.0*d.r - g.r + c.r + 2.0*f.r + i.r, 2.0) \n\t\t+ pow(a.r + 2.0*b.r + c.r - g.r -2.0*h.r - i.r, 2.0));\n\tfloat gc = sqrt(pow(-a.g - 2.0*d.g - g.g + c.g + 2.0*f.g + i.g, 2.0) \n\t\t+ pow(a.g + 2.0*b.g + c.g - g.g -2.0*h.g - i.g, 2.0));\n\tfloat bc = sqrt(pow(-a.b - 2.0*d.b - g.b + c.b + 2.0*f.b + i.b, 2.0) \n\t\t+ pow(a.b + 2.0*b.b + c.b - g.b -2.0*h.b - i.b, 2.0));\n    gl_FragColor = vec4(r, gc, bc, 1.0);\n}   "
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports) {
+
+module.exports = "\nuniform sampler2D texture;\nuniform int u_useTexture;\nuniform vec3 u_albedo;\nuniform vec3 u_ambient;\nuniform vec3 u_lightPos;\nuniform vec3 u_lightCol;\nuniform float u_lightIntensity;\nuniform vec3 u_camPos;\nuniform vec3 u_camDir;\nvarying vec3 f_position;\nvarying vec3 f_normal;\nvarying vec2 f_uv;\n\nvoid main() {\n    vec4 color = vec4(u_albedo, 1.0);\n    \n    if (u_useTexture == 1) {\n        color = texture2D(texture, f_uv);\n    }\n\n    float d = clamp(dot(f_normal, normalize(u_lightPos - f_position)), 0.0, 1.0);\n    vec3 finalColor = d * color.rgb * u_lightCol * u_lightIntensity + u_ambient;\n   \tfinalColor.x = floor(finalColor.x*3.0)/3.0;\n   \tfinalColor.y = floor(finalColor.y*3.0)/3.0;\n   \tfinalColor.z = floor(finalColor.z*3.0)/3.0;\n   \tvec3 view_vec = -normalize(u_camPos - f_position);\n   \tif (abs(dot(f_normal, view_vec)) <=  0.4) {\n   \t\tfinalColor = vec3(0.0, 0.0, 0.0);\n   \t}\n    gl_FragColor = vec4(finalColor, 1.0);\n}"
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports) {
+
+module.exports = "\nvarying vec2 f_uv;\nvarying vec3 f_normal;\nvarying vec3 f_position;\n\n// uv, position, projectionMatrix, modelViewMatrix, normal\nvoid main() {\n    f_uv = uv;\n    f_normal = normal;\n    f_position = position;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n}"
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports) {
+
+module.exports = "\nuniform sampler2D tDiffuse;\nuniform float u_amount;\nuniform float sWidth;\nuniform float sHeight;\nuniform vec3 u_color;\nvarying vec2 f_uv;\n\n\nvec2 getPixel(float x, float y) {\n\treturn f_uv + vec2(1.0/sWidth, 1.0/sHeight) * vec2(x, y);\n}\nfloat getDistance(vec2 pixel) {\n\treturn sqrt(pow(pixel.x - 0.5, 2.0) + pow(pixel.y - 0.5, 2.0));\n}\nvec4 getColor() {\n\tvec4 col = texture2D(tDiffuse, f_uv);\n\treturn col;\n}\nvec4 lerp(vec4 c1, vec4 c2, float t) {\n\treturn (1.0 - t)*c1 + t*c2;\n}\n// tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to\nvoid main() {\n    gl_FragColor = lerp(getColor(), u_amount*vec4(u_color, 1), clamp(getDistance(getPixel(0.0, 0.0)), 0.0, 1.0));\n\n}   "
+
+/***/ }),
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _statsJs = __webpack_require__(4);
+var _statsJs = __webpack_require__(8);
 
 var _statsJs2 = _interopRequireDefault(_statsJs);
 
-var _mario = __webpack_require__(1);
+var _mario = __webpack_require__(3);
 
-var _setup = __webpack_require__(2);
+var _setup = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-__webpack_require__(3);
+__webpack_require__(7);
 
 var THREE = __webpack_require__(0);
-var OrbitControls = __webpack_require__(5)(THREE);
+var OrbitControls = __webpack_require__(9)(THREE);
 
 window.addEventListener('load', function () {
     var stats = new _statsJs2.default();
