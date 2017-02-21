@@ -2,7 +2,8 @@ const THREE = require('three');
 const EffectComposer = require('three-effectcomposer')(THREE)
 
 var options = {
-    iterations: 10,
+    iterationsX: 10,
+    iterationsY: 10,
     threshold: 1,
     pixels: 1
 }
@@ -88,8 +89,11 @@ function draw(renderer, scene, camera) {
     composer.addPass(renderpass);
     // then take the rendered result and apply the GrayscaleShader
     composer.addPass(HighPassShader);
-    for (var i = 0; i < options.iterations; i ++) {
+    for (var i = 0; i < options.iterationsX; i ++) {
         composer.addPass(GaussianXShader);
+    }
+
+    for (var i = 0; i < options.iterationsY; i ++) {
         composer.addPass(GaussianYShader);
     }
 
@@ -109,7 +113,10 @@ export default function Bloom(renderer, scene, camera) {
 
     return {
         initGUI: function(gui) {
-            gui.add(options, 'iterations', 1,30).step(1).onChange(function(val) {
+            gui.add(options, 'iterationsX', 1,30).step(1).onChange(function(val) {
+                draw(renderer,scene,camera);
+            });
+            gui.add(options, 'iterationsY', 1,30).step(1).onChange(function(val) {
                 draw(renderer,scene,camera);
             });
             gui.add(options, 'threshold', 0,3).onChange(function(val) {

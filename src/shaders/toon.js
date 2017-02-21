@@ -8,7 +8,8 @@ var options = {
     lightIntensity: 2,
     albedo: '#dddddd',
     ambient: '#111111',
-    useTexture: true
+    useTexture: true,
+    buckets: 3
 }
 
 export default function(renderer, scene, camera) {
@@ -29,6 +30,9 @@ export default function(renderer, scene, camera) {
             });
             gui.add(options, 'useTexture').onChange(function(val) {
                 Shader.material.uniforms.u_useTexture.value = val;
+            });
+            gui.add(options, 'buckets',1,20).step(1).onChange(function(val) {
+                Shader.material.uniforms.buckets.value = val;
             });
         },
         
@@ -61,6 +65,10 @@ export default function(renderer, scene, camera) {
                 u_lightIntensity: {
                     type: 'f',
                     value: options.lightIntensity
+                }, 
+                buckets: {
+                    type: 'f',
+                    value: options.buckets
                 }
             },
             vertexShader: require('../glsl/toon-vert.glsl'),

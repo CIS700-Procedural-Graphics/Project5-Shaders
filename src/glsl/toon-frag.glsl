@@ -6,6 +6,7 @@ uniform vec3 u_ambient;
 uniform vec3 u_lightPos;
 uniform vec3 u_lightCol;
 uniform float u_lightIntensity;
+uniform float buckets;
 
 varying vec3 f_position;
 varying vec3 f_normal;
@@ -23,7 +24,7 @@ void main() {
     float edge = dot(f_normal, normalize(e_position- f_position));
     vec3 final = vec3(0.0);
     if (edge > 0.5) {
-        float d = floor (5.0 * d) / 5.0;
+        float d = floor (buckets * d) / buckets;
     	final = d * color.rgb * u_lightCol * u_lightIntensity + u_ambient;
     }
     gl_FragColor = vec4(final.rgb, 1.0);
