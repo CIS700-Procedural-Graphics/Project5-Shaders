@@ -1,81 +1,134 @@
-require('file-loader?name=[name].[ext]!../index.html');
-
 const THREE = require('three');
-const OrbitControls = require('three-orbit-controls')(THREE)
+const Random = require("random-js");
 
-import Stats from 'stats-js'
-import {objLoaded} from './mario'
-import {setupGUI} from './setup'
+import Framework from './framework'
+import * as Building from './building.js'
+import * as Rubik from './rubik.js'
+import * as City from './city.js'
 
-window.addEventListener('load', function() {
-    var stats = new Stats();
-    stats.setMode(1);
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.left = '0px';
-    stats.domElement.style.top = '0px';
-    document.body.appendChild(stats.domElement);
+var UserSettings = 
+{
+  iterations : 5
+}
 
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-    var renderer = new THREE.WebGLRenderer( { antialias: true } );
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x999999, 1.0);
+var Engine = 
+{
+  initialized : false,
+  time : 0.0,
+  deltaTime : 0.0,
+  clock : null,
 
-    var controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.enableZoom = true;
-    controls.rotateSpeed = 0.3;
-    controls.zoomSpeed = 1.0;
-    controls.panSpeed = 2.0;
+  music : null,
 
-    document.body.appendChild(renderer.domElement);
+  loadingBlocker : null,
+  materials : [],
 
-    window.addEventListener('resize', function() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-    
-    var mesh, shader, post;
-    // this gets called when we set the shader
-    function shaderSet(Shader, gui) {
-        // create the shader and initialize its gui
-        shader = new Shader(renderer, scene, camera);
-        shader.initGUI(gui);
+  rubik : null,
+  rubikTime : 0,
+}
 
-        // recreate the mesh with a new material
-        if (mesh) scene.remove(mesh);
-        objLoaded.then(function(geo) {
-            mesh = new THREE.Mesh(geo, shader.material);
-            scene.add(mesh);
-        });
-    }
+function onLoad(framework) 
+{
+  var scene = framework.scene;
+  var camera = framework.camera;
+  var renderer = framework.renderer;
+  var gui = framework.gui;
+  var stats = framework.stats;
 
-    // this gets called when we set the postprocess shader
-    function postProcessSet(Post, gui) {
-        // create the shader and initialize its gui
-        post = new Post(renderer, scene, camera);
-        post.initGUI(gui);
-    }
+  renderer.setClearColor(new THREE.Color(.4, .75, .95), 1);
 
-    setupGUI(shaderSet, postProcessSet);
+  // initialize a simple box and material
+  var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+  directionalLight.color = new THREE.Color(.9, .9, 1 );
+  directionalLight.position.set(-10, 10, 10);
+  scene.add(directionalLight);
 
-    objLoaded.then(function(geo) {
-        // point the camera to Mario on load
-        camera.position.set(5, 10, 15);
-        const center = geo.boundingSphere.center;
-        camera.lookAt(center);
-        controls.target.set(center.x, center.y, center.z);
-    });
+  // initialize a simple box and material
+  var directionalLight2 = new THREE.DirectionalLight( 0xffffff, 1 );
+  directionalLight2.color = new THREE.Color(.4, .4, .7);
+  directionalLight2.position.set(-1, -3, 2);
+  directionalLight2.position.multiplyScalar(10);
+  scene.add(directionalLight2);
 
-    (function tick() {
-        controls.update();
-        stats.begin();
-        if (shader && shader.update) shader.update();   // perform any necessary updates
-        if (post && post.update) post.update();         // perform any necessary updates
-        if (post) post.render();                        // render the scene
-        stats.end();
-        requestAnimationFrame(tick);
-    })();
-});
+  // set camera position
+  camera.position.set(40, 40, 40);
+  camera.lookAt(new THREE.Vector3(0,0,0));
+  camera.fov = 5;
+  camera.updateProjectionMatrix();
+
+  var profile = new Building.Profile();
+  profile.addPoint(1.0, 0.0);
+  profile.addPoint(1.0, 1.0);
+
+  profile.addPoint(.9, 1.0);
+  profile.addPoint(.9, 1.1);
+  profile.addPoint(.8, 1.1);
+  profile.addPoint(.8, 1.0);
+
+  profile.addPoint(0.7, 1.0);
+  profile.addPoint(0.6, 2.0);
+  profile.addPoint(0.0, 2.0);
+
+  var lot = new Building.BuildingLot();
+  var subdivs = 25;
+  for(var i = 0; i < subdivs; i++)
+  {
+    var a = i * Math.PI * 2 / subdivs;
+    var r = 1.0 - Math.pow(Math.sin(a * 10) * .5 + .5, 5.0) * .5 + 1.0 ;
+    lot.addPoint(Math.cos(a) * r, Math.sin(a) * r);
+  }
+
+  // var shape = new Building.MassShape(lot, profile);
+  // var mesh = shape.generateMesh();
+  // scene.add(mesh);
+
+  // var rule = new Building.Rule();
+  // rule.componentWise = true;
+  // rule.evaluate(shape, scene);
+
+  Engine.rubik = new Rubik.Rubik();
+  var rubikMesh = Engine.rubik.build();
+  scene.add(rubikMesh);
+
+  // Init Engine stuff
+  Engine.scene = scene;
+  Engine.renderer = renderer;
+  Engine.clock = new THREE.Clock();
+  Engine.camera = camera;
+  Engine.initialized = true;
+
+  var random = new Random(Random.engines.mt19937().seed(2545));
+
+  var speed = .45;
+
+  var city = new City.Generator();
+  var cityBlocks = city.build(scene);
+
+  Engine.rubik.attachShapesToFace(cityBlocks);
+
+  var callback = function() {
+    Engine.rubik.animate(random.integer(0, 2), random.integer(0, 2), speed, callback);
+    // Engine.rubik.animate(1,0, speed, callback);
+  };
+
+  Engine.rubik.animate(0, 0, speed, callback);
+}
+
+// called on frame updates
+function onUpdate(framework) 
+{
+  if(Engine.initialized)
+  {
+    var screenSize = new THREE.Vector2( framework.renderer.getSize().width, framework.renderer.getSize().height );
+    var deltaTime = Engine.clock.getDelta();
+
+    Engine.time += deltaTime;
+    Engine.cameraTime += deltaTime;
+    Engine.deltaTime = deltaTime;
+
+    Engine.rubik.update(deltaTime);
+  }
+}
+
+// when the scene is done initializing, it will call onLoad, then on frame updates, call onUpdate
+Framework.init(onLoad, onUpdate);
