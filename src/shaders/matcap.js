@@ -13,7 +13,7 @@ maps.push(THREE.ImageUtils.loadTexture('../spheremat2.png'));
 maps.push(THREE.ImageUtils.loadTexture('../spheremat3.png'));
 maps.push(THREE.ImageUtils.loadTexture('../spheremat4.png'));
 maps.push(THREE.ImageUtils.loadTexture('../spheremat5.png'));
-maps.push(THREE.ImageUtils.loadTexture('../worsttextureever.png'));
+maps.push(THREE.ImageUtils.loadTexture('../besttextureever.png'));
 var audioLoader = new THREE.AudioLoader();
 var listener = new THREE.AudioListener();
 var sound = new THREE.Audio(listener);
