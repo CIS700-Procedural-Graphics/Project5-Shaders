@@ -10,7 +10,7 @@ void main() {
     float step = 0.005 * (u_rand[3] - 0.5);
 
     // RGB Glitch
-    if (u_rand[0] < 0.4) {
+    if (u_rand[0] < 0.8 * u_amount) {
       vec4 r_shift_col = texture2D(tDiffuse, f_uv + vec2(step, step));
       vec4 g_shift_col = texture2D(tDiffuse, f_uv + vec2(-step, step));
       vec4 b_shift_col = texture2D(tDiffuse, f_uv + vec2(step, -step));
@@ -18,7 +18,7 @@ void main() {
     }
 
     // Gray Glitch
-    if (u_rand[1] < 0.2) {
+    if (u_rand[1] < 0.4 * u_amount) {
       vec2 shift1 = vec2(0.2 * (u_rand[1] - 0.5), 0.0);
       vec4 shift_col1 = texture2D(tDiffuse, f_uv + shift1);
       vec2 shift2 = vec2(0.2 * (u_rand[2] - 0.5), 0.0);

@@ -2,7 +2,7 @@ const THREE = require('three');
 const EffectComposer = require('three-effectcomposer')(THREE)
 
 var options = {
-    amount: 1
+    amount: 0.7
 }
 
 var GlitchShader = new EffectComposer.ShaderPass({
