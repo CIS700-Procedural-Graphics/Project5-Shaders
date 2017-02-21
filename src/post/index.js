@@ -15,4 +15,7 @@ export function None(renderer, scene, camera) {
 }
 
 // follow this syntax to make your shaders available to the GUI
+export {default as Bloom} from './bloom'
 export {default as Grayscale} from './grayscale'
+export {default as Contrast} from './contrast'
+export {default as Vignette} from './vignette'
