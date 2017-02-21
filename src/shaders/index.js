@@ -5,3 +5,4 @@ export {default as Lambert} from './lambert'
 
 export {default as Toon} from './toon'
 export {default as Lit} from './lit'
+// export {default as Iridescent} from './iridescent'

@@ -29,3 +29,6 @@ For each pixel, we band intensities but this time we keep track of the sum of th
 
 ### Dithering
 Since the traditional serial Dithering algorithms aren't parallelizable in glsl, we resort to using other approximation methods. In particular, we perform Ordered Dithering using a generated Bayer matrix to "push" error around. We add the error to the pixel and round to either 1 or 0 (full color or none at all). The end result is pretty neat.
+
+### Pointilism
+Really simple algorithm that goes as follows: take the intensity/luminosity of pixel, generate a random float, if the intensity/luminosity exceeds that random value, we make the pixel white, otherwise black.
