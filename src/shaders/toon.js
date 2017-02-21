@@ -8,7 +8,7 @@ var options = {
     albedo: '#dddddd',
     ambient: '#111111',
     useTexture: true,
-    numberOfShades: 2
+    numberOfShades: 4
 }
 
 export default function(renderer, scene, camera) {
