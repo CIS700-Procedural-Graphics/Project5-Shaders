@@ -72,6 +72,10 @@ export default function(renderer, scene, camera) {
                     type: 't',
                     value: THREE.ImageUtils.loadTexture('../ramp.png')
                 },
+                noise: {
+                    type: 't',
+                    value: THREE.ImageUtils.loadTexture('../perlin.png')
+                },
                 u_useTexture: {
                     type: 'i',
                     value: options.useTexture

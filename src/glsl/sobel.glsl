@@ -22,5 +22,5 @@ void main() {
     vec4 gy = ul + 2.0 * um + ur - bl - 2.0 * bm - br;
     vec4 g = sqrt(gx * gx + gy * gy);
 
-    gl_FragColor = g;
+    gl_FragColor = vec4(g.xyz, 1.0);
 }   

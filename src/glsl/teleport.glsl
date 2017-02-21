@@ -2,6 +2,7 @@
 uniform sampler2D texture;
 uniform sampler2D disintegrate;
 uniform sampler2D ramp;
+uniform sampler2D noise;
 
 uniform int u_useTexture;
 uniform vec3 u_albedo;
@@ -31,12 +32,21 @@ void main() {
     float y = 0.5 * (topEdge - botEdge) * (sin(time)) + 0.5 * (topEdge + botEdge);
     float top = y + u_edgeWidth;
     float bot = y - u_edgeWidth;
+
+
+
+    float theta = (atan(f_position.x, f_position.y) + 1.0) / 3.14159;
+
+    // reread the ramp with a noise value
+    vec2 wsuv = vec2(mod((theta), 1.0), mod(0.05 * f_position.y, 1.0));
+    top -= 0.5 * u_edgeWidth * texture2D(noise, vec2(mod((theta), 1.0), mod(0.025 * top, 1.0))).x;
+    bot -= 0.5 * u_edgeWidth * texture2D(noise, vec2(mod((theta), 1.0), mod(0.025 * bot, 1.0))).x;
+    y = 0.5 * (top + bot);
     float t = clamp((f_position.y - bot) / (top - bot), 0.0, 1.0);
 
+
     // modify ramp with tex noise shape
-    float wsd = sqrt(f_position.x * f_position.x + f_position.z * f_position.z);
-    vec2 wsuv = vec2(mod((f_position.x + f_position.z) * 0.025, 1.0), mod(0.05 * f_position.y, 1.0));
-    float dis = clamp(texture2D(disintegrate, wsuv).x, 0.0, 1.0);
+    float dis = texture2D(disintegrate, wsuv).x;
 
     // modulate tex by ramp: add if above .5, sub otherwise
     t = clamp(2.0 * t + dis - 1.0, 0.0, 1.0);

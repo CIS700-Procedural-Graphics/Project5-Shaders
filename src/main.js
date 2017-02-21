@@ -43,6 +43,7 @@ window.addEventListener('load', function() {
         // create the shader and initialize its gui
         shader = new Shader(renderer, scene, camera);
         shader.initGUI(gui);
+        renderer.setClearColor(0x999999, 1.0);
 
         // recreate the mesh with a new material
         if (mesh) scene.remove(mesh);
