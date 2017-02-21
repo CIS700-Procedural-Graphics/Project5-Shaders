@@ -33,15 +33,10 @@ float cosineInterp(float x, float y, float z)
 float randomNoise(float x, float y)
 {
     vec2 a = vec2(x, y);
-    //vec2 b = vec3(12.9898, 78.233, 140.394);
     vec2 b = vec2(12.9898, 78.233);
 
     float dot_prod = dot(a, b);
     float val = sin(dot_prod) * 43758.5453;
-
-    //this is essentially fract
-    // float int_val = floor(val);
-    // return (val - int_val) * 2.0 - 1.0;
     return fract(val);
 }
 
@@ -65,10 +60,8 @@ float interpolatedNoise(float x, float y)
 
     float v1 = smoothedNoise(floored_x, floored_y);
     float v2 = smoothedNoise(floored_x + 1.0, floored_y);
-
     float v3 = smoothedNoise(floored_x, floored_y + 1.0);
     float v4 = smoothedNoise(floored_x + 1.0, floored_y + 1.0);
-
 
     float interp_1 = cosineInterp(v1, v2, difference_x);
     float interp_2 = cosineInterp(v3, v4, difference_x);
@@ -98,7 +91,6 @@ float perlinNoise(float x, float y)
           i++;
         }
     }
-
     return noise_total;
 }
 

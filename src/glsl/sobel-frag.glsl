@@ -4,12 +4,6 @@ varying vec2 f_uv;
 
 // tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to
 
-
-//resources:
-//https://en.wikipedia.org/wiki/Sobel_operator
-//https://en.wikipedia.org/wiki/Kernel_(image_processing)#Convolution
-//https://blog.saush.com/2011/04/20/edge-detection-with-the-sobel-operator-in-ruby/
-
 uniform vec2 resolution;
 
 //column based
@@ -19,7 +13,7 @@ mat3 sobel_y = mat3(vec3(-1.0, 0.0, 1.0), vec3(-2.0, 0.0, 2.0), vec3(-1.0, 0.0, 
 
 void main() {
     vec4 col = texture2D(tDiffuse, f_uv);
-    
+
     vec4 _result = vec4(0.0);
     float offset = 0.001;
 

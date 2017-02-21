@@ -23,15 +23,6 @@ float randomNoise(float x, float y)
     return fract(val);
 }
 
-float rand(vec2 co){
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-}
-
-int randomInt(int maxIndex, vec2 seed) {
-	return int(floor(rand(seed) * float(maxIndex)));
-}
-
-
 void main() {
     vec4 col = texture2D(tDiffuse, f_uv);
 
@@ -39,35 +30,41 @@ void main() {
     // float rand_result = randomNoise(f_uv[0], f_uv[1]);
     // gl_FragColor = vec4( vec3(rand_result, rand_result, rand_result) , 1.0  );
 
-    const float CELL_SIZE = 150.0;
-    const float SUBCELL_SIZE = CELL_SIZE * 3.0;
+    const float sizepercell = 150.0;
+    const float sizepersubcell = sizepercell * 5.0;
 
-    vec2 xy = (gl_FragCoord.xy / resolution.xy) / 2.0;
+    //scale the image properly. similar to vignette
+    vec2 scaled_xy = (gl_FragCoord.xy / resolution.xy) / 2.0;
 
-    vec2 randomSeedForCell    = floor(xy * CELL_SIZE) / CELL_SIZE;
-    vec2 randomSeedForSubcell = floor(xy * SUBCELL_SIZE) / SUBCELL_SIZE;
-    float colorPickOffset = float(randomInt(10, randomSeedForCell)) * 0.1;
+    //break down texture into cell size offsets
+    vec2 scaledCell    = floor(f_uv * sizepercell) / sizepercell;
+    vec2 scaledsubcell = floor(f_uv * sizepersubcell) / sizepersubcell;
 
-    vec4 textureColor = texture2D(tDiffuse, (floor(xy * CELL_SIZE) + colorPickOffset) / CELL_SIZE );
+    float noiseoffsetCell = randomNoise(scaledCell.x, scaledCell.y);
+    float noiseoffsetSubCell = randomNoise(scaledsubcell.x, scaledsubcell.y);
+    float colorOffset = (1.0 - (noiseoffsetSubCell * noiseoffsetSubCell * noiseoffsetSubCell));
 
-    float colorOffsetBase = rand(randomSeedForSubcell);
-
-    float colorOffset = (1.0 - (colorOffsetBase * colorOffsetBase * colorOffsetBase));
-
+    //recalculate the color with new scaled pixel offsets
+    vec4 textureColor = texture2D(tDiffuse, (floor(scaled_xy * sizepercell) + noiseoffsetCell) / sizepercell );
     gl_FragColor = textureColor;
-    if( rand(randomSeedForSubcell) < (1.0 / 3.0) ) {
+
+    //offset color based on some random criteria
+    //set
+    if( noiseoffsetSubCell < (1.0 / 3.0) )
+    {
         gl_FragColor.r = gl_FragColor.r * colorOffset;
         gl_FragColor.g = gl_FragColor.g * (1.0 / colorOffset);
-    } else if(rand(randomSeedForCell) < (2.0 / 3.0)) {
+    }
+    else if(noiseoffsetSubCell < (2.0 / 3.0))
+    {
         gl_FragColor.g = gl_FragColor.g * colorOffset;
         gl_FragColor.b = gl_FragColor.b * (1.0 / colorOffset);
-    } else {
+    }
+    else
+    {
         gl_FragColor.b = gl_FragColor.b * colorOffset;
         gl_FragColor.r = gl_FragColor.r * (1.0 / colorOffset);
     }
 
-
-    //output final frag color here
-    //gl_FragColor = vec4(  col.rgb , 1.0  );
 
 }//end main

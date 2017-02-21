@@ -6,7 +6,6 @@ varying vec2 f_uv;
 // tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to
 
 
-//resource: https://github.com/mattdesl/lwjgl-basics/wiki/ShaderLesson3
 uniform vec2 resolution;
 const float radius = 1.25;
 const float softness = 0.5;
