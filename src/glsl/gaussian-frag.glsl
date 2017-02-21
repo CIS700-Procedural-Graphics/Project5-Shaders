@@ -21,7 +21,7 @@ varying vec3 f_position;
 
 void main() {
 
-     vec4 col = texture2D(tDiffuse, f_uv);
+    vec4 col = texture2D(tDiffuse, f_uv);
     float blur = u_radius / (u_width * u_height);
 	vec4 sum = vec4(0.0); // Sum of the color
 
