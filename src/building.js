@@ -356,7 +356,7 @@ class MassShape
 				var v2 = offset + ((v + 1) % boundaryVertexCount);
 				var v3 = geometry.vertices.length - 1;
 
-				var face = new THREE.Face3(v1, v2, v3);
+				var face = new THREE.Face3(v3, v2, v1);
 				face.vertexColors = [buildingBaseColor, buildingBaseColor, buildingBaseColor];
 
 				geometry.faces.push(face);

@@ -56,6 +56,7 @@ function loadMusic()
 
       // Initialize the Engine ONLY when the sound is loaded
       Engine.initialized = true;
+      Engine.rubik.container.visible = false;
   });
 }
 
@@ -122,7 +123,7 @@ function loadCameraControllers()
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(4, 4, 4);
 
-      Engine.camera.zoom = 1 + Math.pow(Math.abs(Math.sin(t * 15.5 * Math.PI * 2)), 15) * .15;
+      Engine.camera.zoom = 1 + Math.pow(Math.abs(Math.sin(t * 15.5 * Math.PI * 2)), 15) * .05;
 
       Engine.rubik.container.rotateY(.01);
 
@@ -155,6 +156,19 @@ function makeBackgroundMaterial(mat)
     mat.depthTest = false;
 }
 
+function makeMaterialAdditive(material)
+{
+    material.transparent = true;
+
+    material.blending = THREE.CustomBlending;
+    material.blendEquation = THREE.AddEquation;
+    material.blendSrc = THREE.OneFactor;
+    material.blendDst = THREE.OneFactor;
+
+    material.depthTest = false;
+    material.depthWrite = false;
+}
+
 function loadBackgrounds()
 {   
   var bgGeo = new THREE.PlaneGeometry(1,1,1,1);
@@ -164,8 +178,32 @@ function loadBackgrounds()
   });
   makeBackgroundMaterial(initialMaterial)
   var initialMesh = new THREE.Mesh(bgGeo, initialMaterial);
-
   Engine.scene.add(initialMesh);
+
+  var introOverlayMaterial = loadShaderMaterial("overlays/opening_overlay", {
+    time: { type: "f", value : 0.0 }
+  });
+
+  // Multiply
+  introOverlayMaterial.blending = THREE.CustomBlending;
+  introOverlayMaterial.blendEquation = THREE.AddEquation;
+  introOverlayMaterial.blendSrc = THREE.DstColorFactor;
+  introOverlayMaterial.blendDst = THREE.SrcColorFactor;
+
+  introOverlayMaterial.depthFunc = THREE.AlwaysDepth;
+  introOverlayMaterial.depthWrite = false;
+  introOverlayMaterial.depthTest = false;
+  introOverlayMaterial.side = THREE.DoubleSide;
+  introOverlayMaterial.transparent = true;
+  introOverlayMaterial.renderOrder = 15;
+
+  var openingMesh = new THREE.Mesh(bgGeo, introOverlayMaterial);
+
+  openingMesh.onBeforeRender = function(){
+    if(Engine.time > 8.0)
+      openingMesh.visible = false;
+  };
+  Engine.scene.add(openingMesh);
 }
 
 function loadFakeBox()
@@ -237,8 +275,6 @@ function onLoad(framework)
   var rubikMesh = Engine.rubik.build();
 
   loadBuildings();
-
-  rubikMesh.visible = false;
   scene.add(rubikMesh);
 
   var random = new Random(Random.engines.mt19937().seed(14041956));
