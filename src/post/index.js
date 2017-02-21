@@ -18,5 +18,6 @@ export function None(renderer, scene, camera) {
 export {default as Grayscale} from './grayscale'
 export {default as Pointillism} from './pointillism'
 export {default as Gaussian} from './gaussian'
+export {default as Bloom} from './bloom'
 export {default as Hatching} from './hatching'
 export {default as Vignette} from './vignette'
