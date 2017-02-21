@@ -2,7 +2,7 @@ const THREE = require('three');
 const EffectComposer = require('three-effectcomposer')(THREE)
 
 var options = {
-    amount: 1
+    amount: 800.0
 }
 
 var HatchingShader = new EffectComposer.ShaderPass({
@@ -36,7 +36,7 @@ export default function Hatching(renderer, scene, camera) {
 
     return {
         initGUI: function(gui) {
-            gui.add(options, 'amount', 0, 1).onChange(function(val) {
+            gui.add(options, 'amount', 200, 1000).onChange(function(val) {
                 HatchingShader.material.uniforms.u_amount.value = val;
             });
         },
