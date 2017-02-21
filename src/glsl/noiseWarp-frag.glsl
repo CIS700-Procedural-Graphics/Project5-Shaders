@@ -82,14 +82,15 @@ float sampleOctaves(float x, float y, float z)
 }
 
 void main() {
-	//samples noise for vertex based on ever changing position
+	//samples noise for uv based on ever changing position
 	vec2 sampleUV = f_uv + vec2(time * 0.0025);
 
-	//finds offset for vertex based on noise value
+	//finds offset for uv based on noise value
 	float offset = 0.5*sampleOctaves(sampleUV[0], sampleUV[1], time);
 	
-	//moves the position by the offset along the vertex's surface normal
+	//moves the uv by the offset in both u and v directions
 	vec2 newUV = f_uv + vec2(offset, offset);
 
+	//final color is the texture sampled at the new UV coordinate
     gl_FragColor = texture2D(tDiffuse, newUV);
 }

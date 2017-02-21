@@ -18,22 +18,28 @@ float findNoise(float x, float y, float z)
 void main() {
     vec4 col = texture2D(tDiffuse, f_uv);
 
+    //values ranging 0 to 1 that serve as a weight of darkness, with 1 being darkest
     float rFrac = (1.0-col[0]);
     float gFrac = (1.0-col[1]);
     float bFrac = (1.0-col[2]);
+    //average all the values to get 1 for this pixel
     float avg = (rFrac + gFrac + bFrac)/3.0;
 
+    //need a random value to compare against the probability, found with noise
     float rando = abs(findNoise(pos[0], pos[1], pos[2]));
 
+    //compare rando to my probability, which is enhanced by the darkness factor
     if(rando < avg*darkness)
     {
-    	if(blackWhite == 1)
+    	//if this pixel should be colored and blackWhite is on, it gets colored black, otherwise the color is left alone
+        if(blackWhite == 1)
     	{
    			col.rgb = vec3(0.0,0.0,0.0);
     	}
     }
     else
     {
+        //if this pixel should not be colored, its given a white color
     	col.rgb = vec3(1.0,1.0,1.0);
     }
 
