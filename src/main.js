@@ -1,19 +1,22 @@
 const THREE = require('three');
 const Random = require("random-js");
+const Ease = require("ease-component")
 
 import Framework from './framework'
 import * as Building from './building.js'
 import * as Rubik from './rubik.js'
 import * as City from './city.js'
-
-var UserSettings = 
-{
-  iterations : 5
-}
+import * as Camera from './camera.js'
 
 var Engine = 
 {
   initialized : false,
+
+  camera : null,
+  cameraControllers : [],
+  currentCameraIndex : 0,
+  cameraTime : 0,
+
   time : 0.0,
   deltaTime : 0.0,
   clock : null,
@@ -25,6 +28,99 @@ var Engine =
 
   rubik : null,
   rubikTime : 0,
+
+}
+
+function loadMusic()
+{  
+  // A more complex method needs state checking... 
+  var listener = new THREE.AudioListener();
+  Engine.camera.add(listener);
+
+  var sound = new THREE.Audio(listener);
+  var audioLoader = new THREE.AudioLoader();
+
+  //Load a sound and set it as the Audio object's buffer
+  audioLoader.load('./music/music.mp3', function( buffer ) {
+      sound.setBuffer( buffer );
+      sound.setLoop(true);
+      sound.setVolume(1.0);
+      sound.play();
+
+      // Initialize the Engine ONLY when the sound is loaded
+      Engine.initialized = true;
+  });
+}
+
+function updateCamera()
+{
+    if(Engine.currentCameraIndex < Engine.cameraControllers.length)
+    {
+        var controller = Engine.cameraControllers[Engine.currentCameraIndex];
+        var next = controller.update(Engine.cameraTime);
+
+        if(next)
+        {
+            controller.onExit();
+            setActiveCamera(Engine.currentCameraIndex + 1);
+        }
+    }
+
+    Engine.camera.updateProjectionMatrix();
+}
+
+function setActiveCamera(index)
+{
+    Engine.currentCameraIndex = index;
+
+    if(Engine.currentCameraIndex < Engine.cameraControllers.length)
+        Engine.cameraControllers[Engine.currentCameraIndex].setActive(Engine.cameraTime);
+}
+
+function loadCameraControllers()
+{
+  Engine.cameraControllers.push(new Camera.CameraController(4, function(t) {
+      Engine.camera.position.set(40, 40, 40);
+      Engine.camera.zoom = 4 - t * .25;
+      Engine.camera.lookAt(new THREE.Vector3(0, t + .2, 1));
+  }));
+
+  Engine.cameraControllers.push(new Camera.CameraController(3.5, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(40,-40,40).add(direction.multiplyScalar(t * .5));
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 4 - t * .25;
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 0, 2 - t));
+  }));
+
+  Engine.cameraControllers.push(new Camera.CameraController(7.3, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(4, 4, 4);
+      Engine.camera.position.set(40, 40, 40);
+      // Engine.camera.position.copy(p);
+
+      var smoothT = THREE.Math.smoothstep(Math.pow(t, 40) * .75 + t * .25, 0, 1);
+
+      smoothT = Ease.outBack(smoothT);
+
+      Engine.camera.zoom = 3.5 - smoothT * 2.5;
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 0, 0));
+      Engine.camera.rotateZ(smoothT * Math.PI * 2);
+  }));
+
+  Engine.cameraControllers.push(new Camera.CameraController(15.0, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(4, 4, 4);
+
+      Engine.camera.zoom = 1 + Math.pow(Math.abs(Math.sin(t * 15.5 * Math.PI * 2)), 15) * .2;
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 0, 0));
+  }));
+
+  setActiveCamera(0);
 }
 
 function onLoad(framework) 
@@ -56,36 +152,6 @@ function onLoad(framework)
   camera.fov = 5;
   camera.updateProjectionMatrix();
 
-  var profile = new Building.Profile();
-  profile.addPoint(1.0, 0.0);
-  profile.addPoint(1.0, 1.0);
-
-  profile.addPoint(.9, 1.0);
-  profile.addPoint(.9, 1.1);
-  profile.addPoint(.8, 1.1);
-  profile.addPoint(.8, 1.0);
-
-  profile.addPoint(0.7, 1.0);
-  profile.addPoint(0.6, 2.0);
-  profile.addPoint(0.0, 2.0);
-
-  var lot = new Building.BuildingLot();
-  var subdivs = 25;
-  for(var i = 0; i < subdivs; i++)
-  {
-    var a = i * Math.PI * 2 / subdivs;
-    var r = 1.0 - Math.pow(Math.sin(a * 10) * .5 + .5, 5.0) * .5 + 1.0 ;
-    lot.addPoint(Math.cos(a) * r, Math.sin(a) * r);
-  }
-
-  // var shape = new Building.MassShape(lot, profile);
-  // var mesh = shape.generateMesh();
-  // scene.add(mesh);
-
-  // var rule = new Building.Rule();
-  // rule.componentWise = true;
-  // rule.evaluate(shape, scene);
-
   Engine.rubik = new Rubik.Rubik();
   var rubikMesh = Engine.rubik.build();
   scene.add(rubikMesh);
@@ -95,7 +161,6 @@ function onLoad(framework)
   Engine.renderer = renderer;
   Engine.clock = new THREE.Clock();
   Engine.camera = camera;
-  Engine.initialized = true;
 
   var random = new Random(Random.engines.mt19937().seed(2545));
 
@@ -104,14 +169,17 @@ function onLoad(framework)
   var city = new City.Generator();
   var cityBlocks = city.build(scene);
 
-  Engine.rubik.attachShapesToFace(cityBlocks);
+  // Engine.rubik.attachShapesToFace(cityBlocks);
 
   var callback = function() {
     Engine.rubik.animate(random.integer(0, 2), random.integer(0, 2), speed, callback);
-    // Engine.rubik.animate(1,0, speed, callback);
   };
 
-  Engine.rubik.animate(0, 0, speed, callback);
+  // Engine.rubik.animate(0, 0, speed, callback);
+
+  loadMusic();
+
+  loadCameraControllers();
 }
 
 // called on frame updates
@@ -127,8 +195,9 @@ function onUpdate(framework)
     Engine.deltaTime = deltaTime;
 
     Engine.rubik.update(deltaTime);
+
+    updateCamera();
   }
 }
 
-// when the scene is done initializing, it will call onLoad, then on frame updates, call onUpdate
 Framework.init(onLoad, onUpdate);
