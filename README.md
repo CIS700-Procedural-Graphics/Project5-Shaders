@@ -5,19 +5,19 @@
 ## Renders
 
 1. Iridescence
-![alt text](https://github.com/MegSesh/Project1-Noise/blob/proj1noise_branch1/images/controls.png "Image 1")
+![alt text](https://github.com/MegSesh/Project5-Shaders/blob/master/renders/irid.png "Image 1")
 
 2. Vignette (Post)
-![alt text](https://github.com/MegSesh/Project1-Noise/blob/proj1noise_branch1/images/controls.png "Image 1")
+![alt text](https://github.com/MegSesh/Project5-Shaders/blob/master/renders/vignette.png "Image 1")
 
 3. Pointillism (Post)
-![alt text](https://github.com/MegSesh/Project1-Noise/blob/proj1noise_branch1/images/controls.png "Image 1")
+![alt text](https://github.com/MegSesh/Project5-Shaders/blob/master/renders/pointillism.png "Image 1")
 
 4. Sobel Filtering and Edge Detection (Post)
-![alt text](https://github.com/MegSesh/Project1-Noise/blob/proj1noise_branch1/images/controls.png "Image 1")
+![alt text](https://github.com/MegSesh/Project5-Shaders/blob/master/renders/sobel.png "Image 1")
 
 5. Noise Offset Warp
-![alt text](https://github.com/MegSesh/Project1-Noise/blob/proj1noise_branch1/images/controls.png "Image 1")
+![alt text](https://github.com/MegSesh/Project5-Shaders/blob/master/renders/noise.png "Image 1")
 
 
 ## Resources
