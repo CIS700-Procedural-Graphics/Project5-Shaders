@@ -18,3 +18,4 @@ export function None(renderer, scene, camera) {
 export {default as Grayscale} from './grayscale'
 export {default as Random} from './random'
 export {default as Vignette} from './vignette'
+export {default as Fisheye} from './fisheye'
