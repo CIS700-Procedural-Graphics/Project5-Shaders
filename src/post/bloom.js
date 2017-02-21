@@ -2,7 +2,7 @@ const THREE = require('three');
 const EffectComposer = require('three-effectcomposer')(THREE)
 
 var options = {
-    amount: 0.5,
+    amount: 0.8,
     radius: 50,
     width: 100,
     height: 100
