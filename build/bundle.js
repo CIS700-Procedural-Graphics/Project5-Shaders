@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 48);
+/******/ 	return __webpack_require__(__webpack_require__.s = 58);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -43379,16 +43379,16 @@ Object.defineProperty(exports, "__esModule", {
 // this file is just for convenience. it sets up loading the mario obj and texture
 
 var THREE = __webpack_require__(0);
-__webpack_require__(34)(THREE);
+__webpack_require__(44)(THREE);
 
 var textureLoaded = exports.textureLoaded = new Promise(function (resolve, reject) {
-    new THREE.TextureLoader().load(__webpack_require__(27), function (texture) {
+    new THREE.TextureLoader().load(__webpack_require__(37), function (texture) {
         resolve(texture);
     });
 });
 
 var objLoaded = exports.objLoaded = new Promise(function (resolve, reject) {
-    new THREE.OBJLoader().load(__webpack_require__(28), function (obj) {
+    new THREE.OBJLoader().load(__webpack_require__(38), function (obj) {
         var geo = obj.children[0].geometry;
         geo.computeBoundingSphere();
         resolve(geo);
@@ -43404,11 +43404,11 @@ var objLoaded = exports.objLoaded = new Promise(function (resolve, reject) {
  */
 
 module.exports = function(THREE) {
-  var CopyShader = EffectComposer.CopyShader = __webpack_require__(29)
-    , RenderPass = EffectComposer.RenderPass = __webpack_require__(32)(THREE)
-    , ShaderPass = EffectComposer.ShaderPass = __webpack_require__(33)(THREE, EffectComposer)
-    , MaskPass = EffectComposer.MaskPass = __webpack_require__(31)(THREE)
-    , ClearMaskPass = EffectComposer.ClearMaskPass = __webpack_require__(30)(THREE)
+  var CopyShader = EffectComposer.CopyShader = __webpack_require__(39)
+    , RenderPass = EffectComposer.RenderPass = __webpack_require__(42)(THREE)
+    , ShaderPass = EffectComposer.ShaderPass = __webpack_require__(43)(THREE, EffectComposer)
+    , MaskPass = EffectComposer.MaskPass = __webpack_require__(41)(THREE)
+    , ClearMaskPass = EffectComposer.ClearMaskPass = __webpack_require__(40)(THREE)
 
   function EffectComposer( renderer, renderTarget ) {
     this.renderer = renderer;
@@ -44728,7 +44728,7 @@ var GrayscaleShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: __webpack_require__(3),
-    fragmentShader: __webpack_require__(35)
+    fragmentShader: __webpack_require__(45)
 });
 
 function Grayscale(renderer, scene, camera) {
@@ -44921,7 +44921,7 @@ var MonitorShader = new EffectComposer.ShaderPass({
 
     },
     vertexShader: __webpack_require__(3),
-    fragmentShader: __webpack_require__(40)
+    fragmentShader: __webpack_require__(50)
 });
 
 function Monitor(renderer, scene, camera) {
@@ -45019,7 +45019,7 @@ var PlasmaShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: __webpack_require__(3),
-    fragmentShader: __webpack_require__(41)
+    fragmentShader: __webpack_require__(51)
 });
 
 function Plasma(renderer, scene, camera) {
@@ -45085,7 +45085,7 @@ var SobelShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: __webpack_require__(3),
-    fragmentShader: __webpack_require__(42)
+    fragmentShader: __webpack_require__(52)
 });
 
 function Sobel(renderer, scene, camera) {
@@ -45146,7 +45146,7 @@ var GrayscaleShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: __webpack_require__(3),
-    fragmentShader: __webpack_require__(46)
+    fragmentShader: __webpack_require__(56)
 });
 
 function Grayscale(renderer, scene, camera) {
@@ -45217,7 +45217,7 @@ var WarpShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: __webpack_require__(3),
-    fragmentShader: __webpack_require__(47)
+    fragmentShader: __webpack_require__(57)
 });
 
 function Warp(renderer, scene, camera) {
@@ -45384,7 +45384,7 @@ exports.default = function (renderer, scene, camera) {
                 }
             },
             vertexShader: __webpack_require__(4),
-            fragmentShader: __webpack_require__(36)
+            fragmentShader: __webpack_require__(46)
         })
     };
 
@@ -45473,7 +45473,7 @@ exports.default = function (renderer, scene, camera) {
                     value: options.lightIntensity
                 }
             },
-            vertexShader: __webpack_require__(37),
+            vertexShader: __webpack_require__(47),
             fragmentShader: __webpack_require__(5)
         })
     };
@@ -45524,7 +45524,7 @@ exports.default = function (renderer, scene, camera) {
                     camera.add(listener);
 
                     //Load a sound and set it as the Audio object's buffer
-                    audioLoader.load('./assets/endofallthings.mp3', function (buffer) {
+                    audioLoader.load(__webpack_require__(29), function (buffer) {
                         sound.setBuffer(buffer);
                         sound.setLoop(false);
                         sound.setVolume(1.0);
@@ -45544,8 +45544,8 @@ exports.default = function (renderer, scene, camera) {
                     value: null
                 }
             },
-            vertexShader: __webpack_require__(39),
-            fragmentShader: __webpack_require__(38)
+            vertexShader: __webpack_require__(49),
+            fragmentShader: __webpack_require__(48)
         })
 
     };
@@ -45567,12 +45567,12 @@ var options = {
 };
 
 var maps = [];
-maps.push(THREE.ImageUtils.loadTexture('./assets/spheremat1.png'));
-maps.push(THREE.ImageUtils.loadTexture('./assets/spheremat2.png'));
-maps.push(THREE.ImageUtils.loadTexture('./assets/spheremat3.png'));
-maps.push(THREE.ImageUtils.loadTexture('./assets/spheremat4.png'));
-maps.push(THREE.ImageUtils.loadTexture('./assets/spheremat5.png'));
-maps.push(THREE.ImageUtils.loadTexture('./assets/besttextureever.png'));
+maps.push(THREE.ImageUtils.loadTexture(__webpack_require__(32)));
+maps.push(THREE.ImageUtils.loadTexture(__webpack_require__(33)));
+maps.push(THREE.ImageUtils.loadTexture(__webpack_require__(34)));
+maps.push(THREE.ImageUtils.loadTexture(__webpack_require__(35)));
+maps.push(THREE.ImageUtils.loadTexture(__webpack_require__(36)));
+maps.push(THREE.ImageUtils.loadTexture(__webpack_require__(28)));
 var audioLoader = new THREE.AudioLoader();
 var listener = new THREE.AudioListener();
 var sound = new THREE.Audio(listener);
@@ -45636,15 +45636,15 @@ exports.default = function (renderer, scene, camera) {
                 },
                 disintegrate: {
                     type: 't',
-                    value: THREE.ImageUtils.loadTexture('./assets/anisotropic.png')
+                    value: THREE.ImageUtils.loadTexture(__webpack_require__(27))
                 },
                 ramp: {
                     type: 't',
-                    value: THREE.ImageUtils.loadTexture('./assets/ramp.png')
+                    value: THREE.ImageUtils.loadTexture(__webpack_require__(31))
                 },
                 noise: {
                     type: 't',
-                    value: THREE.ImageUtils.loadTexture('./assets/perlin.png')
+                    value: THREE.ImageUtils.loadTexture(__webpack_require__(30))
                 },
                 u_useTexture: {
                     type: 'i',
@@ -45688,7 +45688,7 @@ exports.default = function (renderer, scene, camera) {
                 }
             },
             vertexShader: __webpack_require__(4),
-            fragmentShader: __webpack_require__(43)
+            fragmentShader: __webpack_require__(53)
         })
     };
     var gl = renderer.context;
@@ -45788,7 +45788,7 @@ exports.default = function (renderer, scene, camera) {
                 }
             },
             vertexShader: __webpack_require__(4),
-            fragmentShader: __webpack_require__(44)
+            fragmentShader: __webpack_require__(54)
         })
     };
 
@@ -45889,7 +45889,7 @@ exports.default = function (renderer, scene, camera) {
                     value: t
                 }
             },
-            vertexShader: __webpack_require__(45),
+            vertexShader: __webpack_require__(55),
             fragmentShader: __webpack_require__(5)
         })
 
@@ -50356,16 +50356,76 @@ dat.utils.common);
 /* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__.p + "./assets/wahoo-1bfe66.bmp";
+module.exports = __webpack_require__.p + "./assets/anisotropic-24a803.png";
 
 /***/ }),
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__.p + "./assets/wahoo-bfeb77.obj";
+module.exports = __webpack_require__.p + "./assets/besttextureever-29b0c3.png";
 
 /***/ }),
 /* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/endofallthings-ec4e18.mp3";
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/perlin-2b231e.png";
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/ramp-9b09c3.png";
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/spheremat1-e3a1aa.png";
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/spheremat2-d9114c.png";
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/spheremat3-b4664d.png";
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/spheremat4-a798c6.png";
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/spheremat5-251635.png";
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/wahoo-1bfe66.bmp";
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./assets/wahoo-bfeb77.obj";
+
+/***/ }),
+/* 39 */
 /***/ (function(module, exports) {
 
 /**
@@ -50407,7 +50467,7 @@ module.exports = {
 
 
 /***/ }),
-/* 30 */
+/* 40 */
 /***/ (function(module, exports) {
 
 /**
@@ -50431,7 +50491,7 @@ module.exports = function(THREE) {
 };
 
 /***/ }),
-/* 31 */
+/* 41 */
 /***/ (function(module, exports) {
 
 /**
@@ -50508,7 +50568,7 @@ module.exports = function(THREE) {
 
 
 /***/ }),
-/* 32 */
+/* 42 */
 /***/ (function(module, exports) {
 
 /**
@@ -50571,7 +50631,7 @@ module.exports = function(THREE) {
 
 
 /***/ }),
-/* 33 */
+/* 43 */
 /***/ (function(module, exports) {
 
 /**
@@ -50633,7 +50693,7 @@ module.exports = function(THREE, EffectComposer) {
 };
 
 /***/ }),
-/* 34 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50952,85 +51012,85 @@ module.exports = function (THREE) {
 };
 
 /***/ }),
-/* 35 */
+/* 45 */
 /***/ (function(module, exports) {
 
 module.exports = "\r\nuniform sampler2D tDiffuse;\r\nuniform float u_amount;\r\nvarying vec2 f_uv;\r\n\r\n// tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to\r\n\r\nvoid main() {\r\n    vec4 col = texture2D(tDiffuse, f_uv);\r\n    float gray = dot(col.rgb, vec3(0.299, 0.587, 0.114));\r\n\r\n    col.rgb = vec3(gray, gray, gray) * (u_amount) + col.rgb * (1.0 - u_amount);\r\n\r\n    gl_FragColor = col;\r\n}   "
 
 /***/ }),
-/* 36 */
+/* 46 */
 /***/ (function(module, exports) {
 
 module.exports = "\r\nuniform sampler2D texture;\r\nuniform int u_useTexture;\r\nuniform vec3 u_albedo;\r\nuniform vec3 u_ambient;\r\nuniform vec3 u_lightPos;\r\nuniform vec3 u_lightCol;\r\nuniform float u_lightIntensity;\r\n\r\nvarying vec3 f_position;\r\nvarying vec3 f_normal;\r\nvarying vec2 f_uv;\r\nvarying vec3 f_cameraPos;\r\n\r\n// cosine palette function by Inigo Quiles \r\nvec3 palette(in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d)\r\n{\r\n    return a + b * cos(3.14159 * 2.0 * (c * t + d));\r\n}\r\n\r\nvoid main() {\r\n    vec4 color = vec4(u_albedo, 1.0);\r\n    \r\n    if (u_useTexture == 1) {\r\n        color = texture2D(texture, f_uv);\r\n    }\r\n\r\n    float b = 0.3 * color.x + 0.59 * color.y + 0.11 * color.z;\r\n    float ed = clamp(dot(f_cameraPos, f_normal), 0.0, 1.0);\r\n\r\n    vec3 ca = vec3(0.5, 0.5, 0.5);\r\n    vec3 cb = vec3(0.5, 0.5, 0.5);\r\n    vec3 cc = vec3(1.0, 1.0, 1.0);\r\n    vec3 cd = vec3(0.0, 0.333, 0.667);\r\n\r\n    vec3 pal = palette(mod(b + ed, 1.0), ca, cb, cc, cd);\r\n    color = vec4(pal, 1.0);\r\n\r\n    float d = clamp(dot(f_normal, normalize(u_lightPos - f_position)), 0.0, 1.0);\r\n\r\n    gl_FragColor = vec4(d * color.rgb * u_lightCol * u_lightIntensity + u_ambient, 1.0);\r\n}"
 
 /***/ }),
-/* 37 */
+/* 47 */
 /***/ (function(module, exports) {
 
 module.exports = "\r\nvarying vec2 f_uv;\r\nvarying vec3 f_normal;\r\nvarying vec3 f_position;\r\n\r\n// uv, position, projectionMatrix, modelViewMatrix, normal\r\nvoid main() {\r\n    f_uv = uv;\r\n    f_normal = normal;\r\n    f_position = position;\r\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\r\n}"
 
 /***/ }),
-/* 38 */
+/* 48 */
 /***/ (function(module, exports) {
 
 module.exports = "uniform sampler2D matcap;\r\n\r\nvarying vec3 f_normal;\r\nvarying vec3 f_cameraPos;\r\n\r\nvoid main() {\r\n\r\n    vec3 ref = reflect(f_cameraPos, f_normal);\r\n    float sphereRad = 2.0 * sqrt(ref.x * ref.x + ref.y * ref.y + (ref.z + 1.0) * (ref.z + 1.0));\r\n    vec2 m = ref.xy / sphereRad + 0.5;\r\n\r\n    vec4 col = texture2D(matcap, m);\r\n\r\n    gl_FragColor = col;\r\n}"
 
 /***/ }),
-/* 39 */
+/* 49 */
 /***/ (function(module, exports) {
 
 module.exports = "uniform sampler2D matcap;\r\n\r\nvarying vec3 f_position;\r\nvarying vec3 f_normal;\r\nvarying vec3 f_cameraPos;\r\n\r\nvoid main() {\r\n\r\n    f_cameraPos = normalize(vec3(modelViewMatrix * vec4(position, 1.0)));\r\n    f_normal = normalize(normalMatrix * normal);\r\n\r\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\r\n\r\n}"
 
 /***/ }),
-/* 40 */
+/* 50 */
 /***/ (function(module, exports) {
 
 module.exports = "\r\nuniform sampler2D tDiffuse;\r\nuniform float u_vignette;\r\nuniform float time;\r\n\r\nuniform float u_bandStrength;\r\nuniform float u_noiseStrength;\r\nuniform float u_bandSpeed;\r\nuniform float u_bandWidth;\r\nuniform float u_colorize;\r\n\r\nuniform float u_scanStrength;\r\nuniform float u_scanSpeed;\r\nuniform float u_scanWidth;\r\n\r\nvarying vec2 f_uv;\r\n\r\n\r\n// implementation of Rachel's noise generation\r\nfloat rNoise(in float x, in float y) {\r\n\treturn fract(sin(dot(vec2(x, y), vec2(12.9898, 78.233))) * 43758.5453);\r\n}\r\n\r\nvoid main() {\r\n    // edge darkening\r\n    float xd = f_uv.x - 0.5;\r\n    float yd = f_uv.y - 0.5;\r\n    float dist = u_vignette * sqrt(xd * xd + yd * yd);\r\n    vec4 vignette = mix(vec4(1, 1, 1, 1), vec4(0, 0, 0, 1), dist * dist);\r\n\r\n    // scan line\r\n    float y = fract(0.1 * u_scanSpeed * time);\r\n    float scanWidth = u_scanWidth * 0.05;\r\n    float t = clamp((y - f_uv.y) / scanWidth, 0.0, 1.0);\r\n    t = u_scanStrength * 0.2 * smoothstep(0.0, 1.0, t) * sign(t - 1.0);\r\n    // distort reading by scan\r\n    vec4 col = texture2D(tDiffuse, vec2(mod(f_uv.x + 0.2 * t, 1.0), f_uv.y));\r\n    col += 2.0 * vec4(t, t, t, 0);\r\n    \r\n    // banding pattern\r\n    float band = sin((1.0 - u_bandWidth) * 1000.0 * fract(f_uv.y + u_bandSpeed * time / 50.0));\r\n    band = 1.0 + u_bandStrength * (band - 1.0);\r\n    band *= 1.0 - u_noiseStrength;\r\n\r\n    // white noise\r\n    float noise = rNoise(11.777 * fract(f_uv.x + 2.347 * time), -4.0973 * fract(f_uv.y + 1.979 * time));\r\n    float noise2 = rNoise(1.236 * fract(f_uv.x - 1.347 * time), -4.0973 * fract(f_uv.y + 4.458 * time));\r\n    noise *= u_noiseStrength * noise2;\r\n\r\n    // composite\r\n    col = vignette * clamp(band * col + noise, vec4(0, 0, 0, 1), vec4(1, 1, 1, 1));\r\n\r\n    // colorize approximation\r\n    float brightness = dot(col.xyz, vec3(0.3, 0.59, 0.11));\r\n    vec4 colorized = vec4(pow(brightness, 1.3), brightness, pow(brightness, 1.2), 1.0);\r\n\r\n    col = mix(col, colorized, u_colorize);\r\n\r\n    gl_FragColor = vec4(col.xyz, 1.0);\r\n}   "
 
 /***/ }),
-/* 41 */
+/* 51 */
 /***/ (function(module, exports) {
 
 module.exports = "\r\nuniform sampler2D tDiffuse;\r\nuniform float u_amount;\r\nuniform float time;\r\nvarying vec2 f_uv;\r\n\r\nvoid main() {\r\n\tfloat t = time;\r\n\t//t = 10.0;\r\n\tfloat x = f_uv.x - 0.5;\r\n\tfloat y = f_uv.y - 0.5;\r\n\r\n\r\n\tfloat s1 = sin(x * 10.0 + t);\r\n\r\n\r\n\tfloat s2 = sin(10.0 * (x * sin(t / 2.0) + y * cos(t / 3.0)) + t);\r\n\tfloat cx = x + 0.5 * sin(t / 5.0);\r\n\tfloat cy = y + 0.5 * cos(t / 3.0);\r\n\tfloat s3 = sin(sqrt(100.0 * (cx * cx + cy * cy) + 1.0) + t);\r\n\r\n\tfloat n = (s1 + s2 + s3) / 3.0;\r\n\t//n = s1;\r\n\r\n\tfloat ct = cos(n * 3.14159);\r\n\tfloat st = sin(n * 3.14159);\r\n\r\n\tvec2 deformed = vec2(mod(f_uv.x + ct * u_amount, 1.0), \r\n\t\tmod(f_uv.y + st * u_amount, 1.0));\r\n\r\n    vec4 col = texture2D(tDiffuse, deformed);\r\n    gl_FragColor = col;\r\n}   "
 
 /***/ }),
-/* 42 */
+/* 52 */
 /***/ (function(module, exports) {
 
 module.exports = "\r\nuniform sampler2D tDiffuse;\r\nuniform float u_amount;\r\nvarying vec2 f_uv;\r\n\r\n#define e 0.01\r\n\r\nvoid main() {\r\n    vec4 col = texture2D(tDiffuse, f_uv);\r\n    float ep = e * u_amount;\r\n\r\n    vec4 ul = texture2D(tDiffuse, vec2(f_uv.x - ep, f_uv.y + ep));\r\n    vec4 um = texture2D(tDiffuse, vec2(f_uv.x, f_uv.y + ep));\r\n    vec4 ur = texture2D(tDiffuse, vec2(f_uv.x + ep, f_uv.y + ep));\r\n    vec4 ml = texture2D(tDiffuse, vec2(f_uv.x - ep, f_uv.y));\r\n    vec4 mr = texture2D(tDiffuse, vec2(f_uv.x + ep, f_uv.y));\r\n    vec4 bl = texture2D(tDiffuse, vec2(f_uv.x - ep, f_uv.y - ep));\r\n    vec4 bm = texture2D(tDiffuse, vec2(f_uv.x, f_uv.y - ep));\r\n    vec4 br = texture2D(tDiffuse, vec2(f_uv.x + ep, f_uv.y - ep));\r\n\r\n    vec4 gx = -ul + ur -2.0 * ml + 2.0 * mr - bl + br;\r\n    vec4 gy = ul + 2.0 * um + ur - bl - 2.0 * bm - br;\r\n    vec4 g = sqrt(gx * gx + gy * gy);\r\n\r\n    gl_FragColor = vec4(g.xyz, 1.0);\r\n}   "
 
 /***/ }),
-/* 43 */
+/* 53 */
 /***/ (function(module, exports) {
 
 module.exports = "\r\nuniform sampler2D texture;\r\nuniform sampler2D disintegrate;\r\nuniform sampler2D ramp;\r\nuniform sampler2D noise;\r\n\r\nuniform int u_useTexture;\r\nuniform vec3 u_albedo;\r\nuniform vec3 u_ambient;\r\nuniform vec3 u_lightPos;\r\nuniform vec3 u_lightCol;\r\nuniform float u_lightIntensity;\r\n\r\nuniform float time;\r\nuniform float u_edgeWidth;\r\n\r\nuniform float topEdge;\r\nuniform float botEdge;\r\n\r\nvarying vec3 f_position;\r\nvarying vec3 f_normal;\r\nvarying vec2 f_uv;\r\n\r\nvoid main() {\r\n    vec4 color = vec4(u_albedo, 1.0);\r\n    \r\n    if (u_useTexture == 1) {\r\n        color = texture2D(texture, f_uv);\r\n    }\r\n\r\n    // get the ramp from the threshold\r\n    float y = 0.5 * (topEdge - botEdge) * (sin(time)) + 0.5 * (topEdge + botEdge);\r\n    float top = y + u_edgeWidth;\r\n    float bot = y - u_edgeWidth;\r\n\r\n\r\n\r\n    float theta = (atan(f_position.x, f_position.y) + 1.0) / 3.14159;\r\n\r\n    // reread the ramp with a noise value\r\n    vec2 wsuv = vec2(mod((theta), 1.0), mod(0.05 * f_position.y, 1.0));\r\n    top -= 0.5 * u_edgeWidth * texture2D(noise, vec2(mod((theta), 1.0), mod(0.025 * top, 1.0))).x;\r\n    bot -= 0.5 * u_edgeWidth * texture2D(noise, vec2(mod((theta), 1.0), mod(0.025 * bot, 1.0))).x;\r\n    y = 0.5 * (top + bot);\r\n    float t = clamp((f_position.y - bot) / (top - bot), 0.0, 1.0);\r\n\r\n\r\n    // modify ramp with tex noise shape\r\n    float dis = texture2D(disintegrate, wsuv).x;\r\n\r\n    // modulate tex by ramp: add if above .5, sub otherwise\r\n    t = clamp(2.0 * t + dis - 1.0, 0.0, 1.0);\r\n    float alpha = sign(t); // everything below ramp is masked\r\n    float lit = sign(f_position.y - y); // lit if above top, otherwise unlit\r\n    color = 0.5 * (color + lit * color);\r\n\r\n    // get color from the ramp\r\n    vec3 rcol = texture2D(ramp, vec2(0.5,t)).rgb;\r\n\r\n    float d = clamp(dot(f_normal, normalize(u_lightPos - f_position)), 0.0, 1.0);\r\n\r\n    gl_FragColor = vec4(d * color.rgb * u_lightCol * u_lightIntensity + u_ambient + rcol, alpha);\r\n}"
 
 /***/ }),
-/* 44 */
+/* 54 */
 /***/ (function(module, exports) {
 
 module.exports = "uniform sampler2D texture;\r\nuniform int u_useTexture;\r\nuniform vec3 u_albedo;\r\nuniform vec3 u_ambient;\r\nuniform vec3 u_lightPos;\r\nuniform vec3 u_lightCol;\r\nuniform float u_lightIntensity;\r\n\r\nvarying vec3 f_position;\r\nvarying vec3 f_normal;\r\nvarying vec2 f_uv;\r\nvarying vec3 f_cameraPos;\r\n\r\nvoid main() {\r\n    vec4 color = vec4(u_albedo, 1.0);\r\n    \r\n    if (u_useTexture == 1) {\r\n        color = texture2D(texture, f_uv);\r\n    }\r\n\r\n    float d = clamp(dot(f_normal, normalize(u_lightPos - f_position)), 0.0, 1.0);\r\n    d = floor(d * 5.0) / 5.0; // distinct steps in shading\r\n\r\n    float outline = clamp(dot(f_normal, f_cameraPos), 0.0, 0.3);\r\n    outline = floor(outline * 4.0);\r\n\r\n    gl_FragColor = vec4(outline * d * color.rgb * u_lightCol * u_lightIntensity + u_ambient, 1.0);\r\n}"
 
 /***/ }),
-/* 45 */
+/* 55 */
 /***/ (function(module, exports) {
 
 module.exports = "\r\nvarying vec2 f_uv;\r\nvarying vec3 f_normal;\r\nvarying vec3 f_position;\r\n\r\nuniform float time;\r\n\r\n// uv, position, projectionMatrix, modelViewMatrix, normal\r\nvoid main() {\r\n    f_uv = uv;\r\n    f_normal = normal;\r\n\r\n\r\n\r\n    vec3 p = (modelMatrix * vec4(position, 1.0)).xyz;\r\n    float t = sin(time) * p.y;\r\n    float ct = cos(t);\r\n    float st = sin(t);\r\n\r\n    f_position = p;\r\n\r\n    f_position.x = p.x * ct - p.z * st;\r\n    f_position.z = p.x * st + p.z * ct;\r\n\r\n    mat3 jInvT = mat3(vec3(ct, st, p.z * sin(time)),\r\n    \t\t\tvec3(0.0, 1.0, 0.0),\r\n    \t\t\tvec3(-st, ct, -p.x * sin(time)));\r\n    f_normal = jInvT * f_normal;\r\n\r\n    gl_Position = projectionMatrix * viewMatrix * vec4(f_position, 1.0);\r\n}"
 
 /***/ }),
-/* 46 */
+/* 56 */
 /***/ (function(module, exports) {
 
 module.exports = "\r\nuniform sampler2D tDiffuse;\r\nuniform float u_amount;\r\nvarying vec2 f_uv;\r\n\r\n// tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to\r\n\r\nvoid main() {\r\n    vec4 col = texture2D(tDiffuse, f_uv);\r\n    float xd = f_uv.x - 0.5;\r\n    float yd = f_uv.y - 0.5;\r\n\r\n    float dist = u_amount * sqrt(xd * xd + yd * yd);\r\n    vec4 vignette = mix(vec4(1, 1, 1, 1), vec4(0, 0, 0, 1), dist);\r\n\r\n    gl_FragColor = vignette * col;\r\n}   "
 
 /***/ }),
-/* 47 */
+/* 57 */
 /***/ (function(module, exports) {
 
 module.exports = "uniform sampler2D tDiffuse;\r\nuniform float u_amount;\r\nvarying vec2 f_uv;\r\n\r\nuniform vec3 gradients3d[12];\r\nuniform int time;\r\nuniform int table[24];\r\n\r\n\r\nfloat lerp(in float a, in float b, in float t)\r\n{\r\n\tt = clamp(t, 0.0, 1.0);\r\n\tfloat val = t * b + (1.0 - t) * a;\r\n\treturn val;\r\n}\r\n\r\n// the ease curve by Ken Perlin, which gives smoother results for LERP\r\nfloat ecurve(in float t)\r\n{\r\n\treturn (t * t * t * (t * (t * 6.0 - 15.0) + 10.0));\r\n}\r\n\r\n// randomly select a 3d gradient given a corner's coordinates\r\nvec3 pickGradient(in int x, in int y, in int z)\r\n{\r\n\t// terrible way of picking the gradient but whatever\r\n\t/*\r\n\tint h = 0;\r\n\tfor (int i = 0; i < 24; i++) {\r\n\t\tif (i == z) {\r\n\t\t\th = table[i]; break;\r\n\t\t}\r\n\t}\r\n\r\n\tfor (int i = 0; i < 24; i++) {\r\n\t\tif (i == y + h) {\r\n\t\t\th = table[i]; break;\r\n\t\t}\r\n\t}\r\n\r\n\tfor (int i = 0; i < 24; i++) {\r\n\t\tif (i == x + h) {\r\n\t\t\th = table[i]; break;\r\n\t\t}\r\n\t}\r\n    */\r\n\tvec3 g = vec3(0, 0, 0);\r\n\tint k = int(mod(float(x) + float(x) * float(y), 12.0));\r\n\r\n\tfor (int i = 0; i < 12; i++) {\r\n\t\tif (i == k) {\r\n\t\t//if (i == int(t * 12.0)) {\r\n\t\t\tg = gradients3d[i];\r\n\t\t\tbreak;\r\n\t\t}\r\n\t}\r\n\treturn g; //gradients3d[int(t * 12.0)];\r\n}\r\n\r\n// uses time as z coordinate\r\nfloat getnoise3d(in float x, in float y, in int numSamples)\r\n{\r\n\tfloat tOffset = float(time) / 1000.0;\r\n\t//tOffset = 3.0;\r\n\t// position within gradient grid\r\n\tfloat xs = mod(x * float(numSamples), 24.0);\r\n\tfloat ys = mod(y * float(numSamples), 24.0);\r\n\tfloat zs = mod(tOffset * float(numSamples) , 24.0);\r\n\t// lower bound of grid cube\r\n\tint xlb = int(floor(xs));\r\n\tint ylb = int(floor(ys));\r\n\tint zlb = int(floor(zs));\r\n\t// 0 - 1 parameterization of grid cube\r\n\tfloat tx = ecurve(xs - float(xlb));\r\n\tfloat ty = ecurve(ys - float(ylb));\r\n\tfloat tz = ecurve(zs - float(zlb));\r\n\r\n\t// position in grid cube\r\n\tfloat px = xs - floor(xs);\r\n\tfloat py = ys - floor(ys);\r\n\tfloat pz = zs - floor(zs);\r\n\r\n\t// sample each corner\r\n\r\n\t// back left bottom\r\n\tfloat blb = dot(pickGradient(xlb, ylb, zlb), vec3(px, py, pz));\r\n\t// back right bottom\r\n\tfloat brb = dot(pickGradient(xlb + 1, ylb, zlb), vec3(px - 1.0, py, pz));\r\n\t// front left bottom\r\n\tfloat flb = dot(pickGradient(xlb, ylb, zlb + 1), vec3(px, py, pz - 1.0));\r\n\tfloat frb = dot(pickGradient(xlb + 1, ylb, zlb + 1), vec3(px - 1.0, py, pz - 1.0));\r\n\t// back left top\r\n\tfloat blt = dot(pickGradient(xlb, ylb + 1, zlb), vec3(px, py - 1.0, pz));\r\n\tfloat brt = dot(pickGradient(xlb + 1, ylb + 1, zlb), vec3(px - 1.0, py - 1.0, pz));\r\n\tfloat flt = dot(pickGradient(xlb, ylb + 1, zlb + 1), vec3(px, py - 1.0, pz - 1.0));\r\n\tfloat frt = dot(pickGradient(xlb + 1, ylb + 1, zlb + 1), vec3(px - 1.0, py - 1.0, pz - 1.0));\r\n\r\n\r\n\t// trilinear sample\r\n\t// back to front\r\n\tfloat l1 = lerp(brb, frb, tz);\r\n\tfloat l2 = lerp(blb, flb, tz);\r\n\tfloat l3 = lerp(brt, frt, tz);\r\n\tfloat l4 = lerp(blt, flt, tz);\r\n\t// bottom to top\r\n\tfloat l13 = lerp(l1, l3, ty);\r\n\tfloat l24 = lerp(l2, l4, ty);\r\n\t// left to right\r\n\treturn lerp (l24, l13, tx);\r\n}\r\n\r\n\r\n\r\nvoid main() {\r\n\r\n\tfloat n = getnoise3d( f_uv.x, f_uv.y, 8);\r\n\t//float c = cos(2.0 * n * 3.14159);\r\n\t//float s = sin(2.0 * n * 3.14159);\r\n\t//vec2 deformed = vec2(f_uv.x  + 2.0 * (u_amount - 0.5) * (f_uv.y - 0.5), f_uv.y);\r\n\tn = getnoise3d(f_uv.x, mod(f_uv.y + n * u_amount, 1.0), 16);\r\n\tvec2 deformed = vec2(f_uv.x, f_uv.y + n * u_amount);\r\n\r\n    vec4 col = texture2D(tDiffuse, deformed);\r\n    gl_FragColor = col;\r\n}   "
 
 /***/ }),
-/* 48 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

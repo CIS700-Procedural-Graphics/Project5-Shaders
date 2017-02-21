@@ -66,15 +66,15 @@ export default function(renderer, scene, camera) {
                 },
                 disintegrate: {
                     type: 't',
-                    value: THREE.ImageUtils.loadTexture('../anisotropic.png')
+                    value: THREE.ImageUtils.loadTexture(require('../assets/anisotropic.png'))
                 },
                 ramp: {
                     type: 't',
-                    value: THREE.ImageUtils.loadTexture('../ramp.png')
+                    value: THREE.ImageUtils.loadTexture(require('../assets/ramp.png'))
                 },
                 noise: {
                     type: 't',
-                    value: THREE.ImageUtils.loadTexture('../perlin.png')
+                    value: THREE.ImageUtils.loadTexture(require('../assets/perlin.png'))
                 },
                 u_useTexture: {
                     type: 'i',
