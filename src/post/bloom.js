@@ -90,13 +90,17 @@ export default function Bloom(renderer, scene, camera) {
     composer.addPass(new EffectComposer.RenderPass(scene, camera));
 
     // then take the rendered result and apply the BloomShader
-    // composer.addPass(BloomShaderX);
-    // composer.addPass(BloomShaderY);    
-
+ 
+    // Isolate Bright Moments
     composer.addPass(BrightnessFilterPass);
 
+    // Just Gaussian Blur
+    composer.addPass(BloomShaderX);
+    composer.addPass(BloomShaderY);   
+
+
     // set this to true on the shader for your last pass to write to the screen
-    BrightnessFilterPass.renderToScreen = true;  
+    BloomShaderY.renderToScreen = true;  
 
     return {
         initGUI: function(gui) {
