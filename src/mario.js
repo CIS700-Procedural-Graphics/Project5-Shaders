@@ -4,8 +4,14 @@
 const THREE = require('three');
 require('three-obj-loader')(THREE)
 
-export var textureLoaded = new Promise((resolve, reject) => {
+export var marioTexture = new Promise((resolve, reject) => {
     (new THREE.TextureLoader()).load(require('./assets/wahoo.bmp'), function(texture) {
+        resolve(texture);
+    })
+})
+
+export var silverblueTexture = new Promise((resolve, reject) => {
+    (new THREE.TextureLoader()).load(require('./assets/silverblue.bmp'), function(texture) {
         resolve(texture);
     })
 })

@@ -1,6 +1,5 @@
 
 const THREE = require('three');
-import {textureLoaded} from '../mario'
 
 // options for lambert shader
 var options = {
@@ -8,7 +7,6 @@ var options = {
     lightIntensity: 2,
     albedo: '#dddddd',
     ambient: '#111111',
-    useTexture: true
 }
 
 export default function(renderer, scene, camera) {
@@ -27,9 +25,6 @@ export default function(renderer, scene, camera) {
             gui.addColor(options, 'ambient').onChange(function(val) {
                 Shader.material.uniforms.u_ambient.value = new THREE.Color(val);
             });
-            gui.add(options, 'useTexture').onChange(function(val) {
-                Shader.material.uniforms.u_useTexture.value = val;
-            });
         },
         
         material: new THREE.ShaderMaterial({
@@ -37,10 +32,6 @@ export default function(renderer, scene, camera) {
                 texture: {
                     type: "t", 
                     value: null
-                },
-                u_useTexture: {
-                    type: 'i',
-                    value: options.useTexture
                 },
                 u_albedo: {
                     type: 'v3',
@@ -67,11 +58,6 @@ export default function(renderer, scene, camera) {
             fragmentShader: require('../glsl/iridescent-frag.glsl')
         })
     }
-
-    // once the Mario texture loads, bind it to the material
-    textureLoaded.then(function(texture) {
-        Shader.material.uniforms.texture.value = texture;
-    });
 
     return Shader;
 }
