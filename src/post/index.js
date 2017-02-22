@@ -15,4 +15,7 @@ export function None(renderer, scene, camera) {
 }
 
 // follow this syntax to make your shaders available to the GUI
-export {default as Grayscale} from './grayscale'
+export {default as Comic_Book} from './comic'
+export {default as Sobel_Filter} from './sobel'
+export {default as Fish_Eye_Bulge} from './fish'
+export {default as Vignette} from './vignette'

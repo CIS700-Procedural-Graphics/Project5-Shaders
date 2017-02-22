@@ -18,5 +18,9 @@
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0",
     "webpack-glsl-loader": "^1.0.1"
+  },
+  "devDependencies": {
+    "file-loader": "^0.10.0",
+    "image-webpack-loader": "^3.2.0"
   }
 }
