@@ -10,7 +10,7 @@ var Shader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: require('../glsl/pass-vert.glsl'),
-    fragmentShader: require('../glsl/pointilism-frag.glsl')
+    fragmentShader: require('../glsl/hatching-frag.glsl')
 });
 
 export default function Fisheye(renderer, scene, camera) {
