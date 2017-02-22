@@ -20,7 +20,7 @@ window.addEventListener('load', function() {
     var renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x999999, 1.0);
+    renderer.setClearColor(0xf0f0f0, 1.0);
 
     var controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -38,6 +38,7 @@ window.addEventListener('load', function() {
     });
     
     var mesh, shader, post;
+    var marioRotationRad = { value: 0 };
     // this gets called when we set the shader
     function shaderSet(Shader, gui) {
         // create the shader and initialize its gui
@@ -59,11 +60,11 @@ window.addEventListener('load', function() {
         post.initGUI(gui);
     }
 
-    setupGUI(shaderSet, postProcessSet);
+    setupGUI(shaderSet, postProcessSet, marioRotationRad);
 
     objLoaded.then(function(geo) {
         // point the camera to Mario on load
-        camera.position.set(5, 10, 15);
+        camera.position.set(-5, 12, 15);
         const center = geo.boundingSphere.center;
         camera.lookAt(center);
         controls.target.set(center.x, center.y, center.z);
