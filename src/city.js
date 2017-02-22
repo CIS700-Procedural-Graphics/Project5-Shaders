@@ -110,7 +110,7 @@ class ConvexHull
 		function addVertex(v, vertices, midpoint)
 		{
 			for(var i = 0; i < vertices.length; i++)
-				if(v.distanceTo(vertices[i]) < .01)
+				if(v.distanceTo(vertices[i]) < .05)
 					return;
 
 			vertices.push(v);
@@ -495,15 +495,20 @@ class Generator
 				// If it is too small, no lot
 				// If it is medium sized, it can be ignored with a probability
 				// if(hull.area > .5 && (random.real(0,1) > .1 || hull.area > 2))
+				if(hull.area > .25) // Prune very small lots
 				{
 					var lot = new Building.BuildingLot();
 
 					// Yes, directly reuse them ;)
-					lot.points = hull.vertices;
+					// lot.points = [];
+
+					for(var j = hull.vertices.length - 1; j >= 0; j--)
+						lot.points.push(hull.vertices[j]);
+
 					lot.buildNormals();
 					lot.hasCap = true;
 					lot.hull = hull;
-					lot.park = (hull.area < .55 || (random.real(0,1) < .1 && hull.area < 2));
+					lot.park = (hull.area < .65 || (random.real(0,1) < .1 && hull.area < 2));
 
 					lotContainer[i].push(lot);
 				}
@@ -615,18 +620,16 @@ class Generator
 		var lots = this.buildLots(hulls, random);
 
 		var baseLotProfile = new Building.Profile();
-		baseLotProfile.addPoint(1.15, 0.0);
-		baseLotProfile.addPoint(1.15, .025);
-		baseLotProfile.addPoint(1.2, .025);
-		baseLotProfile.addPoint(1.2, .035);
-		baseLotProfile.addPoint(1.35, .035);
+		baseLotProfile.addPoint(.9, 0.0);
+		baseLotProfile.addPoint(.9, .025);
+		baseLotProfile.addPoint(.8, .025);
+		baseLotProfile.addPoint(.8, .035);
 
 		var cityBlocks = [];
 
 		for(var i = 0; i < lots.length; i++)
 		{
 			var group = new THREE.Group();
-
 			var geometryBatch = new THREE.Geometry();
 
 			for(var j = 0; j < lots[i].length; j++)

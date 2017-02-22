@@ -33,8 +33,10 @@ var Engine =
   initialCube : null,
 
   // Important materials
-  buildingMaterial : null
+  buildingMaterial : null,
 
+  audio : null,
+  volume : 1.0
 }
 
 function loadMusic()
@@ -46,11 +48,13 @@ function loadMusic()
   var sound = new THREE.Audio(listener);
   var audioLoader = new THREE.AudioLoader();
 
+  Engine.audio = sound;
+
   //Load a sound and set it as the Audio object's buffer
   audioLoader.load('./music/music.mp3', function( buffer ) {
       sound.setBuffer( buffer );
       sound.setLoop(true);
-      sound.setVolume(1.0);
+      sound.setVolume(Engine.volume);
       // sound.setVolume(0.0);
       sound.play();
 
@@ -103,6 +107,7 @@ function loadCameraControllers()
       Engine.camera.lookAt(new THREE.Vector3(0, 0, 2 - t));
   }));
 
+  // DROP CAMERA
   Engine.cameraControllers.push(new Camera.CameraController(7.3, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(4, 4, 4);
@@ -119,7 +124,7 @@ function loadCameraControllers()
       Engine.camera.rotateZ(smoothT * Math.PI * 2);
   }));
 
-  Engine.cameraControllers.push(new Camera.CameraController(15.0, function(t) {
+  Engine.cameraControllers.push(new Camera.CameraController(14.5, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(4, 4, 4);
 
@@ -131,7 +136,84 @@ function loadCameraControllers()
   }, 
   function(){
     Engine.fakeBox.visible = false;
-    Engine.rubik.container.visible = true;
+    Engine.rubik.container.visible = true;    
+    Engine.buildingMaterial.uniforms.animateHeight.value = 1;
+  }));
+
+  Engine.cameraControllers.push(new Camera.CameraController(3.5, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(7,7,0).add(direction.multiplyScalar(t * -.2));
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1;
+      Engine.buildingMaterial.uniforms.animateHeight.value = 0;
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 1, 1 - t * .3));
+  }));
+
+  Engine.cameraControllers.push(new Camera.CameraController(3.5, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(7,-7,0).add(direction.multiplyScalar(t * -.2));
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1;
+      Engine.buildingMaterial.uniforms.animateHeight.value = 0;
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 1, 1 - t * .3));
+  }));
+
+
+  Engine.cameraControllers.push(new Camera.CameraController(3.75, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(7,4,-4).add(direction.multiplyScalar(t * -.2));
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1;
+      Engine.buildingMaterial.uniforms.animateHeight.value = 0;
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 1, 1 - t * .3));
+  }));
+
+  // Engine.cameraControllers.push(new Camera.CameraController(3.5, function(t) {
+  //     var direction = new THREE.Vector3(0, 0, 1);
+  //     var p = new THREE.Vector3(-7,7,4).add(direction.multiplyScalar(t * -.2));
+  //     Engine.camera.position.copy(p);
+
+  //     Engine.camera.zoom = 1;
+  //     Engine.buildingMaterial.uniforms.animateHeight.value = 0;
+
+  //     Engine.camera.lookAt(new THREE.Vector3(0, 1, 1 - t * .3));
+  // }));
+
+  Engine.cameraControllers.push(new Camera.CameraController(4, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(4, 4, 4);
+      Engine.camera.position.set(40, 40, 40);
+      // Engine.camera.position.copy(p);
+
+      var smoothT = THREE.Math.smoothstep(Math.pow(t, 25) * .75 + t * .25, 0, 1);
+
+      smoothT = Ease.outBack(smoothT);
+
+      Engine.camera.zoom = 3.5 - smoothT * 2.5;
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 0, 0));
+      Engine.camera.rotateZ(smoothT * Math.PI * 2);
+  }));
+
+  Engine.cameraControllers.push(new Camera.CameraController(14.5, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(4, 4, 4);
+
+      Engine.camera.zoom = 1 + Math.pow(Math.abs(Math.sin(t * 15.5 * Math.PI * 2)), 15) * .05;
+
+      Engine.rubik.container.rotateY(.01);
+      Engine.rubik.container.rotateX(.01);
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 0, 0));
+  }, 
+  function(){
+    Engine.buildingMaterial.uniforms.animateHeight.value = 1;
   }));
 
   setActiveCamera(0);
@@ -173,11 +255,27 @@ function loadBackgrounds()
 {   
   var bgGeo = new THREE.PlaneGeometry(1,1,1,1);
 
-  var initialMaterial = loadShaderMaterial("bg_initial", {
+  var initialMaterial = loadShaderMaterial("backgrounds/initial", {
     time: { type: "f", value : 0.0 }
   });
-  makeBackgroundMaterial(initialMaterial)
+  makeBackgroundMaterial(initialMaterial);
+
+  var polkaMaterial = loadShaderMaterial("backgrounds/polka", {
+    time: { type: "f", value : 0.0 },
+    ASPECT_RATIO: { type: "f", value : 1.0 }
+  });
+  makeBackgroundMaterial(polkaMaterial)
+
   var initialMesh = new THREE.Mesh(bgGeo, initialMaterial);
+  initialMesh.renderOrder = -10;
+
+  initialMesh.onBeforeRender = function() {
+    if(Engine.time > 40)
+    {
+      initialMesh.material = polkaMaterial;
+    }
+  }
+
   Engine.scene.add(initialMesh);
 
   var introOverlayMaterial = loadShaderMaterial("overlays/opening_overlay", {
@@ -222,10 +320,11 @@ function loadFakeBox()
 function loadBuildings()
 {
   Engine.buildingMaterial = loadShaderMaterial("building", {
-    time: { type: "f", value : 0.0 }
+    time: { type: "f", value : 0.0 },
+    animateHeight: { type: "f", value : 1.0 }
   });
 
-  Engine.buildingMaterial.side = THREE.DoubleSide;
+  // Engine.buildingMaterial.side = THREE.DoubleSide;
   Engine.buildingMaterial.vertexColors = THREE.VertexColors;
 
   var city = new City.Generator();
@@ -266,6 +365,7 @@ function onLoad(framework)
   camera.position.set(40, 40, 40);
   camera.lookAt(new THREE.Vector3(0,0,0));
   camera.fov = 5;
+  camera.far = 100;
   camera.updateProjectionMatrix();
 
   loadBackgrounds();
@@ -298,6 +398,7 @@ function onUpdate(framework)
   if(Engine.initialized)
   {
     var screenSize = new THREE.Vector2( framework.renderer.getSize().width, framework.renderer.getSize().height );
+    var aspectRatio = screenSize.y / screenSize.x;
     var deltaTime = Engine.clock.getDelta();
 
     Engine.time += deltaTime;
@@ -315,6 +416,9 @@ function onUpdate(framework)
 
       if(material.uniforms["SCREEN_SIZE"] != null)
         material.uniforms.SCREEN_SIZE.value = screenSize;
+
+      if(material.uniforms["ASPECT_RATIO"] != null)
+        material.uniforms.ASPECT_RATIO.value = aspectRatio;
     }
 
     updateCamera();

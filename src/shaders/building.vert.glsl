@@ -4,6 +4,7 @@ varying vec3 vColor;
 varying float localHeight;
 
 uniform float time;
+uniform float animateHeight;
 
 float displace(float x)
 {
@@ -27,7 +28,7 @@ void main() {
     pos.y *= verticalMask;
 
     // Displace Red 
-	pos.y *= (1.0 + (displace(color.r * 3.1415 * 2.0 + time * 3.1415 * 2.0 * 1.25)) * verticalMask * .4);
+	pos.y *= (1.0 + (animateHeight * displace(color.r * 3.1415 * 2.0 + time * 3.1415 * 2.0 * 1.25)) * verticalMask * .4);
 
     // pos.y *= (1.0 + (sin(color.r + color.g + color.b + time * 3.1415 * 2.0)) * verticalMask * .2);
 

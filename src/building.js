@@ -28,11 +28,13 @@ class BuildingFactory
 		this.lots.push(this.buildLLot());
 		this.lots.push(this.buildCLot());
 		this.lots.push(this.buildSquareLot());
+		// TODO: trapezoid!
 
 		for(var i = 0; i < this.lots.length; i++)
 			this.lots[i].buildNormals();
 
 		this.profiles.push(this.buildSimpleProfile());
+		this.profiles.push(this.buildPyramidProfile());
 		this.profiles.push(this.buildExtremeProfile());
 	}
 
@@ -71,12 +73,28 @@ class BuildingFactory
 		}
 
 		// Almost always simple case
-		if(random.real(0,1) > .15)
+		if(random.real(0,1) > .3)
 			return this.profiles[0];
 
+		if(random.real(0,1) > .75)
+			return this.profiles[1];
+
 		// Extremee
-		return this.profiles[1];
+		return this.profiles[2];
 	}
+
+	buildPyramidProfile()
+	{		
+		var profile = new Profile();
+
+		profile.addPoint(1.05, 0.0);
+		profile.addPoint(1.05, 0.05);
+		profile.addPoint(1.0, 0.05);
+		profile.addPoint(0.0, 1.0);
+
+		return profile;
+	}
+
 
 	buildSimpleProfile()
 	{		
@@ -211,7 +229,8 @@ class BuildingFactory
 		lot.addPoint(.5, 1);
 		lot.addPoint(.5, .5);
 		lot.addPoint(-.5, .5);
-		lot.addPoint(-.5, 1);		
+		lot.addPoint(-.5, 1);
+		lot.addPoint(-1, 1);
 
 		return lot;
 	}
