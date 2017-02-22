@@ -2,17 +2,15 @@
 const THREE = require('three');
 import {textureLoaded} from '../mario'
 
-// options for lambert shader
+// options
 var options = {
     lightColor: '#ffffff',
-    lightIntensity: 2,
+    lightIntensity: 1,
     albedo: '#dddddd',
     ambient: '#111111',
-    useTexture: true
 }
 
 export default function(renderer, scene, camera) {
-
     const Shader = {
         initGUI: function(gui) {
             gui.addColor(options, 'lightColor').onChange(function(val) {
@@ -27,21 +25,10 @@ export default function(renderer, scene, camera) {
             gui.addColor(options, 'ambient').onChange(function(val) {
                 Shader.material.uniforms.u_ambient.value = new THREE.Color(val);
             });
-            gui.add(options, 'useTexture').onChange(function(val) {
-                Shader.material.uniforms.u_useTexture.value = val;
-            });
         },
 
         material: new THREE.ShaderMaterial({
             uniforms: {
-                texture: {
-                    type: "t", 
-                    value: null
-                },
-                u_useTexture: {
-                    type: 'i',
-                    value: options.useTexture
-                },
                 u_albedo: {
                     type: 'v3',
                     value: new THREE.Color(options.albedo)
@@ -61,17 +48,16 @@ export default function(renderer, scene, camera) {
                 u_lightIntensity: {
                     type: 'f',
                     value: options.lightIntensity
+                },
+                u_cameraPos: {
+                    type: 'v3',
+                    value: camera.position
                 }
             },
-            vertexShader: require('../glsl/lambert-vert.glsl'),
-            fragmentShader: require('../glsl/lambert-frag.glsl')
+            vertexShader: require('../glsl/hatch-vert.glsl'),
+            fragmentShader: require('../glsl/hatch-frag.glsl')
         })
     }
-
-    // once the Mario texture loads, bind it to the material
-    textureLoaded.then(function(texture) {
-        Shader.material.uniforms.texture.value = texture;
-    });
-
     return Shader;
 }
+

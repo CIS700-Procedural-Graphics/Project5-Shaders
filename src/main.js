@@ -36,7 +36,7 @@ window.addEventListener('load', function() {
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
-    
+
     var mesh, shader, post;
     // this gets called when we set the shader
     function shaderSet(Shader, gui) {
