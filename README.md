@@ -4,8 +4,8 @@
 ## Pointillism
 This is what the pointillism shader looks like for different threshold and light intensity values. 
 <br>
-<img src="pt1.png" width=“50”>
-<img src="pt2.png" width=“50”>
+<img src="pt1.png" width=“50” height=“50”>
+<img src="pt2.png" width=“50” height=“50”>
 <br>
 
 ## Iridescence
