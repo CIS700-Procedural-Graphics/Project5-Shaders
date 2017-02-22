@@ -63,10 +63,4 @@ __Pointilism Shader:__
   Reference Source:
   [https://www.shadertoy.com/view/Xlc3Wr](https://www.shadertoy.com/view/Xlc3Wr)
 
-  ![](./images/pointilism.png)
-
-## Deploy
-1. Create a `gh-pages` branch on GitHub
-2. Do `npm run build`
-3. Commit and add all your changes.
-4. Do `npm run deploy`
+  ![](./images/Pointilism.png)
