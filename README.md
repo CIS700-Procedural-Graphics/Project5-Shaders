@@ -15,109 +15,53 @@ Examples: [https://cis700-procedural-graphics.github.io/Project5-Shaders/](https
 
 ### 15 points each: Instagram-like filters
 
-- Tone mapping:
-    - Linear (+5 points)
-    - Reinhard (+5 points)
-    - Filmic (+5 points)
+
 - Gaussian blur (no double counting with Bloom)
-- Iridescence
-- Pointilism
-- Vignette
-- Fish-eye bulge
-
-### 25 points each: 
+    - Description: I do two passes through the image: a horizontal then a vertical pass. I sample 9 pixels in each direction for each pixel. I also use precomputed gaussian weights.
+    - GUI Controls
+        - Radius of the blur
+    - References:
+        - https://en.wikipedia.org/wiki/Gaussian_blur
+        - http://dev.theomader.com/gaussian-kernel-calculator/
+        - https://github.com/mattdesl/lwjgl-basics/wiki/ShaderLesson5
 - Bloom
-- Noise Warp
+    - Description: I save the original render in a separate effect composer than the one that computes the bloom. The one the computes the bloom isolates the bright moments of the scene, then does gaussian blur on that isolated texture. Then I add it to the original render.
+    - GUI Controls
+        - Radius of the blur
+        - Amount of bloom (this is in opposite direction for some reason...)
+    - References:
+        - See Gaussian Blur
+        - https://learnopengl.com/#!Advanced-Lighting/Bloom
+- Iridescence
+    - Description: Color dependent on the viewing angle. I just dotted the look with the normal of the object and then mapped that value to a color pallette
+    -GUI Controls
+        - None.
+    - References:
+        - Pallette: http://www.iquilezles.org/www/articles/palettes/palettes.htm
+        - Slides: https://cis700-procedural-graphics.github.io/files/color_2_14_17.pdf
+- Pointilism
+    - Description: The density of the points is representative of the darkness of the area. I generate noise and if that noise is greater than the grayscale value of the pixel, then that point is black otherwise it is white.
+    - GUI Controls:
+        - None
+    - References:
+        - Slides: https://cis700-procedural-graphics.github.io/files/color_2_14_17.pdf
+- Vignette
+    - Description: There are two variables edge0 and edge1 that describe basically the min and max of the vignette effect. edge0 must be less than or equal to edge1 or else things break. Anyway, I essentially use the smooth step function to define where the vignette is. 
+    - GUI Controls
+        - edge0 (min) [0.0, 1.0]
+        - edge1 (max) [0.0, 1.0]
+    - References:
+        - Smooth Step: http://www.shaderific.com/glsl-functions/
 - Hatching
-- Lit Sphere ([paper](http://www.ppsloan.org/publications/LitSphere.pdf))
-
-### 37.5 points each:
-- K-means color compression (unless you are extremely clever, the k-means clusterer has to be CPU side)
-- Dithering
-- Edge detection with Sobel filtering
-- Uncharted 2 customizable filmic curve, following John Hable’s presetantion. 
-    - Without Linear, Reinhard, filmic (+10 points)
-    - With all of linear, Reinhard, filmic (+10 points)
-    - Customizable via GUI (+17.5 points)
-    - Controlling Exposure (4 points)
-    - Side by side comparison between linear, Reinhard, filmic, and Uncharted2 (13.5 points). 
-
-### 5 points - Interactivity
-Implement a dropdown GUI to select different shader effects from your list.
-
-### ??? points
-Propose your own shading effects!
-
-### For the overachievers:
-Weave all your shading effects into one aesthetically-coherent scene, perhaps by incorporating some of your previous assignments!
-
-
-## Getting Started
-
-### main.js
-
-`main.js` is responsible for setting up the scene with the Mario mesh, initializing GUI and camera, etc.
-
-### Adding Shaders
-
-To add a shader, you'll want to add a file to the `src/shaders` or `src/post` folder. As examples, we've provided two shaders `lambert.js` and `grayscale.js`. Here, I will give a brief overview of how these work and how everything hooks together.
-
-**shaders/lambert.js**
-
-IMPORTANT: I make my lambert shader available by exporting it in `shaders/index.js`. 
-
-```javascript
-export {default as Lambert} from './Lambert'
-```
-
-Each shader should export a function that takes in the `renderer`, `scene`, and `camera`. That function should return a `Shader` Object.
-
-`Shader.initGUI` is a function that will be called to initialize the GUI for that shader. in `lambert.js`, you can see that it's here that I set up all the parameters that will affect my shader.
-
-`Shader.material` should be a `THREE.ShaderMaterial`. This should be pretty similar to what you've seen in previous projects. `Shader.material.vertexShader` and `Shader.material.fragmentShader` are the vertex and fragment shaders used.
-
-At the bottom, I have the following snippet of code. All it does is bind the Mario texture once it's loaded.
-
-```javascript
-textureLoaded.then(function(texture) {
-    Shader.material.uniforms.texture.value = texture;
-});
-```
-
-So when you change the Shader parameter in the GUI, `Shader.initGUI(gui)` will be called to initialize the GUI, and then the Mario mesh will have `Shader.material` applied to it.
-
-**post/grayscale.js**
-
-GUI parameters here are initialized the same way they are for the other shaders.
-
-Post process shaders should use the THREE.js `EffectComposer`. To set up the grayscale filter, I first create a new composer: `var composer = new EffectComposer(renderer);`. Then I add a a render pass as the first pass: `composer.addPass(new EffectComposer.RenderPass(scene, camera));`. This will set up the composer to render the scene as normal into a buffer. I add my filter to operate on that buffer: `composer.addPass(GrayscaleShader);`, and mark it as the final pass that will write to the screen `GrayscaleShader.renderToScreen = true;`
-
-GrayscaleShader is a `EffectComposer.ShaderPass` which basically takes the same arguments as `THREE.ShaderMaterial`. Note, that one uniform that will have to include is `tDiffuse`. This is the texture sampler which the EffectComposer will automatically bind the previously rendered pass to. If you look at `glsl/grayscale-frag.glsl`, this is the texture we read from to get the previous pixel color: `vec4 col = texture2D(tDiffuse, f_uv);`.
-
-IMPORTANT: You initially define your shader passes like so:
-
-```javascript
-var GrayscaleShader = new EffectComposer.ShaderPass({
-    uniforms: {
-        tDiffuse: {
-            type: 't',
-            value: null
-        },
-        u_amount: {
-            type: 'f',
-            value: options.amount
-        }
-    },
-    vertexShader: require('../glsl/pass-vert.glsl'),
-    fragmentShader: require('../glsl/grayscale-frag.glsl')
-});
-```
-
-BUT, if you want to modify the uniforms, you need to do so like so: `GrayscaleShader.material.uniforms.u_amount.value = val;`. Note the extra `.material` property.
-
-## Deploy
-
-1. Create a `gh-pages` branch on GitHub
-2. Do `npm run build`
-3. Commit and add all your changes.
-4. Do `npm run deploy`
+    - Description: Basically I used the sin function to create a hatching pattern and added that onto the texture. Then, I took into account the brightness of pixel; the brighter the pixel the less likely there was hatching. Then, I add some noise as well to make it less regular.
+    - GUI Controls
+        - Amount: size of the hatching
+    - References
+        - Slides: https://cis700-procedural-graphics.github.io/files/color_2_14_17.pdf
+- Tone mapping: Linear 
+    - Description: Adjust gamma (u_amount) which gives more luminance to the image.
+    - GUI Controls:
+        - Amount: Gamma Correction
+    - References: 
+        - https://www.shadertoy.com/view/lslGzl
+        - https://en.wikipedia.org/wiki/Gamma_correction
