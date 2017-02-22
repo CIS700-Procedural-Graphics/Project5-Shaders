@@ -17,7 +17,7 @@ void main() {
 
 	vec3 lookVector = normalize(f_position - cameraPosition);
 	float dotProd = dot(lookVector, f_normal);
-	if ( dotProd >= -0.4 && dotProd <= 0.4) {
+	if ( dotProd >= -0.3 && dotProd <= 0.3) {
 		toon = 0.0;
 	}
 	else {

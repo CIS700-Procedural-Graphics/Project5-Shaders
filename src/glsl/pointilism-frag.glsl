@@ -16,7 +16,7 @@ void main() {
     //linear interpolate probability
     float probability = 0.0 * brightness + 1.0 * brightness;
     float seed = rand(vec2(f_position.x, f_position.y));
-    if (seed <= probability) {
+    if (seed < probability*u_amount) {
     	col.rgb = vec3(1, 1, 1);
     }
     else {

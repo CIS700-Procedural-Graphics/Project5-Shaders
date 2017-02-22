@@ -11,10 +11,6 @@ var SobelShader = new EffectComposer.ShaderPass({
         tDiffuse: {
             type: 't',
             value: null
-        },
-        u_amount: {
-            type: 'f',
-            value: options.amount
         }
     },
     vertexShader: require('../glsl/pass-vert.glsl'),
@@ -38,10 +34,6 @@ export default function Sobel(renderer, scene, camera) {
 
     return {
         initGUI: function(gui) {
-            gui.add(options, 'amount', 0, 1).onChange(function(val) {
-                //NOTE: make sure to use .material
-                SobelShader.material.uniforms.u_amount.value = val;
-            });
         },
         
         //NOTE: ALL post functions must have this dunctions

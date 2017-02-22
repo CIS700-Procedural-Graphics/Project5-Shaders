@@ -5,13 +5,13 @@ const THREE = require('three');
 require('three-obj-loader')(THREE)
 
 export var textureLoaded = new Promise((resolve, reject) => {
-    (new THREE.TextureLoader()).load(require('./assets/wahoo.bmp'), function(texture) {
+    (new THREE.TextureLoader()).load(require('./assets/smithtexture.bmp'), function(texture) {
         resolve(texture);
     })
 })
 
 export var objLoaded = new Promise((resolve, reject) => {
-    (new THREE.OBJLoader()).load(require('./assets/wahoo.obj'), function(obj) {
+    (new THREE.OBJLoader()).load(require('./assets/smith.obj'), function(obj) {
         var geo = obj.children[0].geometry;
         geo.computeBoundingSphere();
         resolve(geo);

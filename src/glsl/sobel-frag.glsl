@@ -1,6 +1,5 @@
 
 uniform sampler2D tDiffuse;
-uniform float u_amount;
 varying vec2 f_uv;
 varying vec3 f_position;
 
