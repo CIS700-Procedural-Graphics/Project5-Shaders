@@ -10,6 +10,7 @@ import * as Camera from './camera.js'
 
 import * as Glare from './post/glare.js'
 import * as Sobel from './post/sobel.js'
+import * as Glitch from './post/glitch.js'
 
 var Engine = 
 {
@@ -335,12 +336,12 @@ function loadCameraControllers()
   }));
 
   // MAIN SECTION, INTRODUCTION OF RUBIK+PASS CHANGE
-  Engine.cameraControllers.push(new Camera.CameraController(15, function(t) {
+  Engine.cameraControllers.push(new Camera.CameraController(31, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(40, 40, 40);
       Engine.camera.position.copy(p);
 
-      Engine.camera.zoom = 1 + Math.pow(Math.abs(Math.sin(t * 15.5 * Math.PI * 2)), 15) * .05;;
+      Engine.camera.zoom = 1 + Math.pow(Math.abs(Math.sin(t * 31.5 * Math.PI * 2)), 15) * .05;;
 
       Engine.rubik.container.rotateY(-.01);
       Engine.rubik.container.rotateX(-.01);
@@ -356,12 +357,14 @@ function loadCameraControllers()
     var callback = function() {
       setTimeout(function(){
 
-        pass = (pass == 2 ? 0 : pass + 1);
+        pass = (pass == 3 ? 0 : pass + 1);
 
         if(pass == 0)
           Engine.currentPass = null;
         else if(pass == 1)
-          Engine.currentPass = Engine.sobelPass;
+          Engine.currentPass = Engine.sobelPass;        
+        else if(pass == 2)
+          Engine.currentPass = Engine.glitchPass;
         else
           Engine.currentPass = Engine.glarePass;
 
@@ -505,8 +508,10 @@ function onLoad(framework)
 
   Engine.glarePass = Glare.GlarePass(renderer, scene, camera);
   Engine.sobelPass = Sobel.MainPass(renderer, scene, camera);
+  Engine.glitchPass = Glitch.MainPass(renderer, scene, camera);
   Engine.passes.push(Engine.glarePass);
   Engine.passes.push(Engine.sobelPass);
+  Engine.passes.push(Engine.glitchPass);
 
   // Very important to set clear color alpha to 0, 
   // so that effects can use that vaue as an additional parameter!
@@ -583,6 +588,21 @@ function onUpdate(framework)
 
       if(material.uniforms["ASPECT_RATIO"] != null)
         material.uniforms.ASPECT_RATIO.value = aspectRatio;
+    }
+
+    // Update passes code
+    for (var i = 0; i < Engine.passes.length; i++)
+    {
+      var pass = Engine.passes[i];
+
+      if(pass.uniforms["time"] != null)
+        pass.uniforms.time.value = Engine.time;
+
+      if(pass.uniforms["SCREEN_SIZE"] != null)
+        pass.uniforms.SCREEN_SIZE.value = screenSize;
+
+      if(pass.uniforms["ASPECT_RATIO"] != null)
+        pass.uniforms.ASPECT_RATIO.value = aspectRatio;
     }
 
     updateCamera();
