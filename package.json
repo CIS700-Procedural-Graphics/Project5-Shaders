@@ -15,8 +15,8 @@
     "three-effectcomposer": "0.0.1",
     "three-obj-loader": "^1.0.2",
     "three-orbit-controls": "^82.1.0",
-    "webpack": "^2.2.1",
-    "webpack-dev-server": "^2.3.0",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.16.2",
     "webpack-glsl-loader": "^1.0.1"
   }
 }

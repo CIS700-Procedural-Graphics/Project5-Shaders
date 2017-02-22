@@ -20,7 +20,7 @@ window.addEventListener('load', function() {
     var renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x999999, 1.0);
+    renderer.setClearColor(0x000000, 1.0);
 
     var controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -37,7 +37,7 @@ window.addEventListener('load', function() {
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
     
-    var mesh, shader, post;
+    var mesh, shader, post, elapsedFrames;
     // this gets called when we set the shader
     function shaderSet(Shader, gui) {
         // create the shader and initialize its gui
@@ -67,6 +67,9 @@ window.addEventListener('load', function() {
         const center = geo.boundingSphere.center;
         camera.lookAt(center);
         controls.target.set(center.x, center.y, center.z);
+
+        //start the clock
+        elapsedFrames = 0.0;
     });
 
     (function tick() {
@@ -76,6 +79,12 @@ window.addEventListener('load', function() {
         if (post && post.update) post.update();         // perform any necessary updates
         if (post) post.render();                        // render the scene
         stats.end();
+
+        //rotate mesh
+        elapsedFrames ++;
+        if(mesh)
+            mesh.rotation.y = elapsedFrames/5.0 * Math.PI/180.0;
+        
         requestAnimationFrame(tick);
     })();
 });
