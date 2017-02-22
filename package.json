@@ -2,7 +2,7 @@
   "scripts": {
     "start": "webpack-dev-server --hot --inline",
     "deploy": "git push origin `git subtree split --prefix build master`:gh-pages --force",
-    "build": "webpack"
+    "build": "node deploy.js"
   },
   "dependencies": {
     "babel-core": "^6.22.1",
