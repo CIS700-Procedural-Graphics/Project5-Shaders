@@ -18,4 +18,7 @@ export function None(renderer, scene, camera) {
 export {default as Grayscale} from './grayscale'
 export {default as InClassPostRedAlter} from './InClassPostRedAlter'
 export {default as Edges} from './edgeWithSobel'
+export {default as Vignette} from './vignette'
+export {default as FishEye} from './fishEye'
+
 export {default as CoolEffect1} from './coolEffect1'
