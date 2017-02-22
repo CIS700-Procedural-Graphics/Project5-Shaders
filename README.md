@@ -1,123 +1,102 @@
 
-# Project 5: Shaders
-
-## Project Instructions
-
-Implement at least 75 points worth of shaders from the following list. We reserve the right to grant only partial credit for shaders that do not meet our standards, as well as extra credit for shaders that we find to be particularly impressive.
-
-Some of these shading effects were covered in lecture -- some were not. If you wish to implement the more complex effects, you will have to perform some extra research. Of course, we encourage such academic curiosity which is why we’ve included these advanced shaders in the first place!
-
-Document each shader you implement in your README with at least a sentence or two of explanation. Well-commented code will earn you many brownie (and probably sanity) points.
-
-If you use shadertoy or any materials as reference, please properly credit your sources in the README and on top of the shader file. Failing to do so will result in plagiarism and will significantly reduce your points.
-
-Examples: [https://cis700-procedural-graphics.github.io/Project5-Shaders/](https://cis700-procedural-graphics.github.io/Project5-Shaders/)
-
-### 15 points each: Instagram-like filters
-
-- Tone mapping:
-    - Linear (+5 points)
-    - Reinhard (+5 points)
-    - Filmic (+5 points)
-- Gaussian blur (no double counting with Bloom)
-- Iridescence
-- Pointilism
-- Vignette
-- Fish-eye bulge
-
-### 25 points each: 
-- Bloom
-- Noise Warp
-- Hatching
-- Lit Sphere ([paper](http://www.ppsloan.org/publications/LitSphere.pdf))
-
-### 37.5 points each:
-- K-means color compression (unless you are extremely clever, the k-means clusterer has to be CPU side)
-- Dithering
-- Edge detection with Sobel filtering
-- Uncharted 2 customizable filmic curve, following John Hable’s presetantion. 
-    - Without Linear, Reinhard, filmic (+10 points)
-    - With all of linear, Reinhard, filmic (+10 points)
-    - Customizable via GUI (+17.5 points)
-    - Controlling Exposure (4 points)
-    - Side by side comparison between linear, Reinhard, filmic, and Uncharted2 (13.5 points). 
-
-### 5 points - Interactivity
-Implement a dropdown GUI to select different shader effects from your list.
-
-### ??? points
-Propose your own shading effects!
-
-### For the overachievers:
-Weave all your shading effects into one aesthetically-coherent scene, perhaps by incorporating some of your previous assignments!
+# Project 5: Shaders Playground
 
 
-## Getting Started
+## [View the Demo Here](https://mccannd.github.io/Project5-Shaders/)
 
-### main.js
+## Geometry Shaders
 
-`main.js` is responsible for setting up the scene with the Mario mesh, initializing GUI and camera, etc.
+### Lambert
 
-### Adding Shaders
+The default, the classic. Lit simply by light direction vs. normal direction
 
-To add a shader, you'll want to add a file to the `src/shaders` or `src/post` folder. As examples, we've provided two shaders `lambert.js` and `grayscale.js`. Here, I will give a brief overview of how these work and how everything hooks together.
+### Toon
 
-**shaders/lambert.js**
+Lambertian shading, but stratified into several levels. Normals that face away from the camera past a threshold are used for a black outline.
 
-IMPORTANT: I make my lambert shader available by exporting it in `shaders/index.js`. 
+### Twist
 
-```javascript
-export {default as Lambert} from './Lambert'
-```
+Lambert fragment shading. Vertex shader is an implementation of Alan Barr's Global and Local Definitions of Solid Primitives. Vertex positions and normals will twist back and forth across the y axis on a timer.
 
-Each shader should export a function that takes in the `renderer`, `scene`, and `camera`. That function should return a `Shader` Object.
+### Matcap
 
-`Shader.initGUI` is a function that will be called to initialize the GUI for that shader. in `lambert.js`, you can see that it's here that I set up all the parameters that will affect my shader.
+Also known as spherelit or spherical environment mapping. Fakes a material or reflected environment by mapping normals facing the camera to a texture of an orthographic hemisphere. Vertex shader transforms normals to camera space and saves the camera vector. Fragment shader handles the hemisphere mapping.
 
-`Shader.material` should be a `THREE.ShaderMaterial`. This should be pretty similar to what you've seen in previous projects. `Shader.material.vertexShader` and `Shader.material.fragmentShader` are the vertex and fragment shaders used.
+New Settings:
+map: switches the texture of the matcap shader
 
-At the bottom, I have the following snippet of code. All it does is bind the Mario texture once it's loaded.
+### Iridescence
 
-```javascript
-textureLoaded.then(function(texture) {
-    Shader.material.uniforms.texture.value = texture;
-});
-```
+Lambertian shading, but color is view dependent. Uses dot product of normal and camera vector as an input for Inigo Quilez's cosine palette. This input is shifted by the grayscale value of the unshaded surface color, so make sure to try toggling the texture and messing with the albedo color. 
 
-So when you change the Shader parameter in the GUI, `Shader.initGUI(gui)` will be called to initialize the GUI, and then the Mario mesh will have `Shader.material` applied to it.
+### Teleport
 
-**post/grayscale.js**
+Creates a horizontal band that makes the mesh look like it is teleporting away or back in.
 
-GUI parameters here are initialized the same way they are for the other shaders.
+Algorithm is as follows:
+- Default output is lambertian shading
+- Other textures for the effect are read from cylindrical mapping
+- Given a y position in world space and an edge thickness, make a band / range of height in world space
+- Deform the band vertically by some noise (perlin texture in this case)
+- Given the band and a world space y, make some parameter t such that:
+    -t is 1 if y is above the band
+    -t is 0 if y is below the band
+    -t smoothly interpolates from 1 to 0 inside the band
+- Read a texture for the shape of the teleport edge. Apply the gradient of t by adding (2t - 1) to the grayscale / channel value
+- Use that value to read an emissive color from a ramp texture
+- Make transparent if t is 0
+- Apply the emissive color to the lambert color
 
-Post process shaders should use the THREE.js `EffectComposer`. To set up the grayscale filter, I first create a new composer: `var composer = new EffectComposer(renderer);`. Then I add a a render pass as the first pass: `composer.addPass(new EffectComposer.RenderPass(scene, camera));`. This will set up the composer to render the scene as normal into a buffer. I add my filter to operate on that buffer: `composer.addPass(GrayscaleShader);`, and mark it as the final pass that will write to the screen `GrayscaleShader.renderToScreen = true;`
+Settings:
+Edge width, minimum and maximum band height, pause button
 
-GrayscaleShader is a `EffectComposer.ShaderPass` which basically takes the same arguments as `THREE.ShaderMaterial`. Note, that one uniform that will have to include is `tDiffuse`. This is the texture sampler which the EffectComposer will automatically bind the previously rendered pass to. If you look at `glsl/grayscale-frag.glsl`, this is the texture we read from to get the previous pixel color: `vec4 col = texture2D(tDiffuse, f_uv);`.
+## Post-Process Shaders
 
-IMPORTANT: You initially define your shader passes like so:
+### Grayscale
 
-```javascript
-var GrayscaleShader = new EffectComposer.ShaderPass({
-    uniforms: {
-        tDiffuse: {
-            type: 't',
-            value: null
-        },
-        u_amount: {
-            type: 'f',
-            value: options.amount
-        }
-    },
-    vertexShader: require('../glsl/pass-vert.glsl'),
-    fragmentShader: require('../glsl/grayscale-frag.glsl')
-});
-```
+Hello, world!
 
-BUT, if you want to modify the uniforms, you need to do so like so: `GrayscaleShader.material.uniforms.u_amount.value = val;`. Note the extra `.material` property.
+### Vignette
 
-## Deploy
+Hello again, world!
 
-1. Create a `gh-pages` branch on GitHub
-2. Do `npm run build`
-3. Commit and add all your changes.
-4. Do `npm run deploy`
+Settings:
+Opacity
+
+### Warp
+
+Shifts pixels vertically with my old perlin noise code. Very slow, not animated, replaced by the vastly superior plasma. 
+
+Settings: 
+Shift intensity
+
+### Plasma
+
+Calculates a -1 to 1 value using sinusoidal plasma clouds. That value both determines the intensity and angle of the UV displacement. Now we know what Mario's mushrooms are like.
+
+Settings:
+Shift intensity
+
+### Sobel
+
+Simple edge detection using the kernel math described on Wikipedia.
+
+Settings:
+Kernel displacement / spread
+
+### Monitor
+
+A flexible effect that emulates a crappy monitor or security camera footage.
+White noise is Rachel's implementation. Two different time-dependent passes per fragment, then multiplied together for final noise.
+A scan line periodically crosses the screen creating a horizontal distortion and darkening effect.
+
+Settings:
+vignette: darkens edges
+noiseStrength: 0: no white noise, --> 1: completely white noise
+bandStrength: controls how strongly the image is multiplied by the horizontal bands
+bandSpeed: controls vertical scrolling speed of horizontal bands
+bandWidth: controls how tall the horizontal bands are
+colorize: maps grayscale value g to a green color, (g^1.3, g, g^1.2). This avoids clunky HSV conversions and preserves white and black pixels. Slider determines strength of interpolation from original to this color.
+scanStrength: determines opacity and UV shift strength of the scanline. 0 turns it off.
+scanWidth: controls how tall the scan line effect is
+scanSpeed: controls speed of scanline scrolling.
