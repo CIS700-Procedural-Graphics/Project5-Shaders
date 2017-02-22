@@ -8,6 +8,8 @@ var options = {
     height: 100
 }
 
+var normalClone;
+
 var BrightnessFilterPass = new EffectComposer.ShaderPass({
     uniforms: {
         tDiffuse: {
@@ -77,6 +79,21 @@ var BloomShaderY = new EffectComposer.ShaderPass({
     fragmentShader: require('../glsl/bloom-frag.glsl')
 });
 
+var SuperimposeTextures = new EffectComposer.ShaderPass({
+    uniforms: {
+        tDiffuse: {
+            type: 't',
+            value: null
+        },
+        tClone: {
+            type: 't',
+            value: null
+        }
+    },
+    vertexShader: require('../glsl/pass-vert.glsl'),
+    fragmentShader: require('../glsl/super-frag.glsl')
+});
+
 export default function Bloom(renderer, scene, camera) {
     // Pass width and height of the screen to the shader
     // Not necessarily shaders
@@ -85,22 +102,29 @@ export default function Bloom(renderer, scene, camera) {
     
     // this is the THREE.js object for doing post-process effects
     var composer = new EffectComposer(renderer);
+    var renderComposer = new EffectComposer(renderer);
 
     // first render the scene normally and add that as the first pass
-    composer.addPass(new EffectComposer.RenderPass(scene, camera));
+    var normalRender = new EffectComposer.RenderPass(scene, camera);
 
-    // then take the rendered result and apply the BloomShader
+    composer.addPass(normalRender);
+    renderComposer.addPass(normalRender);
  
     // Isolate Bright Moments
     composer.addPass(BrightnessFilterPass);
 
     // Just Gaussian Blur
     composer.addPass(BloomShaderX);
-    composer.addPass(BloomShaderY);   
+    composer.addPass(BloomShaderY);  
+
+    SuperimposeTextures.material.uniforms.tClone.value = renderComposer.renderTarget2.texture;
+
+    // Superimpose them
+    composer.addPass(SuperimposeTextures); 
 
 
     // set this to true on the shader for your last pass to write to the screen
-    BloomShaderY.renderToScreen = true;  
+    SuperimposeTextures.renderToScreen = true;  
 
     return {
         initGUI: function(gui) {
@@ -115,6 +139,7 @@ export default function Bloom(renderer, scene, camera) {
         },
         
         render: function() {;
+            renderComposer.render();
             composer.render();
         }
     }
