@@ -51,7 +51,7 @@ export default function Halftone(renderer, scene, camera) {
     HalfToneShader.renderToScreen = true;  
     return {
         initGUI: function(gui) {
-            gui.add(options, 'amount', 0, 1).onChange(function(val) {
+            gui.add(options, 'amount', 0, 5).onChange(function(val) {
                 HalfToneShader.material.uniforms.u_amount.value = val;
             });
 			gui.add(options, 'noise', 0, 10).onChange(function(val) {
