@@ -1,10 +1,10 @@
 uniform sampler2D tDiffuse;
+uniform float aperture;
 varying vec2 f_uv;
 const float PI = 3.1415926535;
 
 // uses the polar method from http://paulbourke.net/dome/fisheye/ 
 void main() {
-  float aperture = 200.0;
   float apertureHalf = 0.5 * aperture * (PI / 180.0);
   float maxFactor = sin(apertureHalf);
   
