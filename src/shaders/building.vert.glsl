@@ -25,10 +25,10 @@ void main() {
 
     float verticalMask = clamp((time - 15.0) * 4.0, 0.0, 1.0);
 
-    pos.y *= verticalMask;
+ //    pos.y *= verticalMask;
 
  //    // Displace Red 
-	pos.y *= (1.0 + (animateHeight * displace(color.r * 3.1415 * 2.0 + time * 3.1415 * 2.0 * 1.25)) * verticalMask * .4);
+	// pos.y *= (1.0 + (animateHeight * displace(color.r * 3.1415 * 2.0 + time * 3.1415 * 2.0 * 1.25)) * verticalMask * .4);
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
 }

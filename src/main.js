@@ -9,6 +9,7 @@ import * as City from './city.js'
 import * as Camera from './camera.js'
 
 import * as Glare from './post/glare.js'
+import * as Sobel from './post/sobel.js'
 
 var Engine = 
 {
@@ -39,14 +40,14 @@ var Engine =
   buildingMaterial : null,
 
   audio : null,
-  volume : 1.0
+  volume : 0.0
 }
 
 function startAnimation()
 {
     // Initialize the Engine ONLY when the sound is loaded
     Engine.initialized = true;
-    Engine.rubik.container.visible = false;
+    // Engine.rubik.container.visible = false;
 }
 
 function loadMusic()
@@ -354,10 +355,10 @@ function onLoad(framework)
   Engine.clock = new THREE.Clock();
   Engine.camera = camera;
 
-  Engine.glarePost = Glare.Grayscale(renderer, scene, camera);
+  Engine.glarePost = Glare.GlarePass(renderer, scene, camera);
+  Engine.sobelPost = Sobel.MainPass(renderer, scene, camera);
   Engine.passes.push(Engine.glarePost);
-
-  console.log(Engine.glarePost)
+  Engine.passes.push(Engine.sobelPost);
 
   // Very important to set clear color alpha to 0, 
   // so that effects can use that vaue as an additional parameter!
@@ -383,8 +384,8 @@ function onLoad(framework)
   camera.far = 200;
   camera.updateProjectionMatrix();
 
-  loadBackgrounds();
-  loadFakeBox();
+  // loadBackgrounds();
+  // loadFakeBox();
 
   Engine.rubik = new Rubik.Rubik();
   var rubikMesh = Engine.rubik.build();
@@ -394,7 +395,6 @@ function onLoad(framework)
 
   var random = new Random(Random.engines.mt19937().seed(14041956));
   var speed = .45;
-
 
   var callback = function() {
     Engine.rubik.animate(random.integer(0, 2), random.integer(0, 2), speed, callback);
@@ -457,10 +457,10 @@ function onUpdate(framework)
     //     pass.ASPECT_RATIO.value = aspectRatio;
     // }
 
-    updateCamera();
+    // updateCamera();
 
     // if(Engine.time < 16)
-      Engine.glarePost.render();
+      Engine.sobelPost.render();
     // else
     //   Engine.renderer.render(Engine.scene, Engine.camera);
   }

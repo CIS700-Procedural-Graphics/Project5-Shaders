@@ -54,7 +54,7 @@ var ComposePass = new EffectComposer.ShaderPass({
     fragmentShader: require('../shaders/post/glare_compose.frag.glsl')
 });
 
-function Grayscale(renderer, scene, camera) 
+function GlarePass(renderer, scene, camera) 
 {
     var width = renderer.getSize().width;
     var height = renderer.getSize().height;
@@ -68,30 +68,26 @@ function Grayscale(renderer, scene, camera)
     var renderTargetX16 = new THREE.WebGLRenderTarget( width / 16, height / 16, parameters );
 
     var composers = [];
+    var blurIterations = 8;
 
-    for(var i = 0; i < 4; i++)
+    for(var i = 0; i < 3; i++)
     {
         var scaleFactor = Math.pow(2, i + 1);
         var scale = 1.0 / scaleFactor;
-
-        console.log(scaleFactor);
 
         var downsampledRenderTarget = new THREE.WebGLRenderTarget( width * scale, height * scale, parameters );
 
         var composer = new EffectComposer(renderer, downsampledRenderTarget);
         composer.addPass(ThresholdDownsamplePass);
-        composer.addPass(HorizontalPass);
-        composer.addPass(VerticalPass);
-        composer.addPass(HorizontalPass);
-        composer.addPass(VerticalPass);
-        composer.addPass(HorizontalPass);
-        composer.addPass(VerticalPass);
-        composer.addPass(HorizontalPass);
-        composer.addPass(VerticalPass);
-        composer.addPass(HorizontalPass);
-        composer.addPass(VerticalPass);
-        composer.addPass(ComposePass);
 
+        // Iterations
+        for(var j = 0; j < blurIterations; j++)
+        {
+            composer.addPass(HorizontalPass);
+            composer.addPass(VerticalPass);
+        }
+
+        composer.addPass(ComposePass);
         composers.push(composer);
     }
 
@@ -108,7 +104,7 @@ function Grayscale(renderer, scene, camera)
 
             var previousRT = null;
 
-            for(var i = 3; i >= 0; i--)
+            for(var i = 2; i >= 0; i--)
             {
                 var scaleFactor = Math.pow(2, i + 1);
                 var scale = 1.0 / scaleFactor;
@@ -132,4 +128,4 @@ function Grayscale(renderer, scene, camera)
     }
 }
 
-export {Grayscale}
+export {GlarePass}
