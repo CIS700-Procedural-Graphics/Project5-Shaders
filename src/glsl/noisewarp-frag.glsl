@@ -57,8 +57,8 @@ float interpolate_noise(float x, float y, float z) {
 
 
 void main() {
-    float warp = interpolate_noise(f_uv.x, f_uv.y, u_amp * sin(u_time));
-    vec2 new_uv = f_uv + vec2(-0.3 * warp * u_freq, 0.1 * warp * u_freq);
+    float warp = interpolate_noise(f_uv.x, f_uv.y, u_amp * sin(u_time * 0.01));
+    vec2 new_uv = f_uv + vec2(-0.3 * sin(warp), 0.2 * sin(warp));
     gl_FragColor = texture2D(tDiffuse, new_uv); 
    
 }
