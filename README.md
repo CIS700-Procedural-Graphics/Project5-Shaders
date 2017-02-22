@@ -1,6 +1,42 @@
 
 # Project 5: Shaders
 
+## Stauffer work
+
+### Irridescence shader
+
+I implemented this by defining a color range over which to vary with the angle between the eye and each fragment's normal.
+
+Options:
+- irrStartCol is the color applied for any angle with dot product >= the irrThreshold value.
+- irrEndCol is the end color for dot product of 1.0 (direct view of fragment). The colors are lerp'ed in hsv space so you get a nice variation along hue. Setting a lower saturation for the starting value gives a nicer fade-in of the color.
+- I would have like to implement a low/high thresholding rather than just low/1.0, since it seems irridescence in nature can sometimes (usually?) rely on more oblique viewing angles, and direct view angles may not necessarily irridesce (is that a word?).
+- The irrRampExp is the exponent for ramping in the effect starting at irrThreshold, so you can soften or harden the starting colors
+- The irrWhiteOnly option applies irridescence only to very white fragments, so you can get the regular textured clothes with irridescent gloves and eye whites (not perfect), if the 'useTexture' option is enabled.
+
+### Lit Sphere
+
+I figured you wanted just the implementation of taking a lit sphere image and using it to shade the object, rather than the full implementation of the referenced paper which worked on creating the sphere mappings from artwork.
+
+Different simple shere files can be loaded, I just made these in photoshop. I didn't have time to get the sphere file displayed in the render.
+
+### Fisheye post shader
+
+Simple fisheye effect. You can change the amount of the effect with the 'fisheye level' option.
+I'd like to know how to smooth the result, but maybe it's not possible without doing an second post-render pass for smoothing?
+
+### Hatching post shader
+
+I did this as a post shader to easily get uv's for the whole screen, but this means the hatching is wed to the screen position rather than the object. Maybe I could use the projected position in regular fragment shader because using the texture uv's gives odd behavior based on the objects texture mapping.
+But I think it look ok for quick work.
+
+There are two hatching patters, and each has these options:
+- spatial frequency in x & y, to create diagonal lines. For the second hatch, the phase of the y component's contribution is reversed to get the diagonal in the other direction.
+- 'scale' is overall scale of the hatching pattern relative to the other
+- 'noise' is a simple noise factor that offset phase
+
+# ---------------
+
 ## Project Instructions
 
 Implement at least 75 points worth of shaders from the following list. We reserve the right to grant only partial credit for shaders that do not meet our standards, as well as extra credit for shaders that we find to be particularly impressive.
