@@ -8,6 +8,8 @@ import * as Rubik from './rubik.js'
 import * as City from './city.js'
 import * as Camera from './camera.js'
 
+import * as Glare from './post/glare.js'
+
 var Engine = 
 {
   initialized : false,
@@ -25,6 +27,7 @@ var Engine =
 
   loadingBlocker : null,
   materials : [],
+  passes : [],
 
   rubik : null,
   rubikTime : 0,
@@ -37,6 +40,13 @@ var Engine =
 
   audio : null,
   volume : 1.0
+}
+
+function startAnimation()
+{
+    // Initialize the Engine ONLY when the sound is loaded
+    Engine.initialized = true;
+    Engine.rubik.container.visible = false;
 }
 
 function loadMusic()
@@ -58,9 +68,7 @@ function loadMusic()
       // sound.setVolume(0.0);
       sound.play();
 
-      // Initialize the Engine ONLY when the sound is loaded
-      Engine.initialized = true;
-      Engine.rubik.container.visible = false;
+      startAnimation();
   });
 }
 
@@ -201,7 +209,7 @@ function loadCameraControllers()
       Engine.camera.rotateZ(smoothT * Math.PI * 2);
   }));
 
-  Engine.cameraControllers.push(new Camera.CameraController(14.5, function(t) {
+  Engine.cameraControllers.push(new Camera.CameraController(30, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(4, 4, 4);
 
@@ -346,7 +354,14 @@ function onLoad(framework)
   Engine.clock = new THREE.Clock();
   Engine.camera = camera;
 
-  renderer.setClearColor(new THREE.Color(.4, .75, .95), 1);
+  Engine.glarePost = Glare.Grayscale(renderer, scene, camera);
+  Engine.passes.push(Engine.glarePost);
+
+  console.log(Engine.glarePost)
+
+  // Very important to set clear color alpha to 0, 
+  // so that effects can use that vaue as an additional parameter!
+  renderer.setClearColor(new THREE.Color(.4, .75, .95), 0);
 
   // initialize a simple box and material
   var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
@@ -365,7 +380,7 @@ function onLoad(framework)
   camera.position.set(40, 40, 40);
   camera.lookAt(new THREE.Vector3(0,0,0));
   camera.fov = 5;
-  camera.far = 100;
+  camera.far = 200;
   camera.updateProjectionMatrix();
 
   loadBackgrounds();
@@ -390,6 +405,13 @@ function onLoad(framework)
   loadMusic();
 
   loadCameraControllers();
+}
+
+function onResize(framework)
+{
+  console.log("resize")
+  for (var i = 0; i < Engine.passes.length; i++)
+    Engine.passes[i].resize();
 }
 
 // called on frame updates
@@ -421,8 +443,27 @@ function onUpdate(framework)
         material.uniforms.ASPECT_RATIO.value = aspectRatio;
     }
 
+    // // Update passes code
+    // for (var i = 0; i < Engine.passes.length; i++)
+    // {
+    //   var pass = Engine.passes[i];
+
+    //   pass.time.value = Engine.time;
+
+    //   if(pass["SCREEN_SIZE"] != null)
+    //     pass.SCREEN_SIZE.value = screenSize;
+
+    //   if(pass["ASPECT_RATIO"] != null)
+    //     pass.ASPECT_RATIO.value = aspectRatio;
+    // }
+
     updateCamera();
+
+    // if(Engine.time < 16)
+      Engine.glarePost.render();
+    // else
+    //   Engine.renderer.render(Engine.scene, Engine.camera);
   }
 }
 
-Framework.init(onLoad, onUpdate);
+Framework.init(onLoad, onUpdate, onResize);

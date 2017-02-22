@@ -86,5 +86,5 @@ void main()
 
  	float f = evaluateFun((p - fP) * (2.0 - rythm(time*6.28318) * 1.0), length(mod(floor(p), vec2(16.0))) + 1.0 + rythm(time * 12.0), random);
 
-	gl_FragColor = vec4(sampleColor(f * (vUv.x + vUv.x)), 1.0);
+	gl_FragColor = vec4(sampleColor(f * (vUv.x + vUv.x)), 0.0);
 }

@@ -584,7 +584,7 @@ class Generator
 				var massProfile = factory.getProfileForShape(random, faceLength, depth, height);
 
 				var shape = new Building.MassShape(massLot, massProfile)
-				var shapeMesh = shape.generateMesh();
+				var shapeMesh = shape.generateMesh(false);
 
 				// var cube = new THREE.Mesh( geometry, material );
 				shapeMesh.scale.set(faceLength * .5, height, depth * .5);
@@ -636,7 +636,7 @@ class Generator
 			{
 				// The blocks profiles are also mass shapes
 				var shape = new Building.MassShape(lots[i][j], baseLotProfile);
-				var mesh = shape.generateMesh();
+				var mesh = shape.generateMesh(true);
 				geometryBatch.mergeMesh(mesh)
 
 				var massShapes = this.generateMassShapesForLot(lots[i][j], random, factory);

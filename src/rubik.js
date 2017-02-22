@@ -278,9 +278,9 @@ class Rubik
 				for(var z = 0; z < 3; z++)
 				{
 					var colorDebugging = z;
-					var mat = new THREE.MeshPhongMaterial( {color: 0x888888} );
+					var mat = new THREE.MeshPhongMaterial( {color: 0x444444} );
 					mat.shininess = 5;
-					mat.specular = new THREE.Color(.2,.2,.3);
+					mat.specular = new THREE.Color(.1,.1,.2);
 					// mat.color = new THREE.Color(1, 0.0, 0.0 );
 
 					// if(colorDebugging == 1)

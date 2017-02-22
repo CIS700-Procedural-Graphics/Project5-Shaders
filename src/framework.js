@@ -6,7 +6,7 @@ import DAT from 'dat-gui'
 
 // when the scene is done initializing, the function passed as `callback` will be executed
 // then, every frame, the function passed as `update` will be executed
-function init(callback, update) {
+function init(callback, update, resizeFunction) {
   var stats = new Stats();
   stats.setMode(1);
   stats.domElement.style.position = 'absolute';
@@ -47,6 +47,8 @@ function init(callback, update) {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+
+      resizeFunction(framework);
     }, false);
 
     // assign THREE.js objects to the object we will return
@@ -58,7 +60,7 @@ function init(callback, update) {
     (function tick() {
       stats.begin();
       update(framework); // perform any requested updates
-      renderer.render(scene, camera); // render the scene
+      // renderer.render(scene, camera); // render the scene
       stats.end();
       requestAnimationFrame(tick); // register to call this again when the browser renders a new frame
     })();

@@ -305,7 +305,7 @@ class MassShape
 		this.profile = profile;
 	}
 
-	generateMesh()
+	generateMesh(grayscale)
 	{
 		this.lot.buildNormals();
 
@@ -316,6 +316,12 @@ class MassShape
 		var offset = 0;
 
 		var buildingBaseColor = new THREE.Color(Math.random(), Math.random(), Math.random())
+
+		if(grayscale)
+		{
+			var r = Math.random() * .2 + .75;
+			buildingBaseColor = new THREE.Color(r,r,r);
+		}
 		
 		for(var i = 0; i < this.profile.points.length; i++)
 		{

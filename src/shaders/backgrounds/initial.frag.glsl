@@ -32,5 +32,5 @@ void main()
     float lines = step(fract(t * 10.0), .25);
     float pattern = length(vUv.yx) * .3 + .4 + lines * .2;
 
-	gl_FragColor = vec4(sampleSky(pattern), 1.0);
+	gl_FragColor = vec4(sampleSky(pattern), 0.0);
 }
