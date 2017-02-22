@@ -442,7 +442,7 @@ function loadCameraControllers()
   }));
 
   // MAIN SECTION, INTRODUCTION OF RUBIK+PASS CHANGE
-  Engine.cameraControllers.push(new Camera.CameraController(57.0, function(t) {
+  Engine.cameraControllers.push(new Camera.CameraController(58.0, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(40, 40, 40);
       Engine.camera.position.copy(p);
