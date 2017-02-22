@@ -1,2 +1,7 @@
 node_modules
 npm-debug.log
+.DS_Store
+src/.DS_Store
+src/glsl/.DS_Store
+src/post/.DS_Store
+src/shaders/.DS_Store
