@@ -369,7 +369,7 @@ function loadCameraControllers()
           Engine.currentPass = Engine.glarePass;
 
         Engine.rubik.animate(Engine.random.integer(0, 2), Engine.random.integer(0, 2), speed, callback, false);
-      }, 500);
+      }, 400);
     };
 
     Engine.rubik.animate(0, 0, speed, callback, true);
@@ -461,6 +461,37 @@ function loadBackgrounds()
       openingMesh.visible = false;
   };
   Engine.scene.add(openingMesh);
+
+  // Vignette
+  var vignetteMaterial = loadShaderMaterial("overlays/vignette", {
+    time: { type: "f", value : 0.0 },
+    SCREEN_SIZE: { type: "2fv", value : new THREE.Vector2( 1, 1 ) },
+    vignette: { type: "t", value: THREE.ImageUtils.loadTexture("./images/vignette.png")}
+  });
+
+  // Multiply
+  vignetteMaterial.blending = THREE.CustomBlending;
+  vignetteMaterial.blendEquation = THREE.AddEquation;
+  vignetteMaterial.blendSrc = THREE.DstColorFactor;
+  vignetteMaterial.blendDst = THREE.SrcColorFactor;
+
+  vignetteMaterial.depthFunc = THREE.AlwaysDepth;
+  vignetteMaterial.depthWrite = false;
+  vignetteMaterial.depthTest = false;
+  vignetteMaterial.side = THREE.DoubleSide;
+  vignetteMaterial.transparent = true;
+  vignetteMaterial.renderOrder = 15;
+
+  var vignetteMesh = new THREE.Mesh(bgGeo, vignetteMaterial);
+  vignetteMesh.frustumCulled = false;
+
+  vignetteMesh.onBeforeRender = function(){
+    if(Engine.currentPass === Engine.sobelPass)
+      vignetteMesh.visible = false;
+    else
+      vignetteMesh.visible = true;
+  };
+  Engine.scene.add(vignetteMesh);
 }
 
 function loadFakeBox()
