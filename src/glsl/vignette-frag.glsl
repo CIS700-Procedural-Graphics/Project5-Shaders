@@ -4,7 +4,7 @@ uniform float u_offset;
 uniform float u_darkness;
 varying vec2 f_uv;
 
-// uses 
+// https://www.airtightinteractive.com/2013/02/intro-to-pixel-shaders-in-three-js/
 void main() {
     vec4 texel = texture2D(tDiffuse, f_uv);
 	vec2 uv = (f_uv - vec2(0.5)) * vec2(u_offset);
