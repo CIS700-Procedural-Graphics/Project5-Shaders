@@ -19,14 +19,38 @@ class Rubik
 		this.container = null;
 	}
 
-	animate(axis, plane, length, callback)
+	animate(axis, plane, length, callback, force)
 	{
+		if(force)
+		{
+			this.reset();
+			this.animating = false;
+		}
+
+		if(this.animating)
+			return;
+
 		this.animating = true;
 		this.currentAxis = axis;
 		this.currentPlane = plane;
 		this.currentLength = length;
 		this.time = 0;
 		this.callback = callback;
+	}
+
+	reset()
+	{
+		this.rotateX(0.0, 0);
+		this.rotateX(0.0, 1);
+		this.rotateX(0.0, 2);
+
+		this.rotateY(0.0, 0);
+		this.rotateY(0.0, 1);
+		this.rotateY(0.0, 2);
+
+		this.rotateZ(0.0, 0);
+		this.rotateZ(0.0, 1);
+		this.rotateZ(0.0, 2);
 	}
 
 	update(deltaTime)

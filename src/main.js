@@ -40,14 +40,18 @@ var Engine =
   buildingMaterial : null,
 
   audio : null,
-  volume : 0.0
+  volume : 1.0,
+
+  glarePass : null,
+  sobelPass : null,
+  currentPass : null
 }
 
 function startAnimation()
 {
     // Initialize the Engine ONLY when the sound is loaded
     Engine.initialized = true;
-    // Engine.rubik.container.visible = false;
+    Engine.rubik.container.visible = false;
 }
 
 function loadMusic()
@@ -116,7 +120,7 @@ function loadCameraControllers()
       Engine.camera.lookAt(new THREE.Vector3(0, 0, 2 - t));
   }));
 
-  // DROP CAMERA
+  // BUILDUP CAMERA
   Engine.cameraControllers.push(new Camera.CameraController(7.3, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(4, 4, 4);
@@ -133,6 +137,7 @@ function loadCameraControllers()
       Engine.camera.rotateZ(smoothT * Math.PI * 2);
   }));
 
+  // DROP CAMERA
   Engine.cameraControllers.push(new Camera.CameraController(14.5, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(4, 4, 4);
@@ -149,6 +154,7 @@ function loadCameraControllers()
     Engine.buildingMaterial.uniforms.animateHeight.value = 1;
   }));
 
+  // ENVIRO 1
   Engine.cameraControllers.push(new Camera.CameraController(3.5, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(7,7,0).add(direction.multiplyScalar(t * -.2));
@@ -160,6 +166,7 @@ function loadCameraControllers()
       Engine.camera.lookAt(new THREE.Vector3(0, 1, 1 - t * .3));
   }));
 
+  // ENVIRO 2
   Engine.cameraControllers.push(new Camera.CameraController(3.5, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(7,-7,0).add(direction.multiplyScalar(t * -.2));
@@ -171,7 +178,7 @@ function loadCameraControllers()
       Engine.camera.lookAt(new THREE.Vector3(0, 1, 1 - t * .3));
   }));
 
-
+  // ENVIRO 3
   Engine.cameraControllers.push(new Camera.CameraController(3.75, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(7,4,-4).add(direction.multiplyScalar(t * -.2));
@@ -183,17 +190,7 @@ function loadCameraControllers()
       Engine.camera.lookAt(new THREE.Vector3(0, 1, 1 - t * .3));
   }));
 
-  // Engine.cameraControllers.push(new Camera.CameraController(3.5, function(t) {
-  //     var direction = new THREE.Vector3(0, 0, 1);
-  //     var p = new THREE.Vector3(-7,7,4).add(direction.multiplyScalar(t * -.2));
-  //     Engine.camera.position.copy(p);
-
-  //     Engine.camera.zoom = 1;
-  //     Engine.buildingMaterial.uniforms.animateHeight.value = 0;
-
-  //     Engine.camera.lookAt(new THREE.Vector3(0, 1, 1 - t * .3));
-  // }));
-
+  // BUILDUP CAMERA 2
   Engine.cameraControllers.push(new Camera.CameraController(4, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(4, 4, 4);
@@ -210,11 +207,12 @@ function loadCameraControllers()
       Engine.camera.rotateZ(smoothT * Math.PI * 2);
   }));
 
-  Engine.cameraControllers.push(new Camera.CameraController(30, function(t) {
+  // DROP 2 CAMERA
+  Engine.cameraControllers.push(new Camera.CameraController(29.65, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(4, 4, 4);
 
-      Engine.camera.zoom = 1 + Math.pow(Math.abs(Math.sin(t * 15.5 * Math.PI * 2)), 15) * .05;
+      Engine.camera.zoom = 1 + Math.pow(Math.abs(Math.sin(t * 31.5 * Math.PI * 2)), 15) * .05;
 
       Engine.rubik.container.rotateY(.01);
       Engine.rubik.container.rotateX(.01);
@@ -223,6 +221,155 @@ function loadCameraControllers()
   }, 
   function(){
     Engine.buildingMaterial.uniforms.animateHeight.value = 1;
+  }));
+
+  // SLOW DOWN CAMERA 1
+  Engine.cameraControllers.push(new Camera.CameraController(3.5, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(7,7,0).add(direction.multiplyScalar(t * -.2));
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1;
+      Engine.buildingMaterial.uniforms.animateHeight.value = 0;
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 1, 1 - t * .3));
+  }));
+
+  // SLOW DOWN CAMERA 2
+  Engine.cameraControllers.push(new Camera.CameraController(3.5, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(7,-7,0).add(direction.multiplyScalar(t * -.2));
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1;
+      Engine.buildingMaterial.uniforms.animateHeight.value = 0;
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 1, 1 - t * .3));
+  }));
+
+  // SLOW DOWN CAMERA 3
+  Engine.cameraControllers.push(new Camera.CameraController(4.75, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(7,4,-4).add(direction.multiplyScalar(t * -.2));
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1;
+      Engine.buildingMaterial.uniforms.animateHeight.value = 0;
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 1, 1 - t * .3));
+  }));
+
+  // PRE BUILDUP 3 CAMERA
+  Engine.cameraControllers.push(new Camera.CameraController(2, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(40, 40, 40);
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1;
+
+      Engine.rubik.container.rotateY(.01);
+      Engine.rubik.container.rotateX(-.01);
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+  }));
+
+  // BUILDUP 3 CAMERA (START OF MOVEMENT)
+  Engine.cameraControllers.push(new Camera.CameraController(15, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(40, 40, 40);
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1 - t * .5;
+
+      Engine.rubik.container.rotateY(.01);
+      Engine.rubik.container.rotateX(.01);
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+  }, 
+  function(){
+    Engine.buildingMaterial.uniforms.animateHeight.value = 1;
+
+    var speed = .5;
+
+    var callback = function() {
+      setTimeout(function(){
+        Engine.rubik.animate(Engine.random.integer(0, 2), Engine.random.integer(0, 2), speed, callback, false);
+      }, 1200);
+    };
+
+    Engine.rubik.animate(0, 0, speed, callback, true);
+  }));
+
+  // BIG DROP
+  Engine.cameraControllers.push(new Camera.CameraController(1.4, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(40, 40, 40);
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1 + Math.floor(t * 4.0) * .25;
+
+      Engine.rubik.container.rotateY(.01);
+      Engine.rubik.container.rotateX(.01);
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+      var sobel = Math.sin(t * Math.PI * 2 * 8.0);
+
+      if(sobel > 0)
+        Engine.currentPass = Engine.sobelPass;
+      else
+        Engine.currentPass = null;
+  }, 
+  function(){
+    Engine.buildingMaterial.uniforms.animateHeight.value = 1;
+
+    var speed = .2;
+
+    var callback = function() {
+      Engine.rubik.animate(Engine.random.integer(0, 2), Engine.random.integer(0, 2), speed, callback, false);
+    };
+
+    Engine.rubik.animate(0, 0, speed, callback, true);
+  }));
+
+  // MAIN SECTION, INTRODUCTION OF RUBIK+PASS CHANGE
+  Engine.cameraControllers.push(new Camera.CameraController(15, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(40, 40, 40);
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1 + Math.pow(Math.abs(Math.sin(t * 15.5 * Math.PI * 2)), 15) * .05;;
+
+      Engine.rubik.container.rotateY(-.01);
+      Engine.rubik.container.rotateX(-.01);
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 0, 0));
+  }, 
+  function(){
+    Engine.buildingMaterial.uniforms.animateHeight.value = 1;
+
+    var speed = .25;
+    var pass = 0;
+
+    var callback = function() {
+      setTimeout(function(){
+
+        pass = (pass == 2 ? 0 : pass + 1);
+
+        if(pass == 0)
+          Engine.currentPass = null;
+        else if(pass == 1)
+          Engine.currentPass = Engine.sobelPass;
+        else
+          Engine.currentPass = Engine.glarePass;
+
+        Engine.rubik.animate(Engine.random.integer(0, 2), Engine.random.integer(0, 2), speed, callback, false);
+      }, 500);
+    };
+
+    Engine.rubik.animate(0, 0, speed, callback, true);
   }));
 
   setActiveCamera(0);
@@ -354,11 +501,12 @@ function onLoad(framework)
   Engine.renderer = renderer;
   Engine.clock = new THREE.Clock();
   Engine.camera = camera;
+  Engine.currentPass = null;
 
-  Engine.glarePost = Glare.GlarePass(renderer, scene, camera);
-  Engine.sobelPost = Sobel.MainPass(renderer, scene, camera);
-  Engine.passes.push(Engine.glarePost);
-  Engine.passes.push(Engine.sobelPost);
+  Engine.glarePass = Glare.GlarePass(renderer, scene, camera);
+  Engine.sobelPass = Sobel.MainPass(renderer, scene, camera);
+  Engine.passes.push(Engine.glarePass);
+  Engine.passes.push(Engine.sobelPass);
 
   // Very important to set clear color alpha to 0, 
   // so that effects can use that vaue as an additional parameter!
@@ -384,8 +532,8 @@ function onLoad(framework)
   camera.far = 200;
   camera.updateProjectionMatrix();
 
-  // loadBackgrounds();
-  // loadFakeBox();
+  loadBackgrounds();
+  loadFakeBox();
 
   Engine.rubik = new Rubik.Rubik();
   var rubikMesh = Engine.rubik.build();
@@ -393,14 +541,8 @@ function onLoad(framework)
   loadBuildings();
   scene.add(rubikMesh);
 
-  var random = new Random(Random.engines.mt19937().seed(14041956));
-  var speed = .45;
+  Engine.random = new Random(Random.engines.mt19937().seed(14041956));
 
-  var callback = function() {
-    Engine.rubik.animate(random.integer(0, 2), random.integer(0, 2), speed, callback);
-  };
-
-  // Engine.rubik.animate(0, 0, speed, callback);
 
   loadMusic();
 
@@ -443,26 +585,12 @@ function onUpdate(framework)
         material.uniforms.ASPECT_RATIO.value = aspectRatio;
     }
 
-    // // Update passes code
-    // for (var i = 0; i < Engine.passes.length; i++)
-    // {
-    //   var pass = Engine.passes[i];
+    updateCamera();
 
-    //   pass.time.value = Engine.time;
-
-    //   if(pass["SCREEN_SIZE"] != null)
-    //     pass.SCREEN_SIZE.value = screenSize;
-
-    //   if(pass["ASPECT_RATIO"] != null)
-    //     pass.ASPECT_RATIO.value = aspectRatio;
-    // }
-
-    // updateCamera();
-
-    // if(Engine.time < 16)
-      Engine.sobelPost.render();
-    // else
-    //   Engine.renderer.render(Engine.scene, Engine.camera);
+    if(Engine.currentPass != null)
+      Engine.currentPass.render();
+    else
+      Engine.renderer.render(Engine.scene, Engine.camera);
   }
 }
 
