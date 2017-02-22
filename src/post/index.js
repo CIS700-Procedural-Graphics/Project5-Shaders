@@ -22,3 +22,5 @@ export {default as Pointilism} from './pointilism'
 export {default as Sobel} from './sobel'
 
 export {default as NoiseWarp} from './noisewarp'
+
+export {default as Bloom} from './bloom'

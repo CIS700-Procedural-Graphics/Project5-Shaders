@@ -2,13 +2,11 @@ const THREE = require('three');
 const EffectComposer = require('three-effectcomposer')(THREE)
 
 var options = {
-    amount: 0.5
+    amount: 0
 }
 
-var start = Date.now();
-
 //NOTE: all shader pass MUST have tDiffuse (texture that it renders the frame to)
-var NoiseWarpShader = new EffectComposer.ShaderPass({
+var BloomShader = new EffectComposer.ShaderPass({
     uniforms: {
         tDiffuse: {
             type: 't',
@@ -18,17 +16,22 @@ var NoiseWarpShader = new EffectComposer.ShaderPass({
             type: 'f',
             value: options.amount
         },
-        time: {
-            type: "f", 
-            value: start
+        window_width: {
+            type: 'f',
+            value: window.innerWidth
+        },
+        window_height: {
+            type: 'f',
+            value: window.innerHeight
         }
+
     },
     vertexShader: require('../glsl/pass-vert.glsl'),
-    fragmentShader: require('../glsl/noisewarp-frag.glsl')
+    fragmentShader: require('../glsl/bloom-frag.glsl')
 });
 
 //ALL shaders must be initialized with these arguments (renderer, scene, camera)
-export default function NoiseWarp(renderer, scene, camera) {
+export default function Bloom(renderer, scene, camera) {
     
     // this is the THREE.js object for doing post-process effects
     var composer = new EffectComposer(renderer);
@@ -36,25 +39,22 @@ export default function NoiseWarp(renderer, scene, camera) {
     // first render the scene normally and add that as the first pass
     composer.addPass(new EffectComposer.RenderPass(scene, camera));
 
-    // then take the rendered result and apply the NoiseWarpShader
-    composer.addPass(NoiseWarpShader);  
+    // then take the rendered result and apply the BloomShader
+    composer.addPass(BloomShader);
 
     // set this to true on the shader for your last pass to write to the screen
-    NoiseWarpShader.renderToScreen = true;  
+    BloomShader.renderToScreen = true;  
 
     return {
         initGUI: function(gui) {
-            gui.add(options, 'amount', 0, 1).onChange(function(val) {
+            gui.add(options, 'amount', 0, 5, 1).onChange(function(val) {
                 //NOTE: make sure to use .material
-                NoiseWarpShader.material.uniforms.u_amount.value = val;
+                BloomShader.material.uniforms.u_amount.value = val;
             });
         },
         
         //NOTE: ALL post functions must have this dunctions
-        render: function() {
-            //INSERT TIME HERE
-            //passing time into shader
-            NoiseWarpShader.uniforms[ 'time' ].value = 0.0005 * ( Date.now() - start );
+        render: function() {;
             composer.render();
         }
     }

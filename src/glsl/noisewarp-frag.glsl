@@ -101,6 +101,7 @@ float multioctave_noise(vec3 pos) {
 
 uniform sampler2D tDiffuse;
 uniform float u_amount;
+uniform float time;
 varying vec2 f_uv;
 varying vec3 f_position;
 
@@ -108,8 +109,8 @@ varying vec3 f_position;
 
 void main() {
     vec4 col = texture2D(tDiffuse, vec2( 
-    f_uv.x + multioctave_noise(vec3(f_uv.x*f_uv.x*20.0, f_uv.y*f_uv.y*20.0, f_uv.y*20.0)) * u_amount*0.03 - u_amount*0.03, 
-    f_uv.y + multioctave_noise(vec3(f_uv.y*f_uv.y*20.0, f_uv.x*f_uv.x*20.0, f_uv.x*20.0)) * u_amount*0.03 - u_amount*0.03));
+    f_uv.x + multioctave_noise(vec3(f_uv.x*f_uv.x*20.0, f_uv.y*f_uv.y*20.0, time)) * u_amount*0.03 - u_amount*0.03, 
+    f_uv.y + multioctave_noise(vec3(f_uv.y*f_uv.y*20.0, f_uv.x*f_uv.x*20.0, time)) * u_amount*0.03 - u_amount*0.03));
 
     gl_FragColor = col;
 }  
