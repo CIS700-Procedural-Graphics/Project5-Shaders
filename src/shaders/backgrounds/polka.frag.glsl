@@ -60,7 +60,10 @@ float evaluateFun(vec2 p, float m, float random)
 
 	float l = length(p);
 	vec3 r = hsv2rgb_p(vec3(random, 1.0, 1.0));
-	float radius = fun(t, m, (r.x + r.z) * .6, r.x * 5.0, (r.y + rythm(time * 6.0) * .5) * 5.0, r.z * 10.0 + 2.0);
+	float radius1 = fun(t, m, (r.x + r.z) * .6, r.x * 5.0, (r.y + rythm(time * 6.0) * .5) * 5.0, r.z * 10.0 + 2.0);
+	float radius2 = .5;
+
+	float radius = mix(radius1, radius2, rythm(time * 12.0) * .5 + .5);
 
 	return smoothstep(l, l + .025, radius);
 }
@@ -81,7 +84,7 @@ void main()
 
  	float polka = smoothstep(l, l + .015, polkaSize);
 
- 	float f = evaluateFun((p - fP) * (2.0 - rythm(time*6.28318) * 1.0), length(mod(floor(p), vec2(16.0))) * .5 + 1.0 + rythm(time * 12.0), random);
+ 	float f = evaluateFun((p - fP) * (2.0 - rythm(time*6.28318) * 1.0), length(mod(floor(p), vec2(16.0))) + 1.0 + rythm(time * 12.0), random);
 
 	gl_FragColor = vec4(sampleColor(f * (vUv.x + vUv.x)), 1.0);
 }
