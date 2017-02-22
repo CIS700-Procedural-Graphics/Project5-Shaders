@@ -17,4 +17,6 @@ export function None(renderer, scene, camera) {
 // follow this syntax to make your shaders available to the GUI
 export {default as Grayscale} from './grayscale'
 export {default as Colorfilter} from './colorfilter'
-export {default as Hatch} from './hatch'
+export {default as Gaussian} from './gaussian'
+
+// export {default as Hatch} from './hatch'

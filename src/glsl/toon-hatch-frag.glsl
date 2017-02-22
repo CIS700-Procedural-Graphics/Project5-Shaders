@@ -132,28 +132,44 @@ void main()
 	intensity = clamp(dot(vNormal, normalize(uLightPos - vPos)), 0.0, 1.0);
 
 
-	if (intensity > 0.85){ //high intensity
+	if (intensity > 0.65){ //high intensity
+		
+		color = black;
+
+		// if (hiFreqHatchAon){
+		// 	color = highColor;
+		// }else if (hatchAon || hatchBon){
+		// 	color = medColor;
+		// }
+			
+
+	}else if (intensity > 0.55){ //medium intensity
+		
+		if(hatchAon)
+			color = medColor;
+
+		// if (hatchAon || hatchBon){
+		// 	color = medColor;
+		// }
+
+	}else if (intensity > 0.15){ //low intensity
+		
+		if (hatchAon || hatchBon){
+			color = medColor;
+		}
+		// color = medColor;
+	}else {
 		
 		if (hiFreqHatchAon){
 			color = highColor;
 		}else if (hatchAon || hatchBon){
 			color = medColor;
 		}
-			
 
-	}else if (intensity > 0.65){ //medium intensity
-		
-		if (hatchAon || hatchBon){
-			color = medColor;
-		}
-
-	}else if (intensity > 0.50 && hatchAon){ //low intensity
-
-		color = medColor;
-
-	}else{
-
-		color = black;
+		// }else if (hatchAon || hatchBon){
+		// 	color = medColor;
+		// }
+		//color = black;
 
 	}
 
