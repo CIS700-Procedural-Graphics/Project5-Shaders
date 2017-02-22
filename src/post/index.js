@@ -18,3 +18,7 @@ export function None(renderer, scene, camera) {
 export {default as Grayscale} from './grayscale'
 
 export {default as Pointilism} from './pointilism'
+
+export {default as Sobel} from './sobel'
+
+export {default as NoiseWarp} from './noisewarp'
