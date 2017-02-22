@@ -17,7 +17,6 @@
 ![](./ss1.png)
 - My iridescence implementation responds to the lightColor slider as well as the ambient light slider. The shading is done at render time, not in post. The iridescence itself is a default magenta/blue color. I added in a magenta outline as well (in the same way a toon outline is added) because I thought it would look nice!
 
-I will explain the details and considerations that went into developing my NYC Shape Grammar.
 
 ### Hatching (25 pts)
 ![](./ss2.png)
