@@ -52,7 +52,7 @@ function startAnimation()
 {
     // Initialize the Engine ONLY when the sound is loaded
     Engine.initialized = true;
-    Engine.rubik.container.visible = false;
+    Engine.rubik.container.scale.set(.1, .1, .1);
 }
 
 function loadMusic()
@@ -149,8 +149,8 @@ function loadCameraControllers()
       Engine.camera.lookAt(new THREE.Vector3(0, 0, 0));
   }, 
   function(){
-    Engine.fakeBox.visible = false;
-    Engine.rubik.container.visible = true;    
+    Engine.fakeBox.visible = false;  
+    Engine.rubik.container.scale.set(1,1,1);
     Engine.buildingMaterial.uniforms.animateHeight.value = 1;
   }));
 
@@ -335,7 +335,7 @@ function loadCameraControllers()
   }));
 
   // MAIN SECTION, INTRODUCTION OF RUBIK+PASS CHANGE
-  Engine.cameraControllers.push(new Camera.CameraController(31, function(t) {
+  Engine.cameraControllers.push(new Camera.CameraController(28.7, function(t) {
       var direction = new THREE.Vector3(0, 0, 1);
       var p = new THREE.Vector3(40, 40, 40);
       Engine.camera.position.copy(p);
@@ -372,6 +372,122 @@ function loadCameraControllers()
     };
 
     Engine.rubik.animate(0, 0, speed, callback, true);
+  }));
+
+  // SLOW DOWN CAMERA 1
+  Engine.cameraControllers.push(new Camera.CameraController(8, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(7,7,0).add(direction.multiplyScalar(t * -.2));
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1;
+      Engine.buildingMaterial.uniforms.animateHeight.value = 0;
+
+      Engine.camera.lookAt(new THREE.Vector3(2, 1, 1 - t * .3));
+  }, 
+  function(){
+    Engine.rubik.reset();
+    Engine.rubik.forceDisable = true;
+  }));
+
+  // // SLOW DOWN CAMERA 2
+  // Engine.cameraControllers.push(new Camera.CameraController(8, function(t) {
+  //     var direction = new THREE.Vector3(0, 0, 1);
+  //     var p = new THREE.Vector3(7,-7,0).add(direction.multiplyScalar(t * -.2));
+  //     Engine.camera.position.copy(p);
+
+  //     Engine.camera.zoom = 1;
+  //     Engine.buildingMaterial.uniforms.animateHeight.value = 0;
+
+  //     Engine.camera.lookAt(new THREE.Vector3(0, 2, 1 - t * .3));
+  // }));
+
+  // SLOW DOWN CAMERA 3
+  Engine.cameraControllers.push(new Camera.CameraController(8, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(7,4,-4).add(direction.multiplyScalar(t * -.2));
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1;
+      Engine.buildingMaterial.uniforms.animateHeight.value = 0;
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 1, 2 - t * .3));
+  }));
+
+  // SLOW DOWN CAMERA 2
+  Engine.cameraControllers.push(new Camera.CameraController(6, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(7,-4,0).add(direction.multiplyScalar(t * -.2));
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1;
+      Engine.buildingMaterial.uniforms.animateHeight.value = 0;
+
+      Engine.camera.lookAt(new THREE.Vector3(0, -2, 1 - t * .3));
+  }));
+
+
+   // SLOW DOWN CAMERA 1
+  Engine.cameraControllers.push(new Camera.CameraController(9.75, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(-4,7,0).add(direction.multiplyScalar(t * -.2));
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1;
+      Engine.buildingMaterial.uniforms.animateHeight.value = 0;
+
+      Engine.camera.lookAt(new THREE.Vector3(-2, 1, 1 - t * .3));
+  }, 
+  function(){
+  }));
+
+  // MAIN SECTION, INTRODUCTION OF RUBIK+PASS CHANGE
+  Engine.cameraControllers.push(new Camera.CameraController(57.0, function(t) {
+      var direction = new THREE.Vector3(0, 0, 1);
+      var p = new THREE.Vector3(40, 40, 40);
+      Engine.camera.position.copy(p);
+
+      Engine.camera.zoom = 1 + Math.pow(Math.abs(Math.sin(t * 60.5 * Math.PI * 2)), 15) * .05;;
+
+      Engine.rubik.container.rotateY(-.01);
+      Engine.rubik.container.rotateX(-.01);
+
+      Engine.camera.lookAt(new THREE.Vector3(0, 0, 0));
+  }, 
+  function(){
+    Engine.buildingMaterial.uniforms.animateHeight.value = 1;
+
+    Engine.rubik.forceDisable = false;
+    var speed = .25;
+    var pass = 0;
+
+    var callback = function() {
+      setTimeout(function(){
+
+        pass = (pass == 3 ? 0 : pass + 1);
+
+        if(pass == 0)
+          Engine.currentPass = null;
+        else if(pass == 1)
+          Engine.currentPass = Engine.sobelPass;        
+        else if(pass == 2)
+          Engine.currentPass = Engine.glitchPass;
+        else
+          Engine.currentPass = Engine.glarePass;
+
+        Engine.rubik.animate(Engine.random.integer(0, 2), Engine.random.integer(0, 2), speed, callback, false);
+      }, 400);
+    };
+
+    Engine.rubik.animate(0, 0, speed, callback, true);
+  }));
+
+   // END CAMERA
+  Engine.cameraControllers.push(new Camera.CameraController(.75, function(t) {      
+      var scale = THREE.Math.smoothstep(1.0 - t, 0.0, 1.0);
+      Engine.rubik.container.scale.set(scale, scale, scale);
+  }, 
+  function(){
   }));
 
   setActiveCamera(0);

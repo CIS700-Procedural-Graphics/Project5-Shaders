@@ -317,11 +317,11 @@ class MassShape
 
 		var buildingBaseColor = new THREE.Color(Math.random(), Math.random(), Math.random())
 
-		if(grayscale)
-		{
-			var r = Math.random() * .2 + .75;
-			buildingBaseColor = new THREE.Color(r,r,r);
-		}
+		// if(grayscale)
+		// {
+		// 	var r = Math.random() * .2 + .75;
+		// 	buildingBaseColor = new THREE.Color(r,r,r);
+		// }
 		
 		for(var i = 0; i < this.profile.points.length; i++)
 		{

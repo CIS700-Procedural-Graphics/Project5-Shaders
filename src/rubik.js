@@ -17,15 +17,16 @@ class Rubik
 		this.time = 0;
 		this.callback = null;
 		this.container = null;
+		this.forceDisable = false;
 	}
 
 	animate(axis, plane, length, callback, force)
 	{
+		if(this.forceDisable)
+			return;
+
 		if(force)
-		{
 			this.reset();
-			this.animating = false;
-		}
 
 		if(this.animating)
 			return;
@@ -51,6 +52,10 @@ class Rubik
 		this.rotateZ(0.0, 0);
 		this.rotateZ(0.0, 1);
 		this.rotateZ(0.0, 2);
+
+		this.callback = null;
+		this.animating = false;
+		this.time = 0;
 	}
 
 	update(deltaTime)

@@ -14,7 +14,7 @@ void main() {
 
 
 	vec4 finalColor = (blur + downsampled * 2.0);
-	finalColor *= finalColor * 8.0 ;
+	finalColor *= finalColor;
 	finalColor += original;
 
 	vec4 intermediateColor = (blur + downsampled * 2.0);
