@@ -1,11 +1,18 @@
 const THREE = require('three');
 const EffectComposer = require('three-effectcomposer')(THREE)
-
+var x;
+var y;
+//document.onmousemove = function(e){
+//    x = e.pageX;
+//    y = e.pageY;
+//}
 var options = {
-    amount: 1
+    amount: 0.2,
+    time: 0.01   
 }
 
-var FishEyeShader = new EffectComposer.ShaderPass({
+
+var WarpShader = new EffectComposer.ShaderPass({
     uniforms: {
         tDiffuse: {
             type: 't',
@@ -22,13 +29,17 @@ var FishEyeShader = new EffectComposer.ShaderPass({
         u_height: {
             type: 'f',
             value: window.innerHeight
+        },
+        u_time: {
+            type: 'f',
+            value: options.time
         }
     },
     vertexShader: require('../glsl/pass-vert.glsl'),
-    fragmentShader: require('../glsl/fisheye-frag.glsl')
+    fragmentShader: require('../glsl/warp-frag.glsl')
 });
 
-export default function FishEye(renderer, scene, camera) {
+export default function Warp(renderer, scene, camera) {
     
     // this is the THREE.js object for doing post-process effects
     var composer = new EffectComposer(renderer);
@@ -37,20 +48,22 @@ export default function FishEye(renderer, scene, camera) {
     composer.addPass(new EffectComposer.RenderPass(scene, camera));
 
     // then take the rendered result and apply the GrayscaleShader
-    composer.addPass(FishEyeShader);  
+    composer.addPass(WarpShader);  
 
     // set this to true on the shader for your last pass to write to the screen
-    FishEyeShader.renderToScreen = true;  
+    WarpShader.renderToScreen = true;  
 
     return {
         initGUI: function(gui) {
-            gui.add(options, 'amount', 0, 100).onChange(function(val) {
-                FishEyeShader.material.uniforms.u_amount.value = val;
+            gui.add(options, 'amount', 0, 1).onChange(function(val) {
+                WarpShader.material.uniforms.u_amount.value = val;
             });
         },
         
         render: function() {;
             composer.render();
+            WarpShader.material.uniforms.u_time.value += options.time;
+                            //console.log(FishEyeShader.material.uniforms.u_time.value);
         }
     }
 }

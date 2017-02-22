@@ -19,4 +19,6 @@ export {default as Grayscale} from './grayscale'
 export {default as Sepia} from './sepia'        
 export {default as GaussianBlur} from './gaussianblur'        
 export {default as Vignette} from './vignette'        
-export {default as FishEye} from './fisheye'        
+export {default as Warp} from './warp'       
+export {default as Pointilism} from './pointilism'       
+        
