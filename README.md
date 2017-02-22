@@ -14,3 +14,5 @@ Shaders Implemented:
 - Screen Print Shader
     - Used a noise function that has a lot of repeated patterns to create a texture that looks like a screen print. 
 
+![Alt text](references/monochrome.png?raw=true)
+*Mario obj with monochromatic toon shader and hatching effect*
