@@ -1,0 +1,21 @@
+Joe Klinger
+Project 5 - Shaders
+
+Shaders I implemented:
+- Noise Warp (25)
+- Sobel Edge Detection (25)
+- Vignette (15)
+- Iridiscence (15)
+
+
+Sources:
+
+Noise Warp - "Plasma" imitation noise:
+http://www.bidouille.org/prog/plasma
+
+Sobel Edge
+https://en.wikipedia.org/wiki/Sobel_operator
+http://www.roborealm.com/help/Sobel.php
+
+Iridiscence:
+http://www.iquilezles.org/www/articles/palettes/palettes.htm
