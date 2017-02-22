@@ -18,3 +18,7 @@ export function None(renderer, scene, camera) {
 export {default as Grayscale} from './grayscale'
 
 export {default as InClass} from './inclass'
+
+export {default as Screen} from './screen'
+
+export {default as Hatching} from './hatch'
