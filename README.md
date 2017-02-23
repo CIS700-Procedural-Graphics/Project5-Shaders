@@ -5,14 +5,20 @@
 
 The Shaders I Implemented and resources if used (other than Rachel's slides)
 
-Post:
-[15] Iridescence
-[25] Edge Detection with Sobel Filtering : http://setosa.io/ev/image-kernels/
-[15] Vignette : https://photographylife.com/what-is-vignetting
-[15] Fish-eye bulge: http://gamedev.stackexchange.com/questions/20626/how-do-i-create-a-wide-angle-fisheye-lens-with-hlsl 
-[?] Inverse
-[?] Swap
-[?] Chromatic Aberration 
+Post-Processing Effects:</br>
+[15] Iridescence</br>
+    Color the rgb values based on the dot product between the normal and the camera's pov. Done through cosine weighting where the r,g,b values are represented with a cosine function but their each offset differently so that when we sample with our t value [indicated by the dot product] we get the output of all rgb components for that dot product.</br>
+[25] Edge Detection with Sobel Filtering : http://setosa.io/ev/image-kernels/</br>
+[15] Vignette : https://photographylife.com/what-is-vignetting</br>
+    Create a oval blackened area around the screen by checking the distance between the center field of view and where the pixel actually is and using that distance as a weighting of how dark the pixel should be. the farther away, the darker.</br>
+[15] Fish-eye bulge: http://gamedev.stackexchange.com/questions/20626/how-do-i-create-a-wide-angle-fisheye-lens-with-hlsl </br>
+    Image magnification increased the closer to the center of the screen. Computed based on a combination of using the "aperture" of our camera and the distance to the center of the camera's point of view. </br>
+[?] Inverse</br>
+    Each color is it's own rgb complement. Just did 1-colorComponent for each component to get opposite hue.</br>
+[?] Swap</br>
+    Just swapped the r,g,b values with one another.</br>
+[?] Chromatic Aberration </br>
+    From the pixel location, sampled the rgb values of the pixel shifted in a particular uv direction doing different sampling for the r,g,b components. When the offsetted images come together, you get an overlaying effect of three mario images where it looks like each is a specific color component.
 
 ## Images from the Project
 
