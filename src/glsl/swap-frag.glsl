@@ -10,6 +10,6 @@ void main() {
     float r = col[0];
     float g = col[1];
     float b = col[2];
-    col.rgb = vec3(g, r, b);
+    col.rgb = vec3(b, g, r);
     gl_FragColor = col;
 }   

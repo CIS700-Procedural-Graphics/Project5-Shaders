@@ -16,7 +16,7 @@ export function None(renderer, scene, camera) {
 
 // follow this syntax to make your shaders available to the GUI
 export {default as Grayscale} from './grayscale'
-export {default as InClassPostRedAlter} from './inClassPostRedAlter'
+export {default as Swap} from './swap'
 export {default as Edges} from './edgeWithSobel'
 export {default as Vignette} from './vignette'
 export {default as FishEye} from './fishEye'
