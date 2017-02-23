@@ -14,11 +14,13 @@ varying vec2 f_uv;
 void main() {
     vec4 color = vec4(u_albedo, 1.0);
     
+    vec2 tex = vec2(f_normal.x, -f_normal.y) * 0.5 + 0.5;
+
     if (u_useTexture == 1) {
-        color = texture2D(texture, f_uv);
+        color = texture2D(texture, tex);
     }
 
     float d = clamp(dot(f_normal, normalize(u_lightPos - f_position)), 0.0, 1.0);
 
-    gl_FragColor = vec4(d * color.rgb * u_lightCol * u_lightIntensity + u_ambient, 1.0);
+    gl_FragColor = color;
 }
