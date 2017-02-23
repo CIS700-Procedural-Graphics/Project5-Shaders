@@ -29,6 +29,9 @@ window.addEventListener('load', function() {
     controls.zoomSpeed = 1.0;
     controls.panSpeed = 2.0;
 
+    // var light = new THREE.DirectionalLight(0xffffff, 1);
+    // scene.add(light);
+
     document.body.appendChild(renderer.domElement);
 
     window.addEventListener('resize', function() {
