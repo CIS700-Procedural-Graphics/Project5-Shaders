@@ -2,7 +2,7 @@
 # Project 5: Shaders
 
 ### Instagram-Like Filters
-- Gaussian Blur (currently named as Bloom in project):
+- Gaussian Blur:
     
     Read up on the Gaussian algorithm here: http://www.pixelstech.net/article/1353768112-Gaussian-Blur-Algorithm
     Used a two-dimensional Gaussian function to output the weights of influence for each neighboring pixel. The number of neighboring pixel samples is dependent on the u_amount slider. The width and the height are always equal and set as odd numbers to keep observed pixel at center. Applied the Gaussian weight to neighboring pixel colors, summed the colors as the observed pixel output color.
@@ -26,4 +26,6 @@
     Took the approximate horizontal derivative (Gx) of 6 neighboring pixels, took the approximate vertical derivative (Gy) of 6 neighboring pixels. Applied Gx and Gy to the 6 neighboring pixel colors respectively, and added them up. Took the square root of the sum of the squares of Gx and Gy, set it as the output color.
 
 - Bloom:
+	
+	First did a render pass on the original image to isolate pixels that have a brightness greater than the threshold. Then used a second render pass to gaussian blur the isolated pixels. Lastly, I used a third render pass to composite the original image and the blurred bright pixels to produce the bloom effect.
 

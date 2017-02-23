@@ -29,6 +29,8 @@ function sin(freq, x, t) {
 
 /////////////////////////////////////////////////////////////////////
 
+var featherMat = [];
+
 window.addEventListener('load', function() {
     var stats = new Stats();
     stats.setMode(1);
@@ -75,6 +77,8 @@ window.addEventListener('load', function() {
 
         var layer = 0.0;
         var j = 0.0;
+        var layer2 = 0.0;
+        var k = 0.0;
         for (var i = 0; i < scene.children.length; i++) {
 
             if (scene.children[i].name == "feather" && layer <= 1.0) {
@@ -86,6 +90,17 @@ window.addEventListener('load', function() {
                 if (j > 1.0) {
                     j = 0.0;
                     layer += 0.5;
+                }
+            }
+            else if (scene.children[i].name == "feather" && layer2 <= 1.0) {
+
+                scene.children[i].material = shader.material;
+
+                var featherDistribution = (0.05/1.5) * (1.0 - layer2) + (0.025/1.5) * layer2;
+                k += featherDistribution;
+                if (k > 1.0) {
+                    k = 0.0;
+                    layer2 += 0.5;
                 }
             }
         }
@@ -123,7 +138,6 @@ window.addEventListener('load', function() {
             new THREE.Vector3( 2 + 2.0 * 0.5, sin(2, 0, 0.003 * (Date.now()-startTime)) , 0 ),
             new THREE.Vector3( 0, 2.0 * sin(2, 0, 0.003 * (Date.now()-startTime)) - 0.20*2.0, 5 )
         );
-
         //top curve
         var curve2 = new THREE.CubicBezierCurve3(
             new THREE.Vector3( 0, 0.1, -5 ),
@@ -150,16 +164,93 @@ window.addEventListener('load', function() {
                 featherMesh.material.color.setRGB(darkness*0.9, darkness*0.9, darkness*1.0);
 
                 var y = curve1.getPointAt(i).y * (1.0 - layer) + curve2.getPointAt(i).y * layer;
-                featherMesh.position.set(curve1.getPointAt(i).x, y, curve1.getPointAt(i).z);
 
-                featherMesh.rotateY(180.0 * Math.PI/180.0);
-                featherMesh.rotateY(gain(0.5, i)*70.0*Math.PI/180.0);
+
+                var mat4 = new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI+gain(0.5, i)*70.0*Math.PI/180.0)
+                                    ) ;
+                mat4.premultiply(new THREE.Matrix4().makeTranslation(curve1.getPointAt(i).x, y, curve1.getPointAt(i).z));
+
+                mat4.premultiply(new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI/2.0)
+                                    )) ;
+                mat4.premultiply(new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI/4.0)
+                                    )) ;
+                mat4.premultiply(new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI-Math.PI/6.0)
+                                    )) ;
+
+                mat4.premultiply(new THREE.Matrix4().makeTranslation(3.6, 5.4, -3.5)) ;
+
+                featherMesh.applyMatrix(mat4);
+                featherMat[layer*10.0+i] = mat4;
 
                 var scalar = scaleBase + gain(0.5, i)*scaleFactor;
                 featherMesh.scale.set(scalar, scalar, scalar);
 
-                //animation for wind turbulence
-                featherMesh.rotateZ(Math.PI/180.0 * sin(2, featherMesh.position.x, (0.003)*(Date.now()-startTime)));
+                scene.add(featherMesh);
+            }
+        }  
+
+        //bottom curve
+        var curve3 = new THREE.CubicBezierCurve3(
+            new THREE.Vector3( 0, 0, -5 ),
+            new THREE.Vector3( 2.0 + 2.0 * 0.5, 0, 0 ),
+            new THREE.Vector3( -2.0 - 2.0 * 0.5, sin(2, 0, 0.003 * (Date.now()-startTime)) , 0 ),
+            new THREE.Vector3( 0, 2.0 * sin(2, 0, 0.003 * (Date.now()-startTime)) - 0.20*2.0, 5 )
+        );
+        //top curve
+        var curve4 = new THREE.CubicBezierCurve3(
+            new THREE.Vector3( 0, 0.1, -5 ),
+            new THREE.Vector3( 2.0 + 2.0 * 0.5, 1, 0 ),
+            new THREE.Vector3( -2.0 - 2.0 * 0.5, sin(2, 0, 0.003 * (Date.now()-startTime)) + 0.2, 0 ),
+            new THREE.Vector3( 0, 2.0 * sin(2, 0, 0.003 * (Date.now()-startTime)), 5 )
+        );
+        for (var layer = 0.0; layer <= 1.0; layer += 0.5) {
+
+            //interpolate feather scaling base for each layer, numbers chosen myself
+            var scaleBase = 1.0 * (1.0 - layer) + 0.5 * layer;
+            //interpolate feather scaling factor (max scaling), numbers chosen myself
+            var scaleFactor = (2.0) * (1.0 - layer) + (0.5) * layer;
+            //interpolate feather distribution, numbers chosen myself
+            var featherDistribution = (0.05/1.5) * (1.0 - layer) + (0.025/1.5) * layer;
+            //interpolate feather color darkness
+            var darkness = 0.8 * (1.0 - layer) + 0.2 * layer;
+
+            for (var i = 0.0; i <= 1.0; i += featherDistribution) {
+
+                var featherMesh = new THREE.Mesh(featherGeo);
+                featherMesh.name = "feather";
+
+                featherMesh.material.color.setRGB(darkness*0.9, darkness*0.9, darkness*1.0);
+
+                var y = curve3.getPointAt(i).y * (1.0 - layer) + curve4.getPointAt(i).y * layer;
+
+
+                var mat4 = new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -gain(0.5, i)*70.0*Math.PI/180.0)
+                                    ) ;
+                mat4.premultiply(new THREE.Matrix4().makeTranslation(curve3.getPointAt(i).x, y, curve3.getPointAt(i).z));
+
+
+                mat4.premultiply(new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI/2.0)
+                                    )) ;
+                mat4.premultiply(new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI+Math.PI/4.0)
+                                    )) ;
+                mat4.premultiply(new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI/6.0)
+                                    )) ;
+
+                mat4.premultiply(new THREE.Matrix4().makeTranslation(-3.6, 5.4, -3.5)) ;
+                
+                featherMesh.applyMatrix(mat4);
+                featherMat[(layer+1.1)*10.0+i] = mat4;
+
+                var scalar = scaleBase + gain(0.5, i)*scaleFactor;
+                featherMesh.scale.set(scalar, scalar, scalar);
 
                 scene.add(featherMesh);
             }
@@ -168,7 +259,8 @@ window.addEventListener('load', function() {
     });
 
     (function tick() {
-        
+
+        //LEFT WING
         //bottom curve
         var curveA = new THREE.CubicBezierCurve3(
             new THREE.Vector3( 0, 0, -5 ),
@@ -176,7 +268,6 @@ window.addEventListener('load', function() {
             new THREE.Vector3( 2 + 2.0 * 0.5, sin(2, 0, 0.003 * (Date.now()-startTime)) , 0 ),
             new THREE.Vector3( 0, 2.0 * sin(2, 0, 0.003 * (Date.now()-startTime)) - 0.20*2.0, 5 )
         );
-
         //top curve
         var curveB = new THREE.CubicBezierCurve3(
             new THREE.Vector3( 0, 0.1, -5 ),
@@ -185,18 +276,67 @@ window.addEventListener('load', function() {
             new THREE.Vector3( 0, 2.0 * sin(2, 0, 0.003 * (Date.now()-startTime)), 5 )
         );
 
+        //RIGHT WING
+        //bottom curve
+        var curveC = new THREE.CubicBezierCurve3(
+            new THREE.Vector3( 0, 0, -5 ),
+            new THREE.Vector3( 2.0 + 2.0 * 0.5, 0, 0 ),
+            new THREE.Vector3( -2.0 - 2.0 * 0.5, sin(2, 0, 0.003 * (Date.now()-startTime)) , 0 ),
+            new THREE.Vector3( 0, 2.0 * sin(2, 0, 0.003 * (Date.now()-startTime)) - 0.20*2.0, 5 )
+        );
+        //top curve
+        var curveD = new THREE.CubicBezierCurve3(
+            new THREE.Vector3( 0, 0.1, -5 ),
+            new THREE.Vector3( 2.0 + 2.0 * 0.5, 1, 0 ),
+            new THREE.Vector3( -2.0 - 2.0 * 0.5, sin(2, 0, 0.003 * (Date.now()-startTime)) + 0.2, 0 ),
+            new THREE.Vector3( 0, 2.0 * sin(2, 0, 0.003 * (Date.now()-startTime)), 5 )
+        );
+
         var layer = 0.0;
         var j = 0.0;
+        var layer2 = 0.0;
+        var k = 0.0;
         for (var i = 0; i < scene.children.length; i++) {
 
-            if (scene.children[i].name == "feather" && layer <= 1.0) {
+            if (scene.children[i].name === "feather" && layer <= 1.0) {
 
                 var featherDistribution = (0.05/1.5) * (1.0 - layer) + (0.025/1.5) * layer;
+                //interpolate feather scaling base for each layer, numbers chosen myself
+                var scaleBase = 1.0 * (1.0 - layer) + 0.5 * layer;
+                //interpolate feather scaling factor (max scaling), numbers chosen myself
+                var scaleFactor = (2.0) * (1.0 - layer) + (0.5) * layer;
 
                 var featherMesh = scene.children[i];
 
                 var y = curveA.getPointAt(j).y * (1.0 - layer) + curveB.getPointAt(j).y * layer;
-                featherMesh.position.set(curveA.getPointAt(j).x, y, curveA.getPointAt(j).z);
+
+
+                featherMesh.applyMatrix(new THREE.Matrix4().getInverse(featherMat[layer*10.0+j]));
+
+                var mat4 = new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI+gain(0.5, j)*70.0*Math.PI/180.0)
+                                    ) ;
+                mat4.premultiply(new THREE.Matrix4().makeTranslation(curveA.getPointAt(j).x, y, curveA.getPointAt(j).z));
+
+
+                mat4.premultiply(new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI/2.0)
+                                    )) ;
+                mat4.premultiply(new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI/4.0)
+                                    )) ;
+                mat4.premultiply(new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI-Math.PI/6.0)
+                                    )) ;
+
+                mat4.premultiply(new THREE.Matrix4().makeTranslation(3.6, 5.4, -3.5)) ;
+
+                featherMesh.applyMatrix(mat4);
+                featherMat[layer*10.0+j] = mat4;
+
+                var scalar = scaleBase + gain(0.5, j)*scaleFactor;
+                featherMesh.scale.set(scalar, scalar, scalar);
+
                 
                 j += featherDistribution;
                 if (j > 1.0) {
@@ -204,7 +344,53 @@ window.addEventListener('load', function() {
                     layer += 0.5;
                 }
             }
+            else if (scene.children[i].name === "feather" && layer2 <= 1.0) {
+                
+                var featherDistribution = (0.05/1.5) * (1.0 - layer2) + (0.025/1.5) * layer2;
+                //interpolate feather scaling base for each layer, numbers chosen myself
+                var scaleBase = 1.0 * (1.0 - layer2) + 0.5 * layer2;
+                //interpolate feather scaling factor (max scaling), numbers chosen myself
+                var scaleFactor = (2.0) * (1.0 - layer2) + (0.5) * layer2;
+
+                var featherMesh = scene.children[i];
+
+                var y = curveC.getPointAt(k).y * (1.0 - layer2) + curveD.getPointAt(k).y * layer2;
+
+
+                featherMesh.applyMatrix(new THREE.Matrix4().getInverse(featherMat[(layer2+1.1)*10.0+k]));
+
+                var mat4 = new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -gain(0.5, k)*70.0*Math.PI/180.0)
+                                    ) ;
+                mat4.premultiply(new THREE.Matrix4().makeTranslation(curveC.getPointAt(k).x, y, curveC.getPointAt(k).z));
+
+
+                mat4.premultiply(new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI/2.0)
+                                    )) ;
+                mat4.premultiply(new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI+Math.PI/4.0)
+                                    )) ;
+                mat4.premultiply(new THREE.Matrix4().makeRotationFromQuaternion(
+                                    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI/6.0)
+                                    )) ;
+
+                mat4.premultiply(new THREE.Matrix4().makeTranslation(-3.6, 5.4, -3.5)) ;
+
+                featherMesh.applyMatrix(mat4);
+                featherMat[(layer2+1.1)*10.0+k] = mat4;
+
+                var scalar = scaleBase + gain(0.5, k)*scaleFactor;
+                featherMesh.scale.set(scalar, scalar, scalar);
+                
+                k += featherDistribution;
+                if (k > 1.0) {
+                    k = 0.0;
+                    layer2 += 0.5;
+                }
+            }
         }
+        
 
         controls.update();
         stats.begin();
