@@ -62,8 +62,8 @@ export default function(renderer, scene, camera) {
                     value: options.lightIntensity
                 }
             },
-            vertexShader: require('../glsl/lambert-vert.glsl'),
-            fragmentShader: require('../glsl/lambert-frag.glsl')
+            vertexShader: require('../glsl/toon-vert.glsl'),
+            fragmentShader: require('../glsl/toon-frag.glsl')
         })
     }
 

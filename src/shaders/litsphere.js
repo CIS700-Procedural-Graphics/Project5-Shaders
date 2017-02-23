@@ -1,6 +1,6 @@
 
 const THREE = require('three');
-import {textureLoaded} from '../mario'
+import { matcapTexture } from '../mario' // TODO: replace this with matcap
 
 // options for lambert shader
 var options = {
@@ -62,13 +62,13 @@ export default function(renderer, scene, camera) {
                     value: options.lightIntensity
                 }
             },
-            vertexShader: require('../glsl/lambert-vert.glsl'),
-            fragmentShader: require('../glsl/lambert-frag.glsl')
+            vertexShader: require('../glsl/litsphere-vert.glsl'),
+            fragmentShader: require('../glsl/litsphere-frag.glsl')
         })
     }
 
     // once the Mario texture loads, bind it to the material
-    textureLoaded.then(function(texture) {
+    matcapTexture.then(function(texture) {
         Shader.material.uniforms.texture.value = texture;
     });
 

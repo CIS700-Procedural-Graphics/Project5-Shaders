@@ -1,4 +1,4 @@
- 
+
 uniform sampler2D texture;
 uniform int u_useTexture;
 uniform vec3 u_albedo;
@@ -20,5 +20,15 @@ void main() {
 
     float d = clamp(dot(f_normal, normalize(u_lightPos - f_position)), 0.0, 1.0);
 
-    gl_FragColor = vec4(d * color.rgb * u_lightCol * u_lightIntensity + u_ambient, 1.0);
+    vec3 calcColor = d * color.rgb * u_lightCol * u_lightIntensity + u_ambient;
+    float bin = 2.0;
+    calcColor = (ceil((calcColor * bin)) - bin/3.0) / bin;
+
+    vec3 look = (cameraPosition - f_position);
+    if (dot(look, f_normal) < 0.5) {
+    	calcColor = vec3( 1,1,1);
+    }
+
+
+    gl_FragColor = vec4(calcColor, 1.0);
 }

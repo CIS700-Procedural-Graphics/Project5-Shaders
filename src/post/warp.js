@@ -5,7 +5,7 @@ var options = {
     amount: 1
 }
 
-var GrayscaleShader = new EffectComposer.ShaderPass({
+var WarpShader = new EffectComposer.ShaderPass({
     uniforms: {
         tDiffuse: { //need this for all shader passes
             type: 't',
@@ -17,10 +17,10 @@ var GrayscaleShader = new EffectComposer.ShaderPass({
         }
     },
     vertexShader: require('../glsl/pass-vert.glsl'),
-    fragmentShader: require('../glsl/grayscale-frag.glsl')
+    fragmentShader: require('../glsl/warp-frag.glsl')
 });
 
-export default function Grayscale(renderer, scene, camera) {
+export default function Warp(renderer, scene, camera) {
     
     // this is the THREE.js object for doing post-process effects
     var composer = new EffectComposer(renderer);
@@ -29,15 +29,15 @@ export default function Grayscale(renderer, scene, camera) {
     composer.addPass(new EffectComposer.RenderPass(scene, camera));
 
     // then take the rendered result and apply the GrayscaleShader
-    composer.addPass(GrayscaleShader);  
+    composer.addPass(WarpShader);  
 
     // set this to true on the shader for your last pass to write to the screen
-    GrayscaleShader.renderToScreen = true;  
+    WarpShader.renderToScreen = true;  
 
     return {
         initGUI: function(gui) {
             gui.add(options, 'amount', 0, 1).onChange(function(val) {
-                GrayscaleShader.material.uniforms.u_amount.value = val;
+                WarpShader.material.uniforms.u_amount.value = val;
             });
         },
         

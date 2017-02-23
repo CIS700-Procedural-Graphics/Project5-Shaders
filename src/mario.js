@@ -17,3 +17,9 @@ export var objLoaded = new Promise((resolve, reject) => {
         resolve(geo);
     });
 })
+
+export var matcapTexture = new Promise((resolve, reject) => {
+    (new THREE.TextureLoader()).load(require('./assets/shiny.jpg'), function(texture) {
+        resolve(texture);
+    })
+})
