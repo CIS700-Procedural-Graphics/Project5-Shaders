@@ -4,6 +4,7 @@ import {textureLoaded} from '../mario'
 
 // options for lambert shader
 var options = {
+    strength: 0.3,
     lightColor: '#ffffff',
     lightIntensity: 2,
     albedo: '#dddddd',
@@ -15,6 +16,9 @@ export default function(renderer, scene, camera) {
 
     const Shader = {
         initGUI: function(gui) {
+            gui.add(options, 'strength', 0.1, 0.9).onChange(function(val) {
+                Shader.material.uniforms.u_strength.value = 1-val;
+            });
             gui.addColor(options, 'lightColor').onChange(function(val) {
                 Shader.material.uniforms.u_lightCol.value = new THREE.Color(val);
             });
@@ -61,14 +65,18 @@ export default function(renderer, scene, camera) {
                 u_lightIntensity: {
                     type: 'f',
                     value: options.lightIntensity
+                },
+                u_strength: {
+                    type: 'f',
+                    value: options.strength
                 }
                 // u_cameraPos: {
                 //     type: 'v3',
                 //     value: camera.position
                 // }
             },
-            vertexShader: require('../glsl/lambert-vert.glsl'),
-            fragmentShader: require('../glsl/lambert-frag.glsl')
+            vertexShader: require('../glsl/pointilism-vert.glsl'),
+            fragmentShader: require('../glsl/pointilism-frag.glsl')
         })
     }
 

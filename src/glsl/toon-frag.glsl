@@ -18,6 +18,15 @@ void main() {
     }
 
     float d = clamp(dot(f_normal, normalize(u_lightPos - f_position)), 0.0, 1.0);
+    float nor = clamp(dot(f_normal, normalize(cameraPosition-f_position)),0.0,1.0); // USING CAMERAPOS-FPOS FOR VIEW DIRECTION..
+    if(nor<=0.2)
+        d=0.0;
 
-    gl_FragColor = vec4(d * color.rgb * u_lightCol * u_lightIntensity + u_ambient, 1.0);
+    d=floor(d*3.0)/3.0;
+    vec4 final = vec4(d * color.rgb * u_lightCol * u_lightIntensity + u_ambient, 1.0);
+    final.x = (floor(final.x*4.0)/4.0);
+    final.y = (floor(final.y*4.0)/4.0);
+    final.z = (floor(final.z*4.0)/4.0);
+
+    gl_FragColor = final;
 }
