@@ -16,7 +16,7 @@ window.addEventListener('load', function() {
     document.body.appendChild(stats.domElement);
 
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 10000 );
     var renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -63,7 +63,7 @@ window.addEventListener('load', function() {
 
     objLoaded.then(function(geo) {
         // point the camera to Mario on load
-        camera.position.set(5, 10, 15);
+        camera.position.set(500, 10, 1500);
         const center = geo.boundingSphere.center;
         camera.lookAt(center);
         controls.target.set(center.x, center.y, center.z);

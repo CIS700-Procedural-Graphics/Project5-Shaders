@@ -13,8 +13,11 @@ varying vec2 f_uv;
 
 void main() {
     vec4 color = vec4(u_albedo, 1.0);
+
+    vec3 refl = normalize(reflect(f_normal, -u_lightPos + f_position));
     
-    vec2 tex = vec2(f_normal.x, -f_normal.y) * 0.5 + 0.5;
+    vec2 tex = vec2(f_normal.x, f_normal.y) * 0.5 + 0.5;
+    // vec2 tex = vec2(refl.x, -refl.y) * 0.5 + 0.5;
 
     if (u_useTexture == 1) {
         color = texture2D(texture, tex);
