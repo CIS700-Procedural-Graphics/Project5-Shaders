@@ -5,6 +5,8 @@ varying vec2 f_uv;
 
 #define M_PI 3.1415926535897932384626433832795
 
+// http://gamedev.stackexchange.com/questions/20626/how-do-i-create-a-wide-angle-fisheye-lens-with-hlsl 
+
 // tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to
 
 vec4 colorFunc() {

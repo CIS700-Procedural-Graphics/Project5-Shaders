@@ -5,6 +5,8 @@ varying vec2 f_uv;
 
 // tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to
 
+// https://photographylife.com/what-is-vignetting
+
 vec4 colorFunc() {
 	// f_uv is vec2 of vals from 0 to 1
 	vec4 col = texture2D(tDiffuse, f_uv);

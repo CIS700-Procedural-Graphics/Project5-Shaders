@@ -3,6 +3,8 @@ uniform sampler2D tDiffuse;
 uniform float u_amount;
 varying vec2 f_uv;
 
+// http://setosa.io/ev/image-kernels/
+
 // tDiffuse is a special uniform sampler that THREE.js will bind the previously rendered frame to
 
 vec4 colorFunc() {
