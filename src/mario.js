@@ -17,3 +17,11 @@ export var objLoaded = new Promise((resolve, reject) => {
         resolve(geo);
     });
 })
+
+export var featherLoaded = new Promise((resolve, reject) => {
+    (new THREE.OBJLoader()).load(require('./assets/feather.obj'), function(obj) {
+        var geo2 = obj.children[0].geometry;
+        geo2.computeBoundingSphere();
+        resolve(geo2);
+    });
+})

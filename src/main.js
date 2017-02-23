@@ -5,7 +5,29 @@ const OrbitControls = require('three-orbit-controls')(THREE)
 
 import Stats from 'stats-js'
 import {objLoaded} from './mario'
+import {featherLoaded} from './mario'
 import {setupGUI} from './setup'
+
+/////////////////////////TOOLBOX FUNCTIONS////////////////////////////
+
+function bias(b, t) {
+    return Math.pow(t, Math.log(b) / Math.log(0.5));
+}
+
+function gain(g, t) {
+    if (t < 0.5) {
+        return bias(1.0 - g, 2.0*t) / 2; 
+    }
+    else {
+        return 1 - bias(1.0 - g, 2.0 - 2.0*t) / 2;
+    }
+}
+
+function sin(freq, x, t) {
+    return Math.sin(freq * (x+t));
+}
+
+/////////////////////////////////////////////////////////////////////
 
 window.addEventListener('load', function() {
     var stats = new Stats();
@@ -50,6 +72,24 @@ window.addEventListener('load', function() {
             mesh = new THREE.Mesh(geo, shader.material);
             scene.add(mesh);
         });
+
+        var layer = 0.0;
+        var j = 0.0;
+        for (var i = 0; i < scene.children.length; i++) {
+
+            if (scene.children[i].name == "feather" && layer <= 1.0) {
+
+                scene.children[i].material = shader.material;
+
+                var featherDistribution = (0.05/1.5) * (1.0 - layer) + (0.025/1.5) * layer;
+                j += featherDistribution;
+                if (j > 1.0) {
+                    j = 0.0;
+                    layer += 0.5;
+                }
+            }
+        }
+
     }
 
     // this gets called when we set the postprocess shader
@@ -69,7 +109,103 @@ window.addEventListener('load', function() {
         controls.target.set(center.x, center.y, center.z);
     });
 
+    var startTime = Date.now();
+    var featherGeo;
+    featherLoaded.then(function(geo2) {
+
+        //initialize global variable featherGeo to geo2
+        featherGeo = geo2;
+
+        //bottom curve
+        var curve1 = new THREE.CubicBezierCurve3(
+            new THREE.Vector3( 0, 0, -5 ),
+            new THREE.Vector3( -2 - 2.0 * 0.5, 0, 0 ),
+            new THREE.Vector3( 2 + 2.0 * 0.5, sin(2, 0, 0.003 * (Date.now()-startTime)) , 0 ),
+            new THREE.Vector3( 0, 2.0 * sin(2, 0, 0.003 * (Date.now()-startTime)) - 0.20*2.0, 5 )
+        );
+
+        //top curve
+        var curve2 = new THREE.CubicBezierCurve3(
+            new THREE.Vector3( 0, 0.1, -5 ),
+            new THREE.Vector3( -2 - 2.0 * 0.5, 1, 0 ),
+            new THREE.Vector3( 2 + 2.0 * 0.5, sin(2, 0, 0.003 * (Date.now()-startTime)) + 0.2, 0 ),
+            new THREE.Vector3( 0, 2.0 * sin(2, 0, 0.003 * (Date.now()-startTime)), 5 )
+        );
+        for (var layer = 0.0; layer <= 1.0; layer += 0.5) {
+
+            //interpolate feather scaling base for each layer, numbers chosen myself
+            var scaleBase = 1.0 * (1.0 - layer) + 0.5 * layer;
+            //interpolate feather scaling factor (max scaling), numbers chosen myself
+            var scaleFactor = (2.0) * (1.0 - layer) + (0.5) * layer;
+            //interpolate feather distribution, numbers chosen myself
+            var featherDistribution = (0.05/1.5) * (1.0 - layer) + (0.025/1.5) * layer;
+            //interpolate feather color darkness
+            var darkness = 0.8 * (1.0 - layer) + 0.2 * layer;
+
+            for (var i = 0.0; i <= 1.0; i += featherDistribution) {
+
+                var featherMesh = new THREE.Mesh(featherGeo);
+                featherMesh.name = "feather";
+
+                featherMesh.material.color.setRGB(darkness*0.9, darkness*0.9, darkness*1.0);
+
+                var y = curve1.getPointAt(i).y * (1.0 - layer) + curve2.getPointAt(i).y * layer;
+                featherMesh.position.set(curve1.getPointAt(i).x, y, curve1.getPointAt(i).z);
+
+                featherMesh.rotateY(180.0 * Math.PI/180.0);
+                featherMesh.rotateY(gain(0.5, i)*70.0*Math.PI/180.0);
+
+                var scalar = scaleBase + gain(0.5, i)*scaleFactor;
+                featherMesh.scale.set(scalar, scalar, scalar);
+
+                //animation for wind turbulence
+                featherMesh.rotateZ(Math.PI/180.0 * sin(2, featherMesh.position.x, (0.003)*(Date.now()-startTime)));
+
+                scene.add(featherMesh);
+            }
+        }  
+
+    });
+
     (function tick() {
+        
+        //bottom curve
+        var curveA = new THREE.CubicBezierCurve3(
+            new THREE.Vector3( 0, 0, -5 ),
+            new THREE.Vector3( -2 - 2.0 * 0.5, 0, 0 ),
+            new THREE.Vector3( 2 + 2.0 * 0.5, sin(2, 0, 0.003 * (Date.now()-startTime)) , 0 ),
+            new THREE.Vector3( 0, 2.0 * sin(2, 0, 0.003 * (Date.now()-startTime)) - 0.20*2.0, 5 )
+        );
+
+        //top curve
+        var curveB = new THREE.CubicBezierCurve3(
+            new THREE.Vector3( 0, 0.1, -5 ),
+            new THREE.Vector3( -2 - 2.0 * 0.5, 1, 0 ),
+            new THREE.Vector3( 2 + 2.0 * 0.5, sin(2, 0, 0.003 * (Date.now()-startTime)) + 0.2, 0 ),
+            new THREE.Vector3( 0, 2.0 * sin(2, 0, 0.003 * (Date.now()-startTime)), 5 )
+        );
+
+        var layer = 0.0;
+        var j = 0.0;
+        for (var i = 0; i < scene.children.length; i++) {
+
+            if (scene.children[i].name == "feather" && layer <= 1.0) {
+
+                var featherDistribution = (0.05/1.5) * (1.0 - layer) + (0.025/1.5) * layer;
+
+                var featherMesh = scene.children[i];
+
+                var y = curveA.getPointAt(j).y * (1.0 - layer) + curveB.getPointAt(j).y * layer;
+                featherMesh.position.set(curveA.getPointAt(j).x, y, curveA.getPointAt(j).z);
+                
+                j += featherDistribution;
+                if (j > 1.0) {
+                    j = 0.0;
+                    layer += 0.5;
+                }
+            }
+        }
+
         controls.update();
         stats.begin();
         if (shader && shader.update) shader.update();   // perform any necessary updates
