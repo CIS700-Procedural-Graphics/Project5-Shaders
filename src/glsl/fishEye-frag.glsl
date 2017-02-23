@@ -19,15 +19,13 @@ vec4 colorFunc() {
 	// setting up variables
 	// ap: aperture
 	float ap = 178.0;
-	float halfAp = (M_PI / 180.0) * 0.5 * ap;
-	float max = sin(halfAp);
+	float max = sin((M_PI / 180.0) * 0.5 * ap);
   
   	vec2 xyLoc = 2.0 * f_uv.xy - 1.0;
   	vec2 uvLoc = vec2(0.0, 0.0);
-
   	float len = length(xyLoc);
-
   	float checkMax = 2.0 - max;
+  	
   	// if in the area for the bulge then
   	if (len < checkMax) {
 	    len = length(xyLoc * max);
