@@ -19,7 +19,8 @@ Post-Processing Effects:</br>
 [?] Swap</br>
     Just swapped the r,g,b values with one another.</br>
 [?] Chromatic Aberration </br>
-    From the pixel location, sampled the rgb values of the pixel shifted in a particular uv direction doing different sampling for the r,g,b components. When the offsetted images come together, you get an overlaying effect of three mario images where it looks like each is a specific color component.
+    From the pixel location, sampled the rgb values of the pixel shifted in a particular uv direction doing different sampling for the r,g,b components. When the offsetted images come together, you get an overlaying effect of three mario images where it looks like each is a specific color component.</br>
+Note: for the shader labeled CoolEffect1 - once it's turned on zoom in a bit and rotate the screen (click and drag) and you'll see the effect.</br>
 
 ## Images from the Project
 
