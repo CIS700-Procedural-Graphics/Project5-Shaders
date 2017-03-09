@@ -1,21 +1,39 @@
 {
   "scripts": {
     "start": "webpack-dev-server --hot --inline",
-    "deploy": "git push origin `git subtree split --prefix build master`:gh-pages --force",
-    "build": "webpack"
+    "build": "webpack",
+    "deploy": "node deploy.js"
+  },
+  "gh-pages-deploy": {
+    "prep": [
+      "build"
+    ],
+    "noprompt": true
   },
   "dependencies": {
     "babel-core": "^6.22.1",
     "babel-loader": "^6.2.10",
     "babel-preset-es2015": "^6.22.0",
     "dat-gui": "^0.5.0",
+    "gl-matrix": "^2.3.2",
     "file-loader": "^0.10.0",
     "stats-js": "^1.0.0-alpha1",
-    "three": "^0.84.0",
+    "three": "^0.82.1",
     "three-effectcomposer": "0.0.1",
     "three-obj-loader": "^1.0.2",
     "three-orbit-controls": "^82.1.0",
     "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.16.2",
+    "webpack-glsl-loader": "^1.0.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.8",
+    "babel-preset-es2015": "^6.18.0",
+    "colors": "^1.1.2",
+    "gh-pages-deploy": "^0.4.2",
+    "simple-git": "^1.65.0",
+    "webpack": "^1.13.3",
     "webpack-dev-server": "^1.16.2",
     "webpack-glsl-loader": "^1.0.1"
   }

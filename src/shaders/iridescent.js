@@ -1,4 +1,3 @@
-
 const THREE = require('three');
 import {textureLoaded} from '../mario'
 
