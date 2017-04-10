@@ -3,7 +3,7 @@
 
 ## View the Project
 
-![click here](https://hanbollar.github.io/Project5-Shaders/ "Click Here")
+# [Click Here](https://hanbollar.github.io/Project5-Shaders/)
 
 ## The Project
 
