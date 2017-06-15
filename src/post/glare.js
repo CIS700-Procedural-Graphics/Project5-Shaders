@@ -68,7 +68,7 @@ function GlarePass(renderer, scene, camera)
     var renderTargetX16 = new THREE.WebGLRenderTarget( width / 16, height / 16, parameters );
 
     var composers = [];
-    var blurIterations = 8;
+    var blurIterations = 4;
 
     for(var i = 0; i < 3; i++)
     {
