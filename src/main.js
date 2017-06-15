@@ -642,8 +642,8 @@ function onLoad(framework)
   var scene = framework.scene;
   var camera = framework.camera;
   var renderer = framework.renderer;
-  var gui = framework.gui;
-  var stats = framework.stats;
+  //var gui = framework.gui;
+  //var stats = framework.stats;
 
   // Init Engine stuff
   Engine.scene = scene;
@@ -702,7 +702,6 @@ function onLoad(framework)
 
 function onResize(framework)
 {
-  console.log("resize")
   for (var i = 0; i < Engine.passes.length; i++)
     Engine.passes[i].resize();
 }
