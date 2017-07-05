@@ -91,12 +91,12 @@ White noise is Rachel's implementation. Two different time-dependent passes per 
 A scan line periodically crosses the screen creating a horizontal distortion and darkening effect.
 
 Settings:
-vignette: darkens edges
-noiseStrength: 0: no white noise, --> 1: completely white noise
-bandStrength: controls how strongly the image is multiplied by the horizontal bands
-bandSpeed: controls vertical scrolling speed of horizontal bands
-bandWidth: controls how tall the horizontal bands are
-colorize: maps grayscale value g to a green color, (g^1.3, g, g^1.2). This avoids clunky HSV conversions and preserves white and black pixels. Slider determines strength of interpolation from original to this color.
-scanStrength: determines opacity and UV shift strength of the scanline. 0 turns it off.
-scanWidth: controls how tall the scan line effect is
-scanSpeed: controls speed of scanline scrolling.
+- vignette: darkens edges
+- noiseStrength: 0: no white noise, --> 1: completely white noise
+- bandStrength: controls how strongly the image is multiplied by the horizontal bands
+- bandSpeed: controls vertical scrolling speed of horizontal bands
+- bandWidth: controls how tall the horizontal bands are
+- colorize: maps grayscale value g to a green color, (g^1.3, g, g^1.2). This avoids clunky HSV conversions and preserves white and black pixels. Slider determines strength of interpolation from original to this color.
+- scanStrength: determines opacity and UV shift strength of the scanline. 0 turns it off.
+- scanWidth: controls how tall the scan line effect is
+- scanSpeed: controls speed of scanline scrolling.
