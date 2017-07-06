@@ -1,6 +1,12 @@
 
+
+
 const THREE = require('three');
 import {textureLoaded} from '../mario'
+
+const DEG2RAD = 0.0174533;
+//new THREE.Vector3(Math.sin(settings.yaw) * Math.cos(settings.pitch)
+    //, Math.sin(settings.pitch), Math.cos(settings.yaw)  * Math.cos(settings.pitch));
 
 // options for lambert shader
 var options = {
@@ -12,30 +18,29 @@ var options = {
     ambient: '#111620',
     useTexture: true,
 
-
-    directionalDirectionX: 0.0,
-    directionalDirectionY: -1.0,
-    directionalDirectionZ: 0.0,
+    directionalYaw: 180.0,
+    directionalPitch: -90.0,
     directionalColor: '#ffeedd',
     directionalIntensity: 2,
 
     pointX: 10.0,
     pointY: 10.0,
     pointZ: 10.0,
+
+    spotX: 10.0,
+    spotY: 10.0,
+    spotZ: 10.0,
+    spotYaw: 225.0,
+    spotPitch: 0.0,
+    spotColor: '#ffeedd',
+    spotIntensity: 2,
+    spotInner: 0.2,
+    spotOuter: 0.3,
+
     exposure: 1.0,
     gamma: 2.2
 }
 
-function NormalizeDirectional() {
-    var len = options.directionalDirectionZ * options.directionalDirectionZ +
-    options.directionalDirectionY * options.directionalDirectionY +
-    options.directionalDirectionX * options.directionalDirectionX;
-
-    len = Math.sqrt(len);
-    options.directionalDirectionX /= len;
-    options.directionalDirectionY /= len;
-    options.directionalDirectionZ /= len;
-}
 
 export default function(renderer, scene, camera) {
     
@@ -45,31 +50,31 @@ export default function(renderer, scene, camera) {
             var f2 = gui.addFolder('DirectionalLight');
 
             f2.addColor(options, 'directionalColor').onChange(function(val) {
-                Shader.material.uniforms.u_lightCol.value = new THREE.Color(val);
+                Shader.material.uniforms.u_dirLightCol.value = new THREE.Color(val);
             });
+
             f2.add(options, 'directionalIntensity').min(0).onChange(function(val) {
                 Shader.material.uniforms.u_dirLightIntensity.value = val;
             });
-            f2.add(options, 'directionalDirectionX', -1, 1, 0.1).listen().onChange(function(val) {
-                options.directionalDirectionX = val;
-                NormalizeDirectional();
-                Shader.material.uniforms.u_dirLightDirection.value = new THREE.Vector3(options.directionalDirectionX, options.directionalDirectionY, options.directionalDirectionZ);
-            });
-            f2.add(options, 'directionalDirectionY', -1, 1, 0.1).listen().onChange(function(val) {
-                options.directionalDirectionY = val;
-                NormalizeDirectional();
-                Shader.material.uniforms.u_dirLightDirection.value = new THREE.Vector3(options.directionalDirectionX, options.directionalDirectionY, options.directionalDirectionZ);
-            });
-            f2.add(options, 'directionalDirectionZ', -1, 1, 0.1).listen().onChange(function(val) {
-                options.directionalDirectionZ = val;
-                NormalizeDirectional();
-                Shader.material.uniforms.u_dirLightDirection.value = new THREE.Vector3(options.directionalDirectionX, options.directionalDirectionY, options.directionalDirectionZ);
+
+            f2.add(options, 'directionalPitch', -90, 90).listen().onChange(function(val) {
+                Shader.material.uniforms.u_dirLightDirection.value = new THREE.Vector3(
+                    Math.sin(DEG2RAD * options.directionalYaw) * Math.cos(DEG2RAD * options.directionalPitch), 
+                    Math.sin(DEG2RAD * options.directionalPitch), 
+                    Math.cos(DEG2RAD * options.directionalYaw) * Math.cos(DEG2RAD * options.directionalPitch));
             });
 
+            f2.add(options, 'directionalYaw', 0, 360).listen().onChange(function(val) {
+                Shader.material.uniforms.u_dirLightDirection.value = new THREE.Vector3(
+                    Math.sin(DEG2RAD * options.directionalYaw) * Math.cos(DEG2RAD * options.directionalPitch), 
+                    Math.sin(DEG2RAD * options.directionalPitch), 
+                    Math.cos(DEG2RAD * options.directionalYaw) * Math.cos(DEG2RAD * options.directionalPitch));
+            });
 
 
             // point lights
-            var f1 = gui.addFolder('PointLight')
+            
+            var f1 = gui.addFolder('PointLight');
 
             f1.addColor(options, 'lightColor').onChange(function(val) {
                 Shader.material.uniforms.u_lightCol.value = new THREE.Color(val);
@@ -89,8 +94,59 @@ export default function(renderer, scene, camera) {
             });
             f1.add(options, 'pointZ').onChange(function(val) {
 
-                Shader.material.uniforms.u_lightPos.value = new THREE.Vector3(options.pointZ, options.pointY, val);
+                Shader.material.uniforms.u_lightPos.value = new THREE.Vector3(options.pointX, options.pointY, val);
             });
+
+
+            // spot light
+            var f3 = gui.addFolder('SpotLight');
+
+            f3.addColor(options, 'spotColor').onChange(function(val) {
+                Shader.material.uniforms.u_spotCol.value = new THREE.Color(val);
+            });
+            f3.add(options, 'spotIntensity').min(0).onChange(function(val) {
+                Shader.material.uniforms.u_spotIntensity.value = val;
+            });
+            f3.add(options, 'spotX').onChange(function(val) {
+
+                Shader.material.uniforms.u_spotPos.value = new THREE.Vector3(val, options.spotY, options.spotZ);
+            });
+            f3.add(options, 'spotY').onChange(function(val) {
+
+                Shader.material.uniforms.u_spotPos.value = new THREE.Vector3(options.spotX, val, options.spotZ);
+            });
+            f3.add(options, 'spotZ').onChange(function(val) {
+
+                Shader.material.uniforms.u_spotPos.value = new THREE.Vector3(options.spotX, options.spotY, val);
+            });
+
+
+            f3.add(options, 'spotPitch', -90, 90).listen().onChange(function(val) {
+                Shader.material.uniforms.u_spotDir.value = new THREE.Vector3(
+                    Math.sin(DEG2RAD * options.spotYaw) * Math.cos(DEG2RAD * options.spotPitch), 
+                    Math.sin(DEG2RAD * options.spotPitch), 
+                    Math.cos(DEG2RAD * options.spotYaw) * Math.cos(DEG2RAD * options.spotPitch));
+            });
+
+            f3.add(options, 'spotYaw', 0, 360).listen().onChange(function(val) {
+                Shader.material.uniforms.u_spotDir.value = new THREE.Vector3(
+                    Math.sin(DEG2RAD * options.spotYaw) * Math.cos(DEG2RAD * options.spotPitch), 
+                    Math.sin(DEG2RAD * options.spotPitch), 
+                    Math.cos(DEG2RAD * options.spotYaw) * Math.cos(DEG2RAD * options.spotPitch));
+            });
+            f3.add(options, 'spotInner', 0.0, 1.0).listen().onChange(function(val) {
+                if (val >= options.spotOuter) options.spotOuter = val;
+                Shader.material.uniforms.u_spotInner.value = val;
+                Shader.material.uniforms.u_spotOuter.value = options.spotOuter;
+                //if (val >= options.spotOuter) Shader.material.uniforms.u_spotOuter = val;
+            });
+            f3.add(options, 'spotOuter', 0.0, 1.0).listen().onChange(function(val) {
+                if (val <= options.spotInner) options.spotInner = val;
+                Shader.material.uniforms.u_spotOuter.value = val;
+                Shader.material.uniforms.u_spotInner.value = options.spotInner;
+                //if (val <= options.spotInner) Shader.material.uniforms.u_spotInner = val;
+            });
+
 
 
             // material properties
@@ -101,14 +157,12 @@ export default function(renderer, scene, camera) {
             gui.addColor(options, 'ambient').onChange(function(val) {
                 Shader.material.uniforms.u_ambient.value = new THREE.Color(val);
             });
+
             gui.add(options, 'useTexture').onChange(function(val) {
                 Shader.material.uniforms.u_useTexture.value = val;
             });
 
-            gui.add(options, 'gamma').onChange(function(val) {
-                Shader.material.uniforms.u_gamma.value = val;
-            });
-            gui.add(options, 'exposure').onChange(function(val) {
+            gui.add(options, 'exposure').min(0).onChange(function(val) {
                 Shader.material.uniforms.u_exposure.value = val;
             });
 
@@ -133,9 +187,10 @@ export default function(renderer, scene, camera) {
                     type: 'v3',
                     value: new THREE.Color(options.ambient)
                 },
+      
                 u_lightPos: {
                     type: 'v3',
-                    value: new THREE.Vector3(30, 50, 40)
+                    value: new THREE.Vector3(10, 10, 10)
                 },
                 u_lightCol: {
                     type: 'v3',
@@ -145,33 +200,76 @@ export default function(renderer, scene, camera) {
                     type: 'f',
                     value: options.lightIntensity
                 },
+
                 u_gamma: {
                     type: 'f',
                     value: options.gamma
                 },
+
                 u_exposure: {
                     type: 'f',
                     value: options.exposure
                 },
+
                 u_specularColor: {
                     type: 'v3',
                     value: new THREE.Color(options.specColor)
                 },
+
                 u_specularExponent: {
                     type: 'f',
                     value: options.specExponent
                 },
+
                 u_dirLightIntensity: {
                     type: 'f',
                     value: options.directionalIntensity
                 },
+
                 u_dirLightDirection: {
                     type: 'v3',
-                    value: new THREE.Vector3(options.directionalDirectionX, options.directionalDirectionY, options.directionalDirectionZ)
+                    value: new THREE.Vector3(
+                    Math.sin(DEG2RAD * options.directionalYaw) * Math.cos(DEG2RAD * options.directionalPitch), 
+                    Math.sin(DEG2RAD * options.directionalPitch), 
+                    Math.cos(DEG2RAD * options.directionalYaw) * Math.cos(DEG2RAD * options.directionalPitch))
                 },
+
                 u_dirLightCol: {
                     type: 'v3',
                     value: new THREE.Color(options.directionalColor)
+                },
+
+                u_spotCol: {
+                    type: 'v3',
+                    value: new THREE.Color(options.spotColor)
+                },
+
+                u_spotDir: {
+                    type: 'v3',
+                    value: new THREE.Vector3(
+                    Math.sin(DEG2RAD * options.spotYaw) * Math.cos(DEG2RAD * options.spotPitch), 
+                    Math.sin(DEG2RAD * options.spotPitch), 
+                    Math.cos(DEG2RAD * options.spotYaw) * Math.cos(DEG2RAD * options.spotPitch))
+            
+                },
+
+                u_spotPos: {
+                    type: 'v3',
+                    value: new THREE.Vector3(options.spotX, options.spotY, options.spotZ)
+                },
+
+                u_spotIntensity: {
+                    type: 'f',
+                    value: options.spotIntensity
+                },
+
+                u_spotInner: {
+                    type: 'f',
+                    value: options.spotInner
+                },
+                u_spotOuter: {
+                    type: 'f',
+                    value: options.spotOuter
                 }
             },
             vertexShader: require('../glsl/blinn_vert.glsl'),

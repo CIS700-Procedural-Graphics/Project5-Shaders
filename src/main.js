@@ -48,6 +48,8 @@ window.addEventListener('load', function() {
         // recreate the mesh with a new material
         if (mesh) scene.remove(mesh);
         objLoaded.then(function(geo) {
+            //var geom = new THREE.SphereGeometry(5, 32, 32);
+            //geom.computeVertexNormals();
             mesh = new THREE.Mesh(geo, shader.material);
             scene.add(mesh);
         });
