@@ -71,20 +71,6 @@ struct matInfo
 	vec3 view;
 };
 
-vec3 evaluateSingleLight(vec3 light_dir, vec3 view_dir, vec3 diffuse, vec3 specular, float specExp,
-	float kd, float ks, float intensity) {
-
-	vec3 col = vec3(0.0);
-	vec3 halfVec = normalize(-light_dir + view_dir);
-
-	float face_diff = clamp(dot(-light_dir, f_normal), 0.0, 1.0);
-	col = face_diff * kd * intensity * diffuse;
-	float face_spec = clamp(dot(halfVec, f_normal), 0.0, 1.0);
-	col += pow(face_spec, specExp) * ks * intensity * specular;
-
-	return col;
-}
-
 vec3 evaluateSingleLight(lightInfo light, matInfo material) {
 	vec3 col;
 	if (light.type == invalid) {
