@@ -37,6 +37,16 @@ var options = {
     spotInner: 0.2,
     spotOuter: 0.3,
 
+    areaWidth: 1.0,
+    areaHeight: 1.0,
+    areaPosX: 0.0,
+    areaPosY: 10.0,
+    areaPosZ: 10.0,
+    areaPitch: 0.0,
+    areaYaw: 180.0,
+    areaColor: '#ffffff',
+    areaIntensity: 2.0,
+
     exposure: 1.0,
     gamma: 2.2
 }
@@ -108,15 +118,12 @@ export default function(renderer, scene, camera) {
                 Shader.material.uniforms.u_spotIntensity.value = val;
             });
             f3.add(options, 'spotX').onChange(function(val) {
-
                 Shader.material.uniforms.u_spotPos.value = new THREE.Vector3(val, options.spotY, options.spotZ);
             });
             f3.add(options, 'spotY').onChange(function(val) {
-
                 Shader.material.uniforms.u_spotPos.value = new THREE.Vector3(options.spotX, val, options.spotZ);
             });
             f3.add(options, 'spotZ').onChange(function(val) {
-
                 Shader.material.uniforms.u_spotPos.value = new THREE.Vector3(options.spotX, options.spotY, val);
             });
 
@@ -147,7 +154,46 @@ export default function(renderer, scene, camera) {
                 //if (val <= options.spotInner) Shader.material.uniforms.u_spotInner = val;
             });
 
+            var f4 = gui.addFolder('AreaLight');
+             f4.add(options, 'areaPitch', -90, 90).listen().onChange(function(val) {
+                Shader.material.uniforms.u_areaDir.value = new THREE.Vector3(
+                    Math.sin(DEG2RAD * options.areaYaw) * Math.cos(DEG2RAD * options.areaPitch), 
+                    Math.sin(DEG2RAD * options.areaPitch), 
+                    Math.cos(DEG2RAD * options.areaYaw) * Math.cos(DEG2RAD * options.areaPitch));
+            });
 
+            f4.add(options, 'areaYaw', 0, 360).listen().onChange(function(val) {
+                Shader.material.uniforms.u_areaDir.value = new THREE.Vector3(
+                    Math.sin(DEG2RAD * options.areaYaw) * Math.cos(DEG2RAD * options.areaPitch), 
+                    Math.sin(DEG2RAD * options.areaPitch), 
+                    Math.cos(DEG2RAD * options.areaYaw) * Math.cos(DEG2RAD * options.areaPitch));
+            });
+
+            f4.addColor(options, 'areaColor').onChange(function(val) {
+                Shader.material.uniforms.u_areaCol.value = new THREE.Color(val);
+            });
+
+            f4.add(options, 'areaIntensity').min(0).onChange(function(val) {
+                Shader.material.uniforms.u_areaIntensity.value = val;
+            });
+
+            f4.add(options, 'areaPosX').onChange(function(val) {
+                Shader.material.uniforms.u_areaPos.value = new THREE.Vector3(val, options.areaPosY, options.areaPosZ);
+            });
+            f4.add(options, 'areaPosY').onChange(function(val) {
+                Shader.material.uniforms.u_areaPos.value = new THREE.Vector3(options.areaPosX, val, options.areaPosZ);
+            });
+            f4.add(options, 'areaPosZ').onChange(function(val) {
+                Shader.material.uniforms.u_areaPos.value = new THREE.Vector3(options.areaPosX, options.areaPosY, val);
+            });
+
+
+            f4.add(options, 'areaWidth').min(0.1).onChange(function(val) {
+                Shader.material.uniforms.u_areaWidth.value = val;
+            });
+            f4.add(options, 'areaHeight').min(0.1).onChange(function(val) {
+                Shader.material.uniforms.u_areaHeight.value = val;
+            });
 
             // material properties
             gui.addColor(options, 'albedo').onChange(function(val) {
@@ -270,6 +316,34 @@ export default function(renderer, scene, camera) {
                 u_spotOuter: {
                     type: 'f',
                     value: options.spotOuter
+                },
+                u_areaWidth: {
+                    type: 'f',
+                    value: options.areaWidth
+                },
+                u_areaHeight: {
+                    type: 'f',
+                    value: options.areaHeight
+                },
+                u_areaPos: {
+                    type: 'v3',
+                    value: new THREE.Vector3(options.areaPosX, options.areaPosY, options.areaPosZ)
+                },
+                u_areaDir: {
+                    type: 'v3',
+                    value: new THREE.Vector3(
+                    Math.sin(DEG2RAD * options.areaYaw) * Math.cos(DEG2RAD * options.areaPitch), 
+                    Math.sin(DEG2RAD * options.areaPitch), 
+                    Math.cos(DEG2RAD * options.areaYaw) * Math.cos(DEG2RAD * options.areaPitch))
+            
+                },
+                u_areaIntensity: {
+                    type: 'f',
+                    value: options.areaIntensity
+                },
+                u_areaCol: {
+                    type: 'v3',
+                    value: new THREE.Color(options.areaColor)
                 }
             },
             vertexShader: require('../glsl/blinn_vert.glsl'),

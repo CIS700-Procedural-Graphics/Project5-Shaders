@@ -147,6 +147,40 @@ vec3 evaluateSingleLight(lightInfo light, matInfo material) {
         light.intensity *= clamp((light.outer - angle) / denom, 0.0, 1.0);
         if (light.intensity < EPSILON) return vec3(0);
 
+    }  else if (light.type == area) {
+        // Sebastien Lagarde, Charles de Rousiers, "Moving Frostbite to Physically Based Rendering 3.0"
+        vec3 disp = f_position - light.location;
+        if (dot(disp, light.direction) < 0.0) return vec3(0);
+        float halfWidth = light.inner;
+        float halfHeight = light.outer;
+        vec3 worldUp = abs(dot(vec3(0, 1, 0), light.direction)) < EPSILON ? vec3(0, 0, -1) : vec3(0, 1, 0);
+        vec3 right = normalize(cross(light.direction, worldUp));
+        vec3 up = normalize(cross(right, light.direction));
+
+        vec3 p0 = light.location + halfWidth * right + halfHeight * up;
+        vec3 p1 = light.location + halfWidth * right - halfHeight * up;
+        vec3 p2 = light.location - halfWidth * right + halfHeight * up;
+        vec3 p3 = light.location - halfWidth * right - halfHeight * up;
+
+        vec3 v0 = normalize(p0 - f_position);
+        vec3 v1 = normalize(p1 - f_position);
+        vec3 v2 = normalize(p2 - f_position);
+        vec3 v3 = normalize(p3 - f_position);
+
+        float c0 = acos(dot(v0, v1));
+        float c1 = acos(dot(v1, v2));
+        float c2 = acos(dot(v2, v3));
+        float c3 = acos(dot(v3, v0));
+
+        vec3 vx0 = normalize(cross(v0, v1)) * c0;
+        vec3 vx1 = normalize(cross(v1, v2)) * c1;
+        vec3 vx2 = normalize(cross(v2, v3)) * c2;
+        vec3 vx3 = normalize(cross(v3, v0)) * c3;
+
+        vec3 weightedLightVec = vx0 + vx1 + vx2 + vx3;
+        // this can be used for physically accurate irradiance, but we're normalizing it here
+        light.direction = normalize(weightedLightVec);
+
     } else return vec3(0);
 
     vec3 halfVec = normalize(material.view - light.direction);
@@ -206,7 +240,9 @@ vec3 IBLSpecular(matInfo material) {
     vec3 reflected = -normalize(reflect(material.view, material.normal));
     float NdotV = abs(dot(material.normal, material.view));
     vec3 brdf = texture2D(brdfLUT, vec2(NdotV, material.roughness)).rgb;
-    return (material.specularColor * brdf.x + brdf.y) * textureCube(cubeTexture, reflected).rgb; 
+    vec3 col = (material.specularColor * brdf.x + brdf.y) * textureCube(cubeTexture, reflected).rgb; 
+    
+    return col;
 }
 
 // testing, should be post
@@ -286,7 +322,7 @@ void main() {
         );
 
     vec3 col = evaluateSingleLight(directional, mat);
-    col += evaluateSingleLight(ambientLight, mat);
+    //col += evaluateSingleLight(ambientLight, mat);
     col += evaluateSingleLight(pointLight, mat);
     col += evaluateSingleLight(spotLight, mat);
     col += u_ambient * IBLDiffuse(mat);

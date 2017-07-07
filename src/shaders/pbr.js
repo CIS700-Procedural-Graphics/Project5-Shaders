@@ -19,7 +19,7 @@ var options = {
     specColor: '#ffffff',
     roughness: 0.5,
     metalness: 0.0,
-    ambient: '#111620',
+    ambient: '#ffffff',
     useTexture: true,
 
     directionalYaw: 180.0,
