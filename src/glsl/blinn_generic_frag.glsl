@@ -114,6 +114,11 @@ vec3 evaluateSingleLight(lightInfo light, matInfo material) {
         light.intensity *= clamp((light.outer - angle) / denom, 0.0, 1.0);
         if (light.intensity < EPSILON) return vec3(0);
         halfVec = normalize(material.view - light.direction);
+    } else if (light.type == flash) {
+        // infite point at the camera, override position and direction
+        light.location = f_view;
+        light.direction = normalize(f_position - f_view);
+        halfVec = normalize(material.view - light.direction);
     } else if (light.type == area) {
         // Sebastien Lagarde, Charles de Rousiers, "Moving Frostbite to Physically Based Rendering 3.0"
         vec3 disp = f_position - light.location;
@@ -121,12 +126,8 @@ vec3 evaluateSingleLight(lightInfo light, matInfo material) {
         float halfWidth = light.inner;
         float halfHeight = light.outer;
         vec3 worldUp = (1.0 - abs(dot(vec3(0, 1, 0), light.direction)))< EPSILON ? vec3(0, 0, -1) : vec3(0, 1, 0);
-        //return vec3(abs(dot(vec3(0, 1, 0), light.direction)));
-        //return abs(worldUp);
         vec3 right = normalize(cross(light.direction, worldUp));
-        //return abs(right);
         vec3 up = normalize(cross(right, light.direction));
-        //return abs(up);
 
         vec3 p0 = light.location + halfWidth * right + halfHeight * up;
         vec3 p1 = light.location + halfWidth * right - halfHeight * up;
@@ -160,9 +161,7 @@ vec3 evaluateSingleLight(lightInfo light, matInfo material) {
 
         light.intensity *= length(weightedLightVec);
         light.direction = normalize(weightedLightVec);
-        halfVec = normalize(normalize(bestplanar - f_position) + material.view);
-        //return vec3(dot(normalize(bestplanar - f_position), light.direction));
-        
+        halfVec = test == 1 ? normalize(normalize(bestplanar - f_position) + material.view): normalize(material.view - light.direction);        
     } else return vec3(0);
 
 
@@ -198,8 +197,6 @@ void main() {
     	color.rgb, u_specularColor, normalize(f_normal), view_dir
     	);
 
-
-
     vec3 col = vec3(0.0);
 
     for (int i = 0; i < MAX_LIGHTS; i++) {
@@ -207,17 +204,6 @@ void main() {
     }
 
     col = toneMap(col);
-
-
-    // debug example half vector
-    //col = 0.5 * normalize(f_view + normalize(vec3(1.0))) + vec3(0.5);
-
-    // debug view vector
-    //col = 0.5 * f_view + vec3(0.5);
-
-    //  debug normals
-    //col = 0.5 * f_normal + vec3(0.5);
-
 
     gl_FragColor = vec4(col, 1.0);
 }

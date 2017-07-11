@@ -143,6 +143,7 @@ float smithG1(float NdotV, float r) {
     return 2.0 / (1.0 + sqrt(1.0 + r * r * ts));
 }
 
+// Bruce G. Smith, "Geometrical Shadowing of a Rough Surface"
 float geometricOcclusion(pbrInfo pbr) {
     return smithG1(pbr.NdotL, pbr.roughness) * smithG1(pbr.NdotV, pbr.roughness);
 }
@@ -161,9 +162,8 @@ vec3 evaluateSingleLight(lightInfo light, matInfo material) {
 		return vec3(0);
 
 	} else if (light.type == ambient) {
-
+        // should probably throw out for PBR
 		return light.intensity * light.color * material.diffuseColor;
-
 	} else if (light.type == point) {
         // calculate direction and distance based intensity
 		vec3 disp = f_position - light.location;
@@ -183,19 +183,20 @@ vec3 evaluateSingleLight(lightInfo light, matInfo material) {
         light.intensity *= clamp((light.outer - angle) / denom, 0.0, 1.0);
         if (light.intensity < EPSILON) return vec3(0);
         halfVec = normalize(material.view - light.direction);
-    }  else if (light.type == area) {
+    } else if (light.type == flash) {
+        // infite point at the camera, override position and direction
+        light.location = f_view;
+        light.direction = normalize(f_position - f_view);
+        halfVec = normalize(material.view - light.direction);
+    } else if (light.type == area) {
         // Sebastien Lagarde, Charles de Rousiers, "Moving Frostbite to Physically Based Rendering 3.0"
         vec3 disp = f_position - light.location;
         if (dot(disp, light.direction) < 0.0) return vec3(0);
         float halfWidth = light.inner;
         float halfHeight = light.outer;
         vec3 worldUp = (1.0 - abs(dot(vec3(0, 1, 0), light.direction)))< EPSILON ? vec3(0, 0, -1) : vec3(0, 1, 0);
-        //return vec3(abs(dot(vec3(0, 1, 0), light.direction)));
-        //return abs(worldUp);
         vec3 right = normalize(cross(light.direction, worldUp));
-        //return abs(right);
         vec3 up = normalize(cross(right, light.direction));
-        //return abs(up);
 
         vec3 p0 = light.location + halfWidth * right + halfHeight * up;
         vec3 p1 = light.location + halfWidth * right - halfHeight * up;
@@ -229,11 +230,7 @@ vec3 evaluateSingleLight(lightInfo light, matInfo material) {
 
         light.intensity *= length(weightedLightVec);
         light.direction = normalize(weightedLightVec);
-        //light.direction = -normalize(bestplanar - f_position);
-        halfVec = test == 1 ? normalize(normalize(bestplanar - f_position) + material.view): normalize(material.view - light.direction);
-        //halfVec = normalize(material.view - light.direction);
-        //return vec3(dot(normalize(bestplanar - f_position), light.direction));
-        
+        halfVec = test == 1 ? normalize(normalize(bestplanar - f_position) + material.view): normalize(material.view - light.direction);        
     } else return vec3(0);
 
     //vec3 halfVec = normalize(material.view - light.direction);
@@ -271,13 +268,10 @@ vec3 evaluateSingleLight(lightInfo light, matInfo material) {
         );
 
     //vec3 F = fresnelSchlick2(NdotV, specular);
+    // Above seems to match 'fresnel' idea alone, but below looks better?
     vec3 F = fresnelSchlick(pbrVals);
     float G = geometricOcclusion(pbrVals);
     float D = distributionGGX(pbrVals);
-    //debug
-    //return F;
-    //return vec3(G);
-    //return vec3(D);
 
     vec3 ambientLambert = (1.0 - F) * diffuse / PI;
     vec3 combinedSpecular = F * G * D / (4.0 * NdotL * NdotV);
@@ -294,7 +288,9 @@ vec3 IBLSpecular(matInfo material) {
     float NdotV = abs(dot(material.normal, material.view));
     vec3 brdf = texture2D(brdfLUT, vec2(NdotV, material.roughness)).rgb;
     reflected.x *= -1.0; // WebGL bug?
-    vec3 col = (material.specularColor * brdf.x + brdf.y) * textureCube(cubeTexture, reflected).rgb; 
+    vec3 col = textureCube(cubeTexture, reflected).rgb; 
+    //vec3 col = textureCubeLod(cubeTexture, reflected, 9.0 * material.roughness).rgb;
+    col *= (material.specularColor * brdf.x + brdf.y); 
     // temp hdr fudge
     float bright = dot(col, vec3(0.299, 0.587, 0.114));
     bright += 1.0;
