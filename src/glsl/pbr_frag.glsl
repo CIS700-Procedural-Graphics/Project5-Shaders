@@ -1,4 +1,7 @@
 // Special thanks to Hamoudi Moneimne for research and reference implementation of realtime PBR
+#extension GL_EXT_shader_texture_lod: enable
+#extension GL_OES_standard_derivatives: enable
+
 
 #define PI 3.14159
 #define EPSILON 0.00001
@@ -288,13 +291,16 @@ vec3 IBLSpecular(matInfo material) {
     float NdotV = abs(dot(material.normal, material.view));
     vec3 brdf = texture2D(brdfLUT, vec2(NdotV, material.roughness)).rgb;
     reflected.x *= -1.0; // WebGL bug?
-    vec3 col = textureCube(cubeTexture, reflected).rgb; 
-    //vec3 col = textureCubeLod(cubeTexture, reflected, 9.0 * material.roughness).rgb;
+    //vec3 col = textureCube(cubeTexture, reflected).rgb; 
+    // constant should be log2 of resolution
+    vec3 col = textureCubeLodEXT(cubeTexture, reflected, 12.0 * material.roughness).rgb;
     col *= (material.specularColor * brdf.x + brdf.y); 
     // temp hdr fudge
     float bright = dot(col, vec3(0.299, 0.587, 0.114));
+    bright *= 2.0 * bright;
     bright += 1.0;
     col *= pow(2.73, bright);
+    //col *= bright;
 
     return col;
 }

@@ -412,6 +412,9 @@ export default function(renderer, scene, camera) {
     cubemapDiffLoaded.then(function(texture) {
         Shader.material.uniforms.cubeDiffTexture.value = texture;
     });
-
+    var gl = renderer.domElement.getContext('webgl') ||
+    renderer.domElement.getContext('experimental-webgl');
+    gl.getExtension('EXT_shader_texture_lod');
+    gl.getExtension('OES_standard_derivatives');
     return Shader;
 }
