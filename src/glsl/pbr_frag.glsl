@@ -63,26 +63,26 @@ const int skyOpening = 9;
 
 struct lightInfo 
 {
-	vec3 location;
-	vec3 direction;
-	int type;
-	float intensity;
-	vec3 color;
-	float intensity2;
-	vec3 color2;
-	float kelvin;
-	float inner;
-	float outer;
+    vec3 location;
+    vec3 direction;
+    int type;
+    float intensity;
+    vec3 color;
+    float intensity2;
+    vec3 color2;
+    float kelvin;
+    float inner;
+    float outer;
 };
 
 struct matInfo
 {
-	float roughness; 
-	float metalness; 
-	vec3 diffuseColor;
-	vec3 specularColor;
-	vec3 normal;
-	vec3 view;
+    float roughness; 
+    float metalness; 
+    vec3 diffuseColor;
+    vec3 specularColor;
+    vec3 normal;
+    vec3 view;
 };
 
 // From Hamoudi Moneimne's reference implementation
@@ -159,19 +159,19 @@ float distributionGGX(pbrInfo pbr) {
 }
 
 vec3 evaluateSingleLight(lightInfo light, matInfo material) {
-	vec3 col, halfVec;
-	if (light.type == invalid) {
+    vec3 col, halfVec;
+    if (light.type == invalid) {
 
-		return vec3(0);
+        return vec3(0);
 
-	} else if (light.type == ambient) {
+    } else if (light.type == ambient) {
         // should probably throw out for PBR
-		return light.intensity * light.color * material.diffuseColor;
-	} else if (light.type == point) {
+        return light.intensity * light.color * material.diffuseColor;
+    } else if (light.type == point) {
         // calculate direction and distance based intensity
-		vec3 disp = f_position - light.location;
-		light.intensity *= 1000.0 / (dot(disp, disp) * 4.0 * PI + EPSILON);
-		light.direction = normalize(disp);
+        vec3 disp = f_position - light.location;
+        light.intensity *= 1000.0 / (dot(disp, disp) * 4.0 * PI + EPSILON);
+        light.direction = normalize(disp);
         halfVec = normalize(material.view - light.direction);
     } else if (light.type == distant) {
         // do nothing. ech.
@@ -246,6 +246,7 @@ vec3 evaluateSingleLight(lightInfo light, matInfo material) {
 
     float metalness = clamp(material.metalness, 0.0, 1.0);
     float roughness = clamp(material.roughness, 0.03, 1.0);
+    roughness *= roughness;
 
     vec3 f0 = vec3(0.04);
     vec3 diffuse = material.diffuseColor;//mix(material.diffuseColor * (1.0 - f0), vec3(0.0), metalness);
@@ -307,8 +308,8 @@ vec3 IBLSpecular(matInfo material) {
 
 // testing, should be post
 vec3 toneMap(vec3 unclampedColor) {
-	vec3 map = vec3(1.0) - exp(-unclampedColor * u_exposure);
-	return map;
+    vec3 map = vec3(1.0) - exp(-unclampedColor * u_exposure);
+    return map;
 }
 
 
@@ -325,49 +326,49 @@ void main() {
     vec3 specular = mix(f0, color.rgb, u_metalness);
 
     matInfo mat = matInfo(
-    	u_roughness, 
+        u_roughness, 
         u_metalness,
-    	diffuse, specular, normalize(f_normal), view_dir
-    	);
+        diffuse, specular, normalize(f_normal), view_dir
+        );
 
     lightInfo directional = lightInfo(
-    	vec3(0),
-    	u_dirLightDirection,
-    	distant,
-    	u_dirLightIntensity,
-    	u_dirLightCol,
-    	0.0,
-    	vec3(0),
-    	0.0,
-    	0.0,
-    	0.0
-    	);
+        vec3(0),
+        u_dirLightDirection,
+        distant,
+        u_dirLightIntensity,
+        u_dirLightCol,
+        0.0,
+        vec3(0),
+        0.0,
+        0.0,
+        0.0
+        );
 
     lightInfo ambientLight = lightInfo(
-    	vec3(0),
-    	vec3(0),
-    	ambient,
-    	1.0,
-    	u_ambient,
-    	0.0,
-    	vec3(0),
-    	0.0,
-    	0.0,
-    	0.0
-    	);
+        vec3(0),
+        vec3(0),
+        ambient,
+        1.0,
+        u_ambient,
+        0.0,
+        vec3(0),
+        0.0,
+        0.0,
+        0.0
+        );
 
     lightInfo pointLight = lightInfo(
-    	u_lightPos,
-    	vec3(0),
-    	point,
-    	u_lightIntensity,
-    	u_lightCol,
-    	0.0,
-    	vec3(0),
-    	0.0,
-    	0.0,
-    	0.0
-    	);
+        u_lightPos,
+        vec3(0),
+        point,
+        u_lightIntensity,
+        u_lightCol,
+        0.0,
+        vec3(0),
+        0.0,
+        0.0,
+        0.0
+        );
 
     lightInfo spotLight = lightInfo(
         u_spotPos,

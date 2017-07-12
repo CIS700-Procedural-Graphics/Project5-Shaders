@@ -55,27 +55,27 @@ const int skyOpening = 9;
 
 struct lightInfo 
 {
-	vec3 location;
-	vec3 direction;
-	int type;
-	float intensity;
-	vec3 color;
-	float intensity2;
-	vec3 color2;
-	float kelvin;
-	float inner;
-	float outer;
+    vec3 location;
+    vec3 direction;
+    int type;
+    float intensity;
+    vec3 color;
+    float intensity2;
+    vec3 color2;
+    float kelvin;
+    float inner;
+    float outer;
 };
 
 struct matInfo
 {
-	float ks; // spec
-	float kd; // diffuse
-	float shininess;
-	vec3 diffuseColor;
-	vec3 specularColor;
-	vec3 normal;
-	vec3 view;
+    float ks; // spec
+    float kd; // diffuse
+    float shininess;
+    vec3 diffuseColor;
+    vec3 specularColor;
+    vec3 normal;
+    vec3 view;
 };
 
 // get the closest point on a ray to a plane
@@ -104,21 +104,21 @@ vec3 rectClamp(vec3 center, vec3 right, vec3 up, vec3 pos, vec2 wh) {
 }
 
 vec3 evaluateSingleLight(lightInfo light, matInfo material) {
-	vec3 col;
+    vec3 col;
     vec3 halfVec;
-	if (light.type == invalid) {
+    if (light.type == invalid) {
 
-		return vec3(0);
+        return vec3(0);
 
-	} else if (light.type == ambient) {
+    } else if (light.type == ambient) {
 
-		return light.intensity * light.color * material.diffuseColor;
+        return light.intensity * light.color * material.diffuseColor;
 
-	} else if (light.type == point) {
+    } else if (light.type == point) {
         // calculate direction and distance based intensity
-		vec3 disp = f_position - light.location;
-		light.intensity *= 1000.0 / (dot(disp, disp) * 4.0 * PI + EPSILON);
-		light.direction = normalize(disp);
+        vec3 disp = f_position - light.location;
+        light.intensity *= 1000.0 / (dot(disp, disp) * 4.0 * PI + EPSILON);
+        light.direction = normalize(disp);
         halfVec = normalize(material.view - light.direction);
     } else if (light.type == distant) {
         // do nothing. ech.
@@ -189,16 +189,16 @@ vec3 evaluateSingleLight(lightInfo light, matInfo material) {
     
     float face_spec = clamp(dot(halfVec, material.normal), 0.0, 1.0);
     col += material.ks * pow(face_spec, material.shininess) * material.specularColor;
-	col *= light.intensity * light.color;
-	return col;
+    col *= light.intensity * light.color;
+    return col;
 }
 
 
 // testing, should be post
 vec3 toneMap(vec3 unclampedColor) {
-	vec3 map = vec3(1.0) - exp(-unclampedColor * u_exposure);
-	//map = pow(map, vec3(1.0 / u_gamma));
-	return map;
+    vec3 map = vec3(1.0) - exp(-unclampedColor * u_exposure);
+    //map = pow(map, vec3(1.0 / u_gamma));
+    return map;
 }
 
 
@@ -212,48 +212,48 @@ void main() {
     vec3 view_dir = normalize(f_view - f_position);
 
     matInfo mat = matInfo(
-    	0.2, 0.8, u_specularExponent, 
-    	color.rgb, u_specularColor, normalize(f_normal), view_dir
-    	);
+        0.2, 0.8, u_specularExponent, 
+        color.rgb, u_specularColor, normalize(f_normal), view_dir
+        );
 
     lightInfo directional = lightInfo(
-    	vec3(0),
-    	u_dirLightDirection,
-    	distant,
-    	u_dirLightIntensity,
-    	u_dirLightCol,
-    	0.0,
-    	vec3(0),
-    	0.0,
-    	0.0,
-    	0.0
-    	);
+        vec3(0),
+        u_dirLightDirection,
+        distant,
+        u_dirLightIntensity,
+        u_dirLightCol,
+        0.0,
+        vec3(0),
+        0.0,
+        0.0,
+        0.0
+        );
 
     lightInfo ambientLight = lightInfo(
-    	vec3(0),
-    	vec3(0),
-    	ambient,
-    	1.0,
-    	u_ambient,
-    	0.0,
-    	vec3(0),
-    	0.0,
-    	0.0,
-    	0.0
-    	);
+        vec3(0),
+        vec3(0),
+        ambient,
+        1.0,
+        u_ambient,
+        0.0,
+        vec3(0),
+        0.0,
+        0.0,
+        0.0
+        );
 
     lightInfo pointLight = lightInfo(
-    	u_lightPos,
-    	vec3(0),
-    	point,
-    	u_lightIntensity,
-    	u_lightCol,
-    	0.0,
-    	vec3(0),
-    	0.0,
-    	0.0,
-    	0.0
-    	);
+        u_lightPos,
+        vec3(0),
+        point,
+        u_lightIntensity,
+        u_lightCol,
+        0.0,
+        vec3(0),
+        0.0,
+        0.0,
+        0.0
+        );
 
     lightInfo spotLight = lightInfo(
         u_spotPos,

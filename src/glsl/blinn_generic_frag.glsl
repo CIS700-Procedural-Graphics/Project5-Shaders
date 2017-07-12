@@ -174,11 +174,23 @@ vec3 evaluateSingleLight(lightInfo light, matInfo material) {
 	return col;
 }
 
+// John Hable, Filmic Worlds
+vec3 toneMapUncharted2(vec3 unclampedColor) {
+    unclampedColor *= u_exposure;
+    vec3 map = ((unclampedColor * (0.15 * unclampedColor + 0.05) + 0.004) /
+        (unclampedColor * (0.15 * unclampedColor + 0.5) + 0.06)) - 0.0667;
+    vec3 W = vec3(11.2);
+    map *= 1.0 / ((W * (0.15 * W + 0.05) + 0.004) /
+        (W * (0.15 * W + 0.5) + 0.06)) - 0.0667;
+    //map = pow(map, vec3(1.0 /2.2)); // THREE seems to handle gamma with ShaderMaterial Already
+    return map;
+}
 
 // testing, should be post
 vec3 toneMap(vec3 unclampedColor) {
 	vec3 map = vec3(1.0) - exp(-unclampedColor * u_exposure);
-	//map = pow(map, vec3(1.0 / u_gamma));
+
+	//map = pow(map, vec3(1.0 /2.2)); // THREE seems to handle gamma with ShaderMaterial Already
 	return map;
 }
 
