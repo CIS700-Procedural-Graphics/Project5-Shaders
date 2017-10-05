@@ -1,6 +1,6 @@
 # Shaders in WebGL
 
-# ![/assets/ShadersInWebGL_vimeoLink.png](https://vimeo.com/231613912)
+[![](assets/ShadersInWebGL_vimeoLink.png)](https://vimeo.com/231613912)
 
 ## Overview
 
