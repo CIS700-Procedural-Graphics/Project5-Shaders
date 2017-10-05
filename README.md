@@ -6,6 +6,8 @@ In this project, I implemented a bunch shaders and post processing effects. Thes
 Shaders are used to give life to a 3D virtual scene by coloring pixels on the screen in a way that produces the appropriate colors and lighting. They can be used to produce special effects or create highly realistic scenes by mimicing materials found in real life.
 Post-Processing effects are similar to shaders but are applied in post, so they work on a rectangular texture produced by some shader to add effects over it, think instagram filters.
 
+# [Demo Here!](http://amansachan.com/Shaders_in_WebGL/)
+
 ## Shaders
 ### Lambert Shader:
 The color is determined in accordance with lamberts law, ie light intensity at a point is scaled down by the angle of incidence of light at that point. The formulation becomes: finalColor = color * lightIntensity * cos(theta); where theta isthe angle between the surface normal and the inverted incoming light ray (line from that point to the light source).
