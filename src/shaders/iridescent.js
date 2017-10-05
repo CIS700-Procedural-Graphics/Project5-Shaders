@@ -1,4 +1,3 @@
-
 const THREE = require('three');
 import {textureLoaded} from '../mario'
 
@@ -12,8 +11,6 @@ var options = {
 }
 
 export default function(renderer, scene, camera) {
-
-// renderer.setClearColor(0x000000, 1.0);
 
     const Shader = {
         initGUI: function(gui) {
@@ -63,10 +60,14 @@ export default function(renderer, scene, camera) {
                 u_lightIntensity: {
                     type: 'f',
                     value: options.lightIntensity
+                },
+                CamPos: {
+                    type: 'v3',
+                    value: camera.position
                 }
             },
             vertexShader: require('../glsl/lambert-vert.glsl'),
-            fragmentShader: require('../glsl/lambert-frag.glsl')
+            fragmentShader: require('../glsl/iridescent-frag.glsl')
         })
     }
 

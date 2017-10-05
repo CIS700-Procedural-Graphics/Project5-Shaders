@@ -1,124 +1,41 @@
+# Shaders in WebGL
 
-# Project 5: Shaders
+[![](assets/ShadersInWebGL_vimeoLink.png)](https://vimeo.com/231613912)
 
-## Project Instructions
+## Overview
 
-Implement at least 75 points worth of shaders from the following list. We reserve the right to grant only partial credit for shaders that do not meet our standards, as well as extra credit for shaders that we find to be particularly impressive.
+In this project, I implemented a bunch shaders and post processing effects. These were written using WebGL and javascript.
+Shaders are used to give life to a 3D virtual scene by coloring pixels on the screen in a way that produces the appropriate colors and lighting. They can be used to produce special effects or create highly realistic scenes by mimicing materials found in real life.
+Post-Processing effects are similar to shaders but are applied in post, so they work on a rectangular texture produced by some shader to add effects over it, think instagram filters.
 
-Some of these shading effects were covered in lecture -- some were not. If you wish to implement the more complex effects, you will have to perform some extra research. Of course, we encourage such academic curiosity which is why we’ve included these advanced shaders in the first place!
+# [Demo Here!](http://amansachan.com/Shaders_in_WebGL/)
 
-Document each shader you implement in your README with at least a sentence or two of explanation. Well-commented code will earn you many brownie (and probably sanity) points.
+## Shaders
+### Lambert Shader:
+The color is determined in accordance with lamberts law, ie light intensity at a point is scaled down by the angle of incidence of light at that point. The formulation becomes: finalColor = color * lightIntensity * cos(theta); where theta isthe angle between the surface normal and the inverted incoming light ray (line from that point to the light source).
 
-If you use shadertoy or any materials as reference, please properly credit your sources in the README and on top of the shader file. Failing to do so will result in plagiarism and will significantly reduce your points.
+### Iridescence Shader:
+The color is made to be view point dependent in this shader.
 
-Examples: [https://cis700-procedural-graphics.github.io/Project5-Shaders/](https://cis700-procedural-graphics.github.io/Project5-Shaders/)
+### Toon Shader:
+The color from lambertian shading is binned into a particular bucket to give the image a cartoony look. There can be any number of buckets but the more there are the closer the shading gets to lambertian shading.
 
-### 15 points each: Instagram-like filters
+### Pointilism Shader:
+This shader takes lambertian shading and overlays noise on top of the mesh; This noise can be controlled by a threshold value.
 
-- Tone mapping:
-    - Linear (5 points)
-    - Reinhard (5 points)
-    - Filmic (5 points)
-- Gaussian blur (no double counting with Bloom)
-- Iridescence
-- Pointilism
-- Vignette
-- Fish-eye bulge
+## Post-processing
+### Tone Mapping:
+#### Linear Tone mapping
+This tone mapping produces better blacks; There are controls for gamma and Exposure.
 
-### 25 points each: 
-- Bloom
-- Noise Warp
-- Hatching
-- Edge detection with Sobel filtering
-- Lit Sphere ([paper](http://www.ppsloan.org/publications/LitSphere.pdf))
-- Uncharted 2 customizable filmic curve, following John Hable’s presetantion. 
-    - Without Linear, Reinhard, filmic (10 points)
-    - With all of linear, Reinhard, filmic (10 points)
-    - Customizable via GUI: (5 points total)
-        - Controlling Exposure 
-        - Side by side comparison between linear, Reinhard, filmic, and Uncharted2 .
+#### Reinhard Tone mapping
+This tone mapping produces better blacks, and less saturated whites; There are controls for gamma and Exposure.
 
-### 37.5 points each:
-- K-means color compression (unless you are extremely clever, the k-means clusterer has to be CPU side)
-- Dithering
- 
+#### Filmic Tone mapping
+This tone mapping is like reinhard tone mapping but produces even better blacks, and similarly less saturated whites; There are controls for gamma and Exposure.
 
-### 5 points - Interactivity
-Implement a dropdown GUI to select different shader effects from your list.
+### Vignette
+Creates a vignette over the image.
 
-### ??? points
-Propose your own shading effects!
-
-### For the overachievers:
-Weave all your shading effects into one aesthetically-coherent scene, perhaps by incorporating some of your previous assignments!
-
-
-## Getting Started
-
-### main.js
-
-`main.js` is responsible for setting up the scene with the Mario mesh, initializing GUI and camera, etc.
-
-### Adding Shaders
-
-To add a shader, you'll want to add a file to the `src/shaders` or `src/post` folder. As examples, we've provided two shaders `lambert.js` and `grayscale.js`. Here, I will give a brief overview of how these work and how everything hooks together.
-
-**shaders/lambert.js**
-
-IMPORTANT: I make my lambert shader available by exporting it in `shaders/index.js`. 
-
-```javascript
-export {default as Lambert} from './Lambert'
-```
-
-Each shader should export a function that takes in the `renderer`, `scene`, and `camera`. That function should return a `Shader` Object.
-
-`Shader.initGUI` is a function that will be called to initialize the GUI for that shader. in `lambert.js`, you can see that it's here that I set up all the parameters that will affect my shader.
-
-`Shader.material` should be a `THREE.ShaderMaterial`. This should be pretty similar to what you've seen in previous projects. `Shader.material.vertexShader` and `Shader.material.fragmentShader` are the vertex and fragment shaders used.
-
-At the bottom, I have the following snippet of code. All it does is bind the Mario texture once it's loaded.
-
-```javascript
-textureLoaded.then(function(texture) {
-    Shader.material.uniforms.texture.value = texture;
-});
-```
-
-So when you change the Shader parameter in the GUI, `Shader.initGUI(gui)` will be called to initialize the GUI, and then the Mario mesh will have `Shader.material` applied to it.
-
-**post/grayscale.js**
-
-GUI parameters here are initialized the same way they are for the other shaders.
-
-Post process shaders should use the THREE.js `EffectComposer`. To set up the grayscale filter, I first create a new composer: `var composer = new EffectComposer(renderer);`. Then I add a a render pass as the first pass: `composer.addPass(new EffectComposer.RenderPass(scene, camera));`. This will set up the composer to render the scene as normal into a buffer. I add my filter to operate on that buffer: `composer.addPass(GrayscaleShader);`, and mark it as the final pass that will write to the screen `GrayscaleShader.renderToScreen = true;`
-
-GrayscaleShader is a `EffectComposer.ShaderPass` which basically takes the same arguments as `THREE.ShaderMaterial`. Note, that one uniform that will have to include is `tDiffuse`. This is the texture sampler which the EffectComposer will automatically bind the previously rendered pass to. If you look at `glsl/grayscale-frag.glsl`, this is the texture we read from to get the previous pixel color: `vec4 col = texture2D(tDiffuse, f_uv);`.
-
-IMPORTANT: You initially define your shader passes like so:
-
-```javascript
-var GrayscaleShader = new EffectComposer.ShaderPass({
-    uniforms: {
-        tDiffuse: {
-            type: 't',
-            value: null
-        },
-        u_amount: {
-            type: 'f',
-            value: options.amount
-        }
-    },
-    vertexShader: require('../glsl/pass-vert.glsl'),
-    fragmentShader: require('../glsl/grayscale-frag.glsl')
-});
-```
-
-BUT, if you want to modify the uniforms, you need to do so like so: `GrayscaleShader.material.uniforms.u_amount.value = val;`. Note the extra `.material` property.
-
-## Deploy
-
-1. Create a `gh-pages` branch on GitHub
-2. Do `npm run build`
-3. Commit and add all your changes.
-4. Do `npm run deploy`
+### Lens Distortion mapping
+Creates a lens centered at the origin, that magnifies the portion of the image behind it to the point of distortion.

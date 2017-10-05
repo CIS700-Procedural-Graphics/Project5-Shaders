@@ -8,12 +8,11 @@ var options = {
     lightIntensity: 2,
     albedo: '#dddddd',
     ambient: '#111111',
-    useTexture: true
+    useTexture: true,
+    threshold: 0.3
 }
 
 export default function(renderer, scene, camera) {
-
-// renderer.setClearColor(0x000000, 1.0);
 
     const Shader = {
         initGUI: function(gui) {
@@ -31,6 +30,9 @@ export default function(renderer, scene, camera) {
             });
             gui.add(options, 'useTexture').onChange(function(val) {
                 Shader.material.uniforms.u_useTexture.value = val;
+            });
+            gui.add(options, 'threshold', 0.0, 1.0).onChange(function(val) {
+                Shader.material.uniforms.u_threshold.value = val;
             });
         },
 
@@ -63,10 +65,18 @@ export default function(renderer, scene, camera) {
                 u_lightIntensity: {
                     type: 'f',
                     value: options.lightIntensity
+                },
+                CamPos: {
+                    type: 'v3',
+                    value: camera.position
+                },
+                u_threshold: {
+                    type: 'f',
+                    value: 0.3
                 }
             },
             vertexShader: require('../glsl/lambert-vert.glsl'),
-            fragmentShader: require('../glsl/lambert-frag.glsl')
+            fragmentShader: require('../glsl/pointilism-frag.glsl')
         })
     }
 
