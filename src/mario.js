@@ -37,7 +37,7 @@ export var objLoaded = new Promise((resolve, reject) => {
         var geometry = new THREE.Geometry();
         geometry.vertices = vertices;
         geometry.faces = faces;
-        geometry.computeFaceNormals();              
+        geometry.computeFaceNormals();
         geometry.mergeVertices()
         geometry.computeVertexNormals();
         geometry.computeBoundingSphere();
@@ -48,7 +48,7 @@ export var objLoaded = new Promise((resolve, reject) => {
 })
 
 export var matcapTexture = new Promise((resolve, reject) => {
-    (new THREE.TextureLoader()).load(require('./assets/water3.jpg'), function(texture) {
+    (new THREE.TextureLoader()).load(require('./assets/cloudy.png'), function(texture) {
         resolve(texture);
     })
 })
