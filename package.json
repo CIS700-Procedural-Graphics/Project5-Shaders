@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "webpack-dev-server --hot --inline",
-    "deploy": "git push origin `git subtree split --prefix build master`:gh-pages --force",
+    "deploy": "gh-pages-deploy",
     "build": "webpack"
   },
   "dependencies": {
@@ -19,5 +19,8 @@
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0",
     "webpack-glsl-loader": "^1.0.1"
+  },
+  "devDependencies": {
+    "gh-pages-deploy": "^0.5.1"
   }
 }
