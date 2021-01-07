@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "webpack-dev-server --hot --inline",
-    "deploy": "gh-pages-deploy",
+    "deploy": "npm run build && node deploy.js",
     "build": "webpack"
   },
   "dependencies": {
