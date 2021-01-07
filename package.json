@@ -21,6 +21,7 @@
     "webpack-glsl-loader": "^1.0.1"
   },
   "devDependencies": {
-    "gh-pages-deploy": "^0.5.1"
+    "gh-pages-deploy": "^0.5.1",
+    "simple-git": "^2.31.0"
   }
 }
