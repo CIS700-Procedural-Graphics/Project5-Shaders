@@ -12,9 +12,12 @@
   },
   "dependencies": {
     "dat-gui": "^0.5.0",
+    "ease-component": "1.0.0",
     "gl-matrix": "^2.3.2",
+    "random-js": "1.0.8",
     "stats-js": "^1.0.0-alpha1",
     "three": "^0.82.1",
+    "three-effectcomposer": "0.0.1",
     "three-orbit-controls": "^82.1.0"
   },
   "devDependencies": {
